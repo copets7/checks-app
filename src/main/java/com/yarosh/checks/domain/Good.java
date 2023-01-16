@@ -8,9 +8,13 @@ public class Good {
     private String description;
     private int quantity;
     private int price;
-    private Double discount;
+    private double discount;
 
-    public Good(Long id, String description, int quantity, int price, Double discount) {
+    public Good(Long id,
+                String description,
+                int quantity,
+                int price,
+                double discount) {
         this.id = id;
         this.description = description;
         this.quantity = quantity;
@@ -50,11 +54,11 @@ public class Good {
         this.price = price;
     }
 
-    public Double getDiscount() {
+    public double getDiscount() {
         return discount;
     }
 
-    public void setDiscount(Double discount) {
+    public void setDiscount(double discount) {
         this.discount = discount;
     }
 

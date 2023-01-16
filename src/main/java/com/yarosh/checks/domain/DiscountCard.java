@@ -5,11 +5,11 @@ import java.util.Objects;
 public class DiscountCard {
 
     private Long id;
-    private int amountOfDiscount;
+    private double discount;
 
-    public DiscountCard(Long id, int amountOfDiscount) {
+    public DiscountCard(Long id, double discount) {
         this.id = id;
-        this.amountOfDiscount = amountOfDiscount;
+        this.discount = discount;
     }
 
     public Long getId() {
@@ -20,12 +20,12 @@ public class DiscountCard {
         this.id = id;
     }
 
-    public int getAmountOfDiscount() {
-        return amountOfDiscount;
+    public double getDiscount() {
+        return discount;
     }
 
-    public void setAmountOfDiscount(int amountOfDiscount) {
-        this.amountOfDiscount = amountOfDiscount;
+    public void setDiscount(double discount) {
+        this.discount = discount;
     }
 
     @Override
@@ -33,19 +33,19 @@ public class DiscountCard {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DiscountCard that = (DiscountCard) o;
-        return amountOfDiscount == that.amountOfDiscount && Objects.equals(id, that.id);
+        return discount == that.discount && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, amountOfDiscount);
+        return Objects.hash(id, discount);
     }
 
     @Override
     public String toString() {
         return "DiscountCard{" +
                 "id=" + id +
-                ", amountOfDiscount=" + amountOfDiscount +
+                ", amountOfDiscount=" + discount +
                 '}';
     }
 }

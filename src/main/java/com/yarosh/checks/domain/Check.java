@@ -12,18 +12,25 @@ public class Check {
     private String cashierName;
     private LocalDate date;
     private LocalTime time;
-    private List<Good> goodList;
-    private Person person;
+    private List<Good> goods;
+    private Customer customer;
     private int totalPrice;
 
-    public Check(Long id, String marketName, String cashierName, LocalDate date, LocalTime time, List<Good> goodList, Person person, int totalPrice) {
+    public Check(Long id,
+                 String marketName,
+                 String cashierName,
+                 LocalDate date,
+                 LocalTime time,
+                 List<Good> goods,
+                 Customer customer,
+                 int totalPrice) {
         this.id = id;
         this.marketName = marketName;
         this.cashierName = cashierName;
         this.date = date;
         this.time = time;
-        this.goodList = goodList;
-        this.person = person;
+        this.goods = goods;
+        this.customer = customer;
         this.totalPrice = totalPrice;
     }
 
@@ -67,20 +74,20 @@ public class Check {
         this.time = time;
     }
 
-    public List<Good> getGoodList() {
-        return goodList;
+    public List<Good> getGoods() {
+        return goods;
     }
 
-    public void setGoodList(List<Good> goodList) {
-        this.goodList = goodList;
+    public void setGoods(List<Good> goods) {
+        this.goods = goods;
     }
 
-    public Person getPerson() {
-        return person;
+    public Customer getPerson() {
+        return customer;
     }
 
-    public void setPerson(Person person) {
-        this.person = person;
+    public void setPerson(Customer customer) {
+        this.customer = customer;
     }
 
     public int getTotalPrice() {
@@ -96,12 +103,19 @@ public class Check {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Check check = (Check) o;
-        return totalPrice == check.totalPrice && Objects.equals(id, check.id) && Objects.equals(marketName, check.marketName) && Objects.equals(cashierName, check.cashierName) && Objects.equals(date, check.date) && Objects.equals(time, check.time) && Objects.equals(goodList, check.goodList) && Objects.equals(person, check.person);
+        return totalPrice == check.totalPrice &&
+                Objects.equals(id, check.id) &&
+                Objects.equals(marketName, check.marketName) &&
+                Objects.equals(cashierName, check.cashierName) &&
+                Objects.equals(date, check.date) &&
+                Objects.equals(time, check.time) &&
+                Objects.equals(goods, check.goods) &&
+                Objects.equals(customer, check.customer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, marketName, cashierName, date, time, goodList, person, totalPrice);
+        return Objects.hash(id, marketName, cashierName, date, time, goods, customer, totalPrice);
     }
 
     @Override
@@ -112,8 +126,8 @@ public class Check {
                 ", cashierName='" + cashierName + '\'' +
                 ", date=" + date +
                 ", time=" + time +
-                ", goodList=" + goodList +
-                ", person=" + person +
+                ", goodList=" + goods +
+                ", person=" + customer +
                 ", totalPrice=" + totalPrice +
                 '}';
     }
