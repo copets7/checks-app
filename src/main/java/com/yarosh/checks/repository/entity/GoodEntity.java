@@ -4,18 +4,18 @@ public class GoodEntity {
 
     private Long id;
     private String description;
-    private int quantity;
+    private int quantityInShop;
     private int price;
     private double discount;
 
     public GoodEntity(Long id,
-                String description,
-                int quantity,
-                int price,
-                double discount) {
+                      String description,
+                      int quantityInShop,
+                      int price,
+                      double discount) {
         this.id = id;
         this.description = description;
-        this.quantity = quantity;
+        this.quantityInShop = quantityInShop;
         this.price = price;
         this.discount = discount;
     }
@@ -36,12 +36,12 @@ public class GoodEntity {
         this.description = description;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getQuantityInShop() {
+        return quantityInShop;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setQuantityInShop(int quantityInShop) {
+        this.quantityInShop = quantityInShop;
     }
 
     public int getPrice() {
@@ -65,7 +65,7 @@ public class GoodEntity {
         return "GoodEntity{" +
                 "id=" + id +
                 ", description='" + description + '\'' +
-                ", quantity=" + quantity +
+                ", quantityInShop=" + quantityInShop +
                 ", price=" + price +
                 ", discount=" + discount +
                 '}';

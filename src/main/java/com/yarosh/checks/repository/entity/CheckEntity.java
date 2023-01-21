@@ -1,8 +1,5 @@
 package com.yarosh.checks.repository.entity;
 
-import com.yarosh.checks.domain.Customer;
-import com.yarosh.checks.domain.Good;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
