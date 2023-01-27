@@ -1,21 +1,18 @@
 package com.yarosh.checks.repository.entity;
 
-public class GoodEntity {
+public class ProductEntity {
 
     private Long id;
     private String description;
-    private int quantityInShop;
     private int price;
     private double discount;
 
-    public GoodEntity(Long id,
-                      String description,
-                      int quantityInShop,
-                      int price,
-                      double discount) {
+    public ProductEntity(Long id,
+                         String description,
+                         int price,
+                         double discount) {
         this.id = id;
         this.description = description;
-        this.quantityInShop = quantityInShop;
         this.price = price;
         this.discount = discount;
     }
@@ -34,14 +31,6 @@ public class GoodEntity {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public int getQuantityInShop() {
-        return quantityInShop;
-    }
-
-    public void setQuantityInShop(int quantityInShop) {
-        this.quantityInShop = quantityInShop;
     }
 
     public int getPrice() {
@@ -65,7 +54,6 @@ public class GoodEntity {
         return "GoodEntity{" +
                 "id=" + id +
                 ", description='" + description + '\'' +
-                ", quantityInShop=" + quantityInShop +
                 ", price=" + price +
                 ", discount=" + discount +
                 '}';

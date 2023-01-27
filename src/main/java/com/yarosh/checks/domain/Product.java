@@ -3,25 +3,22 @@ package com.yarosh.checks.domain;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Good {
+public class Product {
 
     private Long id;
     private String description;
     private Optional<Integer> quantityInCheck;
-    private int quantityInShop;
     private int price;
     private double discount;
 
-    public Good(Long id,
-                String description,
-                Optional<Integer> quantityInCheck,
-                int quantityInShop,
-                int price,
-                double discount) {
+    public Product(Long id,
+                   String description,
+                   Optional<Integer> quantityInCheck,
+                   int price,
+                   double discount) {
         this.id = id;
         this.description = description;
         this.quantityInCheck = quantityInCheck;
-        this.quantityInShop = quantityInShop;
         this.price = price;
         this.discount = discount;
     }
@@ -50,14 +47,6 @@ public class Good {
         this.quantityInCheck = quantityInCheck;
     }
 
-    public int getQuantityInShop() {
-        return quantityInShop;
-    }
-
-    public void setQuantityInShop(int quantityInShop) {
-        this.quantityInShop = quantityInShop;
-    }
-
     public int getPrice() {
         return price;
     }
@@ -78,18 +67,17 @@ public class Good {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Good good = (Good) o;
-        return quantityInCheck == good.quantityInCheck &&
-                quantityInShop == good.quantityInShop &&
-                price == good.price &&
-                Double.compare(good.discount, discount) == 0 &&
-                Objects.equals(id, good.id) &&
-                Objects.equals(description, good.description);
+        Product product = (Product) o;
+        return price == product.price &&
+                Double.compare(product.discount, discount) == 0 &&
+                Objects.equals(id, product.id) &&
+                Objects.equals(description, product.description) &&
+                Objects.equals(quantityInCheck, product.quantityInCheck);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, description, quantityInCheck, quantityInShop, price, discount);
+        return Objects.hash(id, description, quantityInCheck, price, discount);
     }
 
     @Override
@@ -98,7 +86,6 @@ public class Good {
                 "id=" + id +
                 ", description='" + description + '\'' +
                 ", quantityInCheck=" + quantityInCheck +
-                ", quantityInShop=" + quantityInShop +
                 ", price=" + price +
                 ", discount=" + discount +
                 '}';
