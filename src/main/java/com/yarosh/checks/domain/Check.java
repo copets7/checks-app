@@ -12,8 +12,7 @@ public class Check {
     private String cashierName;
     private LocalDate date;
     private LocalTime time;
-    private List<Good> goods;
-    private Customer customer;
+    private List<Product> products;
     private int totalPrice;
 
     public Check(Long id,
@@ -21,16 +20,14 @@ public class Check {
                  String cashierName,
                  LocalDate date,
                  LocalTime time,
-                 List<Good> goods,
-                 Customer customer,
+                 List<Product> products,
                  int totalPrice) {
         this.id = id;
         this.marketName = marketName;
         this.cashierName = cashierName;
         this.date = date;
         this.time = time;
-        this.goods = goods;
-        this.customer = customer;
+        this.products = products;
         this.totalPrice = totalPrice;
     }
 
@@ -74,20 +71,12 @@ public class Check {
         this.time = time;
     }
 
-    public List<Good> getGoods() {
-        return goods;
+    public List<Product> getGoods() {
+        return products;
     }
 
-    public void setGoods(List<Good> goods) {
-        this.goods = goods;
-    }
-
-    public Customer getPerson() {
-        return customer;
-    }
-
-    public void setPerson(Customer customer) {
-        this.customer = customer;
+    public void setGoods(List<Product> products) {
+        this.products = products;
     }
 
     public int getTotalPrice() {
@@ -109,13 +98,12 @@ public class Check {
                 Objects.equals(cashierName, check.cashierName) &&
                 Objects.equals(date, check.date) &&
                 Objects.equals(time, check.time) &&
-                Objects.equals(goods, check.goods) &&
-                Objects.equals(customer, check.customer);
+                Objects.equals(products, check.products);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, marketName, cashierName, date, time, goods, customer, totalPrice);
+        return Objects.hash(id, marketName, cashierName, date, time, products, totalPrice);
     }
 
     @Override
@@ -126,8 +114,7 @@ public class Check {
                 ", cashierName='" + cashierName + '\'' +
                 ", date=" + date +
                 ", time=" + time +
-                ", goodList=" + goods +
-                ", person=" + customer +
+                ", goodList=" + products +
                 ", totalPrice=" + totalPrice +
                 '}';
     }

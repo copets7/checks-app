@@ -6,14 +6,12 @@ import java.util.List;
 
 public class CheckEntity {
 
-
     private Long id;
     private String marketName;
     private String cashierName;
     private LocalDate date;
     private LocalTime time;
-    private List<GoodEntity> goods;
-    private CustomerEntity customer;
+    private List<ProductEntity> products;
     private int totalPrice;
 
     public CheckEntity(Long id,
@@ -21,16 +19,14 @@ public class CheckEntity {
                        String cashierName,
                        LocalDate date,
                        LocalTime time,
-                       List<GoodEntity> goods,
-                       CustomerEntity customer,
+                       List<ProductEntity> products,
                        int totalPrice) {
         this.id = id;
         this.marketName = marketName;
         this.cashierName = cashierName;
         this.date = date;
         this.time = time;
-        this.goods = goods;
-        this.customer = customer;
+        this.products = products;
         this.totalPrice = totalPrice;
     }
 
@@ -74,20 +70,12 @@ public class CheckEntity {
         this.time = time;
     }
 
-    public List<GoodEntity> getGoods() {
-        return goods;
+    public List<ProductEntity> getProducts() {
+        return products;
     }
 
-    public void setGoods(List<GoodEntity> goods) {
-        this.goods = goods;
-    }
-
-    public CustomerEntity getPerson() {
-        return customer;
-    }
-
-    public void setPerson(CustomerEntity customer) {
-        this.customer = customer;
+    public void setProducts(List<ProductEntity> products) {
+        this.products = products;
     }
 
     public int getTotalPrice() {
@@ -106,8 +94,7 @@ public class CheckEntity {
                 ", cashierName='" + cashierName + '\'' +
                 ", date=" + date +
                 ", time=" + time +
-                ", goods=" + goods +
-                ", customer=" + customer +
+                ", goods=" + products +
                 ", totalPrice=" + totalPrice +
                 '}';
     }
