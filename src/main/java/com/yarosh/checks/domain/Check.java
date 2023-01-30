@@ -71,11 +71,11 @@ public class Check {
         this.time = time;
     }
 
-    public List<Product> getGoods() {
+    public List<Product> getProducts() {
         return products;
     }
 
-    public void setGoods(List<Product> products) {
+    public void setProducts(List<Product> products) {
         this.products = products;
     }
 
