@@ -8,6 +8,7 @@ import com.yarosh.checks.service.util.BidirectionalConverter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class ProductService implements CrudService<Product, Long> {
 
@@ -22,42 +23,35 @@ public class ProductService implements CrudService<Product, Long> {
 
     @Override
     public Product add(Product product) {
-        ProductEntity addedProduct = productRepository.insert(productConverter.convertToEntity(product));
-        return productConverter.convertToDomain(addedProduct);
+        return upsert(productRepository::insert, product);
     }
 
     @Override
     public Optional<Product> get(Long id) {
-        Optional<ProductEntity> product = productRepository.find(id);
-        if (product.isPresent()) {
-            return Optional.of(productConverter.convertToDomain(product.get()));
-        }
-
-        return Optional.empty();
+        return productRepository.find(id)
+                .map(productConverter::convertToDomain);
     }
 
     @Override
     public List<Product> getAll() {
-        List<ProductEntity> entities = productRepository.findAll();
-
-        List<Product> products = new ArrayList<>();
-        if (!entities.isEmpty()) {
-            for (ProductEntity entity : entities) {
-                products.add(productConverter.convertToDomain(entity));
-            }
-        }
-
-        return products;
+        return productRepository.findAll()
+                .stream()
+                .map(productConverter::convertToDomain)
+                .toList();
     }
 
     @Override
     public Product update(Product product) {
-        ProductEntity updatedProduct = productRepository.update(productConverter.convertToEntity(product));
-        return productConverter.convertToDomain(updatedProduct);
+        return upsert(productRepository::update, product);
     }
 
     @Override
     public void delete(Long id) {
         productRepository.delete(id);
+    }
+
+    private Product upsert(Function<ProductEntity, ProductEntity> upsert, Product product) {
+        ProductEntity upsertedProduct = upsert.apply(productConverter.convertToEntity(product));
+        return productConverter.convertToDomain(upsertedProduct);
     }
 }
