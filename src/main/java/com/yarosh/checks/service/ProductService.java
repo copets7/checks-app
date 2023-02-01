@@ -5,7 +5,6 @@ import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.ProductEntity;
 import com.yarosh.checks.service.util.BidirectionalConverter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
