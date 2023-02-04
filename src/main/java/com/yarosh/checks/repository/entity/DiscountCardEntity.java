@@ -1,6 +1,6 @@
 package com.yarosh.checks.repository.entity;
 
-public class DiscountCardEntity {
+public class DiscountCardEntity implements Entity {
 
     private Long id;
     private double discount;

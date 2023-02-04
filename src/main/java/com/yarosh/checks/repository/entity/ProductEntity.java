@@ -1,6 +1,6 @@
 package com.yarosh.checks.repository.entity;
 
-public class ProductEntity {
+public class ProductEntity implements Entity {
 
     private Long id;
     private String description;

@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-public class CheckEntity {
+public class CheckEntity implements Entity {
 
     private Long id;
     private String marketName;
