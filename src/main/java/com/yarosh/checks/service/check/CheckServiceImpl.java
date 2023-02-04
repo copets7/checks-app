@@ -1,27 +1,34 @@
-package com.yarosh.checks.service;
+package com.yarosh.checks.service.check;
 
 import com.yarosh.checks.domain.Check;
 import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.CheckEntity;
+import com.yarosh.checks.service.CrudService;
 import com.yarosh.checks.service.util.BidirectionalConverter;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class CheckService implements CrudService<Check, Long> {
+public class CheckServiceImpl implements CheckService {
 
     private final CrudRepository<CheckEntity, Long> checkRepository;
     private final CrudService<Product, Long> productService;
     private final BidirectionalConverter<Check, CheckEntity> checkConverter;
 
-    public CheckService(CrudRepository<CheckEntity, Long> checkRepository,
-                        CrudService<Product, Long> productService,
-                        BidirectionalConverter<Check, CheckEntity> checkConverter) {
+    public CheckServiceImpl(CrudRepository<CheckEntity, Long> checkRepository,
+                            CrudService<Product, Long> productService,
+                            BidirectionalConverter<Check, CheckEntity> checkConverter) {
         this.checkRepository = checkRepository;
         this.productService = productService;
         this.checkConverter = checkConverter;
+    }
+
+    @Override
+    public Check performCheck(Map<Long, Integer> productsQuantity, Long discountCardId) {
+        return null;
     }
 
     @Override
@@ -57,4 +64,6 @@ public class CheckService implements CrudService<Check, Long> {
         CheckEntity upsertedCheck = upsert.apply(checkConverter.convertToEntity(check));
         return checkConverter.convertToDomain(upsertedCheck);
     }
+
+
 }
