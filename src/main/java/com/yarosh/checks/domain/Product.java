@@ -3,7 +3,7 @@ package com.yarosh.checks.domain;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Product {
+public class Product implements Domain {
 
     private Long id;
     private String description;
@@ -82,7 +82,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Good{" +
+        return "Product{" +
                 "id=" + id +
                 ", description='" + description + '\'' +
                 ", quantityInCheck=" + quantityInCheck +

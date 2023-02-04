@@ -5,7 +5,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 
-public class Check {
+public class Check implements Domain {
 
     private Long id;
     private String marketName;

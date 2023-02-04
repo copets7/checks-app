@@ -2,7 +2,7 @@ package com.yarosh.checks.domain;
 
 import java.util.Objects;
 
-public class DiscountCard {
+public class DiscountCard implements Domain {
 
     private Long id;
     private double discount;
