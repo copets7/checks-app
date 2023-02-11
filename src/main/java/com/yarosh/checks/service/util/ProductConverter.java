@@ -1,6 +1,6 @@
 package com.yarosh.checks.service.util;
 
-import com.yarosh.checks.domain.Product;
+import com.yarosh.checks.domain.product.Product;
 import com.yarosh.checks.repository.entity.ProductEntity;
 
 import java.util.Optional;
