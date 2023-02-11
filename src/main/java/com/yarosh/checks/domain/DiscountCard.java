@@ -4,8 +4,8 @@ import java.util.Objects;
 
 public class DiscountCard implements Domain {
 
-    private Long id;
-    private double discount;
+    private final Long id;
+    private final double discount;
 
     public DiscountCard(Long id, double discount) {
         this.id = id;
@@ -16,16 +16,8 @@ public class DiscountCard implements Domain {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public double getDiscount() {
         return discount;
-    }
-
-    public void setDiscount(double discount) {
-        this.discount = discount;
     }
 
     @Override

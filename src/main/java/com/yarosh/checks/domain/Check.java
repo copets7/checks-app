@@ -1,19 +1,23 @@
 package com.yarosh.checks.domain;
 
+import com.yarosh.checks.domain.product.Product;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Check implements Domain {
 
-    private Long id;
-    private String marketName;
-    private String cashierName;
-    private LocalDate date;
-    private LocalTime time;
-    private List<Product> products;
-    private int totalPrice;
+    private final Long id;
+    private final String marketName;
+    private final String cashierName;
+    private final LocalDate date;
+    private final LocalTime time;
+    private final List<Product> products;
+    private final Optional<DiscountCard> discountCard;
+    private final int totalPrice;
 
     public Check(Long id,
                  String marketName,
@@ -21,6 +25,7 @@ public class Check implements Domain {
                  LocalDate date,
                  LocalTime time,
                  List<Product> products,
+                 Optional<DiscountCard> discountCard,
                  int totalPrice) {
         this.id = id;
         this.marketName = marketName;
@@ -28,6 +33,7 @@ public class Check implements Domain {
         this.date = date;
         this.time = time;
         this.products = products;
+        this.discountCard = discountCard;
         this.totalPrice = totalPrice;
     }
 
@@ -35,57 +41,34 @@ public class Check implements Domain {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getMarketName() {
         return marketName;
-    }
-
-    public void setMarketName(String marketName) {
-        this.marketName = marketName;
     }
 
     public String getCashierName() {
         return cashierName;
     }
 
-    public void setCashierName(String cashierName) {
-        this.cashierName = cashierName;
-    }
-
     public LocalDate getDate() {
         return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
     }
 
     public LocalTime getTime() {
         return time;
     }
 
-    public void setTime(LocalTime time) {
-        this.time = time;
-    }
-
     public List<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public Optional<DiscountCard> getDiscountCard() {
+        return discountCard;
     }
 
     public int getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(int totalPrice) {
-        this.totalPrice = totalPrice;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -98,12 +81,13 @@ public class Check implements Domain {
                 Objects.equals(cashierName, check.cashierName) &&
                 Objects.equals(date, check.date) &&
                 Objects.equals(time, check.time) &&
-                Objects.equals(products, check.products);
+                Objects.equals(products, check.products) &&
+                Objects.equals(discountCard, check.discountCard);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, marketName, cashierName, date, time, products, totalPrice);
+        return Objects.hash(id, marketName, cashierName, date, time, products, discountCard, totalPrice);
     }
 
     @Override
@@ -114,7 +98,8 @@ public class Check implements Domain {
                 ", cashierName='" + cashierName + '\'' +
                 ", date=" + date +
                 ", time=" + time +
-                ", goodList=" + products +
+                ", products=" + products +
+                ", discountCard=" + discountCard +
                 ", totalPrice=" + totalPrice +
                 '}';
     }

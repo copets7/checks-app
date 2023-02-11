@@ -1,15 +1,17 @@
-package com.yarosh.checks.domain;
+package com.yarosh.checks.domain.product;
+
+import com.yarosh.checks.domain.Domain;
 
 import java.util.Objects;
 import java.util.Optional;
 
 public class Product implements Domain {
 
-    private Long id;
-    private String description;
-    private Optional<Integer> quantityInCheck;
-    private int price;
-    private double discount;
+    private final Long id;
+    private final String description;
+    private final Optional<Integer> quantityInCheck;
+    private final int price;
+    private final double discount;
 
     public Product(Long id,
                    String description,
@@ -27,40 +29,28 @@ public class Product implements Domain {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Optional<Integer> getQuantityInCheck() {
         return quantityInCheck;
     }
 
-    public void setQuantityInCheck(Optional<Integer> quantityInCheck) {
-        this.quantityInCheck = quantityInCheck;
+    public Product performProductForCheck(int quantityInCheck) {
+        if (quantityInCheck <= 0) {
+            throw new InvalidQuantityException(id, quantityInCheck);
+        }
+
+        return new Product(id, description, Optional.of(quantityInCheck), price, discount);
     }
 
     public int getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
     public double getDiscount() {
         return discount;
-    }
-
-    public void setDiscount(double discount) {
-        this.discount = discount;
     }
 
     @Override
