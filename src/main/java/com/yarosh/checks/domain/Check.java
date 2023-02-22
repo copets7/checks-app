@@ -1,6 +1,6 @@
 package com.yarosh.checks.domain;
 
-import com.yarosh.checks.domain.product.Product;
+import com.yarosh.checks.domain.exception.InvalidTotalPriceException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -10,6 +10,10 @@ import java.util.Optional;
 
 public class Check implements Domain {
 
+    private static final int NO_DISCOUNT = 0;
+    private static final int MAX_DISCOUNT = 1;
+    private static final double INVALID_TOTAL_PRICE = 0.0;
+
     private final Long id;
     private final String marketName;
     private final String cashierName;
@@ -17,7 +21,8 @@ public class Check implements Domain {
     private final LocalTime time;
     private final List<Product> products;
     private final Optional<DiscountCard> discountCard;
-    private final int totalPrice;
+
+    private final double totalPrice = countTotalPrice();
 
     public Check(Long id,
                  String marketName,
@@ -25,8 +30,7 @@ public class Check implements Domain {
                  LocalDate date,
                  LocalTime time,
                  List<Product> products,
-                 Optional<DiscountCard> discountCard,
-                 int totalPrice) {
+                 Optional<DiscountCard> discountCard) {
         this.id = id;
         this.marketName = marketName;
         this.cashierName = cashierName;
@@ -34,7 +38,6 @@ public class Check implements Domain {
         this.time = time;
         this.products = products;
         this.discountCard = discountCard;
-        this.totalPrice = totalPrice;
     }
 
     public Long getId() {
@@ -65,10 +68,9 @@ public class Check implements Domain {
         return discountCard;
     }
 
-    public int getTotalPrice() {
+    public double getTotalPrice() {
         return totalPrice;
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -102,5 +104,29 @@ public class Check implements Domain {
                 ", discountCard=" + discountCard +
                 ", totalPrice=" + totalPrice +
                 '}';
+    }
+
+    private double countTotalPrice() {
+        return products.stream()
+                .map(product -> (product.getPrice() * (MAX_DISCOUNT - countDiscount(product))) * product.getValidatedQuantity())
+                .reduce(Double::sum)
+                .filter(this::isTotalPriceValid)
+                .orElseThrow();
+    }
+
+    private double countDiscount(Product product) {
+        if (product.getDiscount() > NO_DISCOUNT) {
+            return product.getDiscount();
+        }
+
+        return (discountCard.isPresent()) ? discountCard.get().getDiscount() : NO_DISCOUNT;
+    }
+
+    private boolean isTotalPriceValid(Double price) {
+        if (price <= INVALID_TOTAL_PRICE) {
+            throw new InvalidTotalPriceException(price);
+        }
+
+        return true;
     }
 }
