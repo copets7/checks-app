@@ -7,5 +7,5 @@ import java.util.Map;
 
 public interface CheckService extends CrudService<Check, Long> {
 
-    Check performCheck(Map<Long, Integer> productsQuantity, Long discountCardId);
+    Check performCheck(Long discountCardId, Map<Long, Integer> productsQuantity);
 }
