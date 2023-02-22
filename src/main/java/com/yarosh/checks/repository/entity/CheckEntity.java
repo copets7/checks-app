@@ -12,7 +12,11 @@ public class CheckEntity implements Entity {
     private LocalDate date;
     private LocalTime time;
     private List<ProductEntity> products;
-    private int totalPrice;
+    private DiscountCardEntity discountCard;
+    private double totalPrice;
+
+    public CheckEntity() {
+    }
 
     public CheckEntity(Long id,
                        String marketName,
@@ -20,13 +24,15 @@ public class CheckEntity implements Entity {
                        LocalDate date,
                        LocalTime time,
                        List<ProductEntity> products,
-                       int totalPrice) {
+                       DiscountCardEntity discountCard,
+                       double totalPrice) {
         this.id = id;
         this.marketName = marketName;
         this.cashierName = cashierName;
         this.date = date;
         this.time = time;
         this.products = products;
+        this.discountCard = discountCard;
         this.totalPrice = totalPrice;
     }
 
@@ -34,56 +40,32 @@ public class CheckEntity implements Entity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getMarketName() {
         return marketName;
-    }
-
-    public void setMarketName(String marketName) {
-        this.marketName = marketName;
     }
 
     public String getCashierName() {
         return cashierName;
     }
 
-    public void setCashierName(String cashierName) {
-        this.cashierName = cashierName;
-    }
-
     public LocalDate getDate() {
         return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
     }
 
     public LocalTime getTime() {
         return time;
     }
 
-    public void setTime(LocalTime time) {
-        this.time = time;
-    }
-
     public List<ProductEntity> getProducts() {
         return products;
     }
 
-    public void setProducts(List<ProductEntity> products) {
-        this.products = products;
+    public DiscountCardEntity getDiscountCard() {
+        return discountCard;
     }
 
-    public int getTotalPrice() {
+    public double getTotalPrice() {
         return totalPrice;
-    }
-
-    public void setTotalPrice(int totalPrice) {
-        this.totalPrice = totalPrice;
     }
 
     @Override
@@ -94,7 +76,8 @@ public class CheckEntity implements Entity {
                 ", cashierName='" + cashierName + '\'' +
                 ", date=" + date +
                 ", time=" + time +
-                ", goods=" + products +
+                ", products=" + products +
+                ", discountCard=" + discountCard +
                 ", totalPrice=" + totalPrice +
                 '}';
     }
