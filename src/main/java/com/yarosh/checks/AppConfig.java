@@ -2,7 +2,7 @@ package com.yarosh.checks;
 
 import com.yarosh.checks.domain.Check;
 import com.yarosh.checks.domain.DiscountCard;
-import com.yarosh.checks.domain.product.Product;
+import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.CheckEntity;
 import com.yarosh.checks.repository.entity.DiscountCardEntity;
@@ -43,7 +43,7 @@ public class AppConfig {
     }
 
     public BidirectionalConverter<Check, CheckEntity> checkConverter() {
-        return new CheckConverter(productConverter());
+        return new CheckConverter(productConverter(), discountCardConverter());
     }
 
     public BidirectionalConverter<Product, ProductEntity> productConverter() {

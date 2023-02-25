@@ -2,10 +2,11 @@ package com.yarosh.checks.service.check;
 
 import com.yarosh.checks.domain.Check;
 import com.yarosh.checks.domain.DiscountCard;
-import com.yarosh.checks.domain.product.Product;
+import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.CheckEntity;
 import com.yarosh.checks.service.CrudService;
+import com.yarosh.checks.service.ProductNotFoundException;
 import com.yarosh.checks.service.util.BidirectionalConverter;
 
 import java.util.List;

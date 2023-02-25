@@ -1,4 +1,4 @@
-package com.yarosh.checks.service.check;
+package com.yarosh.checks.service;
 
 import java.text.MessageFormat;
 
