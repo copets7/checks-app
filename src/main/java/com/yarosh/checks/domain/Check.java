@@ -1,6 +1,7 @@
 package com.yarosh.checks.domain;
 
 import com.yarosh.checks.domain.exception.InvalidCheckException;
+import com.yarosh.checks.domain.id.CheckId;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -14,7 +15,7 @@ public class Check implements Domain {
     private static final int MAX_DISCOUNT = 1;
     private static final double INVALID_TOTAL_PRICE = 0.0;
 
-    private final Optional<Long> id;
+    private final Optional<CheckId> id;
     private final String marketName;
     private final String cashierName;
     private final LocalDate date;
@@ -24,7 +25,7 @@ public class Check implements Domain {
 
     private final double totalPrice = countTotalPrice();
 
-    public Check(Optional<Long> id,
+    public Check(Optional<CheckId> id,
                  String marketName,
                  String cashierName,
                  LocalDate date,
@@ -40,7 +41,7 @@ public class Check implements Domain {
         this.discountCard = discountCard;
     }
 
-    public Optional<Long> getId() {
+    public Optional<CheckId> getId() {
         return id;
     }
 
@@ -77,14 +78,14 @@ public class Check implements Domain {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Check check = (Check) o;
-        return totalPrice == check.totalPrice &&
-                Objects.equals(id, check.id) &&
-                Objects.equals(marketName, check.marketName) &&
-                Objects.equals(cashierName, check.cashierName) &&
-                Objects.equals(date, check.date) &&
-                Objects.equals(time, check.time) &&
-                Objects.equals(products, check.products) &&
-                Objects.equals(discountCard, check.discountCard);
+        return Double.compare(check.totalPrice, totalPrice) == 0
+                && Objects.equals(id, check.id)
+                && Objects.equals(marketName, check.marketName)
+                && Objects.equals(cashierName, check.cashierName)
+                && Objects.equals(date, check.date)
+                && Objects.equals(time, check.time)
+                && Objects.equals(products, check.products)
+                && Objects.equals(discountCard, check.discountCard);
     }
 
     @Override
