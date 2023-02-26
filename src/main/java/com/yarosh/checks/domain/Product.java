@@ -1,6 +1,7 @@
 package com.yarosh.checks.domain;
 
-import com.yarosh.checks.domain.exception.InvalidQuantityException;
+import com.yarosh.checks.domain.exception.InvalidProductException;
+import com.yarosh.checks.domain.id.ProductId;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -9,13 +10,13 @@ public class Product implements Domain {
 
     private static final int INVALID_QUANTITY = 0;
 
-    private final Long id;
+    private final Optional<ProductId> id;
     private final String description;
     private final Optional<Integer> quantityInCheck;
     private final double price;
     private final double discount;
 
-    public Product(Long id,
+    public Product(Optional<ProductId> id,
                    String description,
                    Optional<Integer> quantityInCheck,
                    double price,
@@ -29,18 +30,18 @@ public class Product implements Domain {
 
     public int getValidatedQuantity() {
         return getQuantityInCheck().filter(quantity -> quantity > INVALID_QUANTITY)
-                .orElseThrow(() -> new InvalidQuantityException(getId(), getQuantityInCheck().get()));
+                .orElseThrow(() ->  InvalidProductException.quantityCase(id.get().getId(), getQuantityInCheck().get()));
     }
 
-    public Product performProductForCheck(int quantityInCheck) {
+    public Product performForCheck(int quantityInCheck) {
         if (quantityInCheck <= INVALID_QUANTITY) {
-            throw new InvalidQuantityException(id, quantityInCheck);
+            throw  InvalidProductException.quantityCase(id.get().getId(), getQuantityInCheck().get());
         }
 
         return new Product(id, description, Optional.of(quantityInCheck), price, discount);
     }
 
-    public Long getId() {
+    public Optional<ProductId> getId() {
         return id;
     }
 
