@@ -1,18 +1,23 @@
 package com.yarosh.checks.domain;
 
+import com.yarosh.checks.domain.exception.InvalidDiscountCardException;
+
 import java.util.Objects;
+import java.util.Optional;
 
 public class DiscountCard implements Domain {
 
-    private final Long id;
+    private static final int NO_DISCOUNT = 0;
+
+    private final Optional<Long> id;
     private final double discount;
 
-    public DiscountCard(Long id, double discount) {
+    public DiscountCard(Optional<Long> id, double discount) {
         this.id = id;
         this.discount = discount;
     }
 
-    public Long getId() {
+    public Optional<Long> getId() {
         return id;
     }
 
@@ -39,5 +44,11 @@ public class DiscountCard implements Domain {
                 "id=" + id +
                 ", amountOfDiscount=" + discount +
                 '}';
+    }
+
+    private void validate() {
+        if (discount <= NO_DISCOUNT) {
+            throw new InvalidDiscountCardException("Discount is less than 0.1, DiscountCard: {0}", this);
+        }
     }
 }
