@@ -1,6 +1,7 @@
 package com.yarosh.checks.domain;
 
 import com.yarosh.checks.domain.exception.InvalidDiscountCardException;
+import com.yarosh.checks.domain.id.DiscountCardId;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -9,15 +10,15 @@ public class DiscountCard implements Domain {
 
     private static final int NO_DISCOUNT = 0;
 
-    private final Optional<Long> id;
+    private final Optional<DiscountCardId> id;
     private final double discount;
 
-    public DiscountCard(Optional<Long> id, double discount) {
+    public DiscountCard(Optional<DiscountCardId> id, double discount) {
         this.id = id;
         this.discount = discount;
     }
 
-    public Optional<Long> getId() {
+    public Optional<DiscountCardId> getId() {
         return id;
     }
 
