@@ -1,6 +1,6 @@
 package com.yarosh.checks.domain;
 
-import com.yarosh.checks.domain.exception.InvalidTotalPriceException;
+import com.yarosh.checks.domain.exception.InvalidCheckException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -14,7 +14,7 @@ public class Check implements Domain {
     private static final int MAX_DISCOUNT = 1;
     private static final double INVALID_TOTAL_PRICE = 0.0;
 
-    private final Long id;
+    private final Optional<Long> id;
     private final String marketName;
     private final String cashierName;
     private final LocalDate date;
@@ -24,7 +24,7 @@ public class Check implements Domain {
 
     private final double totalPrice = countTotalPrice();
 
-    public Check(Long id,
+    public Check(Optional<Long> id,
                  String marketName,
                  String cashierName,
                  LocalDate date,
@@ -40,7 +40,7 @@ public class Check implements Domain {
         this.discountCard = discountCard;
     }
 
-    public Long getId() {
+    public Optional<Long> getId() {
         return id;
     }
 
@@ -124,7 +124,7 @@ public class Check implements Domain {
 
     private boolean isTotalPriceValid(Double price) {
         if (price <= INVALID_TOTAL_PRICE) {
-            throw new InvalidTotalPriceException(price);
+            throw new InvalidCheckException(price);
         }
 
         return true;
