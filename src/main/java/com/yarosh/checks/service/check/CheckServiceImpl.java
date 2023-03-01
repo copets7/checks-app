@@ -3,6 +3,9 @@ package com.yarosh.checks.service.check;
 import com.yarosh.checks.domain.Check;
 import com.yarosh.checks.domain.DiscountCard;
 import com.yarosh.checks.domain.Product;
+import com.yarosh.checks.domain.id.CheckId;
+import com.yarosh.checks.domain.id.DiscountCardId;
+import com.yarosh.checks.domain.id.ProductId;
 import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.CheckEntity;
 import com.yarosh.checks.service.CrudService;
@@ -18,14 +21,14 @@ public class CheckServiceImpl implements CheckService {
 
     private final CrudRepository<CheckEntity, Long> checkRepository;
 
-    private final CrudService<Product, Long> productService;
-    private final CrudService<DiscountCard, Long> discountCardService;
+    private final CrudService<Product, ProductId> productService;
+    private final CrudService<DiscountCard, DiscountCardId> discountCardService;
 
     private final BidirectionalConverter<Check, CheckEntity> checkConverter;
 
     public CheckServiceImpl(CrudRepository<CheckEntity, Long> checkRepository,
-                            CrudService<Product, Long> productService,
-                            CrudService<DiscountCard, Long> discountCardService,
+                            CrudService<Product, ProductId> productService,
+                            CrudService<DiscountCard, DiscountCardId> discountCardService,
                             BidirectionalConverter<Check, CheckEntity> checkConverter) {
         this.checkRepository = checkRepository;
         this.productService = productService;
@@ -34,9 +37,9 @@ public class CheckServiceImpl implements CheckService {
     }
 
     @Override
-    public Check performCheck(Long discountCardId, Map<Long, Integer> productsQuantity) {
+    public Check performCheck(DiscountCardId discountCardId, Map<ProductId, Integer> productsQuantity) {
         Optional<DiscountCard> maybeDiscountCard = discountCardService.get(discountCardId);
-
+        List<Product> products = performProducts(productsQuantity);
         return null;
     }
 
@@ -46,8 +49,8 @@ public class CheckServiceImpl implements CheckService {
     }
 
     @Override
-    public Optional<Check> get(Long id) {
-        return checkRepository.find(id)
+    public Optional<Check> get(CheckId id) {
+        return checkRepository.find(id.getId())
                 .map(checkConverter::convertToDomain);
     }
 
@@ -65,8 +68,8 @@ public class CheckServiceImpl implements CheckService {
     }
 
     @Override
-    public void delete(Long id) {
-        checkRepository.delete(id);
+    public void delete(CheckId id) {
+        checkRepository.delete(id.getId());
     }
 
     private Check upsert(Function<CheckEntity, CheckEntity> upsert, Check check) {
@@ -74,16 +77,16 @@ public class CheckServiceImpl implements CheckService {
         return checkConverter.convertToDomain(upsertedCheck);
     }
 
-    private List<Product> performProducts(Map<Long, Integer> productsQuantity) {
+    private List<Product> performProducts(Map<ProductId, Integer> productsQuantity) {
         return productsQuantity.entrySet()
                 .stream()
                 .map(entry -> performProduct(entry.getKey(), entry.getValue()))
                 .toList();
     }
 
-    private Product performProduct(long id, int quantity) {
+    private Product performProduct(ProductId id, int quantity) {
         return productService.get(id)
-                .map(product -> product.performProductForCheck(quantity))
-                .orElseThrow(() -> new ProductNotFoundException(id));
+                .map(product -> product.performForCheck(quantity))
+                .orElseThrow(() -> new ProductNotFoundException(id.getId()));
     }
 }
