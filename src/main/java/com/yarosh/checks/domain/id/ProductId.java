@@ -2,13 +2,12 @@ package com.yarosh.checks.domain.id;
 
 import com.yarosh.checks.domain.exception.TypedIdException;
 
-public class ProductId {
+public class ProductId implements DomainId {
 
     private final Long id;
 
     public ProductId(Long id) {
         this.id = id;
-
         validate();
     }
 
@@ -25,7 +24,7 @@ public class ProductId {
 
     private void validate() {
         if (id == null) {
-            throw new TypedIdException("Id can't be null in {0}", this);
+            throw new TypedIdException(this);
         }
     }
 }
