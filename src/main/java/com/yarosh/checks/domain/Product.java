@@ -30,12 +30,12 @@ public class Product implements Domain {
 
     public int getValidatedQuantity() {
         return getQuantityInCheck().filter(quantity -> quantity > INVALID_QUANTITY)
-                .orElseThrow(() ->  InvalidProductException.quantityCase(id.get().getId(), getQuantityInCheck().get()));
+                .orElseThrow(() -> InvalidProductException.quantityCase(id.get().getId(), getQuantityInCheck().get()));
     }
 
     public Product performForCheck(int quantityInCheck) {
         if (quantityInCheck <= INVALID_QUANTITY) {
-            throw  InvalidProductException.quantityCase(id.get().getId(), getQuantityInCheck().get());
+            throw InvalidProductException.quantityCase(id.get().getId(), getQuantityInCheck().get());
         }
 
         return new Product(id, description, Optional.of(quantityInCheck), price, discount);
