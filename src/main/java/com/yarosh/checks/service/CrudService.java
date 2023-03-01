@@ -1,11 +1,12 @@
 package com.yarosh.checks.service;
 
 import com.yarosh.checks.domain.Domain;
+import com.yarosh.checks.domain.id.DomainId;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface CrudService<D extends Domain, ID> {
+public interface CrudService<D extends Domain, ID extends DomainId> {
 
     D add(D domain);
 
