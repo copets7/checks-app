@@ -12,6 +12,8 @@ import com.yarosh.checks.service.CrudService;
 import com.yarosh.checks.service.ProductNotFoundException;
 import com.yarosh.checks.service.util.BidirectionalConverter;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,21 +28,33 @@ public class CheckServiceImpl implements CheckService {
 
     private final BidirectionalConverter<Check, CheckEntity> checkConverter;
 
+    private final String marketName;
+    private final String cashierName;
+
     public CheckServiceImpl(CrudRepository<CheckEntity, Long> checkRepository,
                             CrudService<Product, ProductId> productService,
                             CrudService<DiscountCard, DiscountCardId> discountCardService,
-                            BidirectionalConverter<Check, CheckEntity> checkConverter) {
+                            BidirectionalConverter<Check, CheckEntity> checkConverter,
+                            String marketName,
+                            String cashierName) {
         this.checkRepository = checkRepository;
         this.productService = productService;
         this.discountCardService = discountCardService;
         this.checkConverter = checkConverter;
+        this.marketName = marketName;
+        this.cashierName = cashierName;
     }
 
     @Override
     public Check performCheck(DiscountCardId discountCardId, Map<ProductId, Integer> productsQuantity) {
-        Optional<DiscountCard> maybeDiscountCard = discountCardService.get(discountCardId);
-        List<Product> products = performProducts(productsQuantity);
-        return null;
+        return add(new Check(Optional.empty(),
+                marketName,
+                cashierName,
+                LocalDate.now(),
+                LocalTime.now(),
+                performProducts(productsQuantity),
+                discountCardService.get(discountCardId))
+        );
     }
 
     @Override
