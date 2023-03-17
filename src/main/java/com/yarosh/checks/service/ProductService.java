@@ -1,6 +1,7 @@
 package com.yarosh.checks.service;
 
 import com.yarosh.checks.domain.Product;
+import com.yarosh.checks.domain.id.ProductId;
 import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.ProductEntity;
 import com.yarosh.checks.service.util.BidirectionalConverter;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class ProductService implements CrudService<Product, Long> {
+public class ProductService implements CrudService<Product, ProductId> {
 
     private final CrudRepository<ProductEntity, Long> productRepository;
     private final BidirectionalConverter<Product, ProductEntity> productConverter;
@@ -26,8 +27,8 @@ public class ProductService implements CrudService<Product, Long> {
     }
 
     @Override
-    public Optional<Product> get(Long id) {
-        return productRepository.find(id)
+    public Optional<Product> get(ProductId id) {
+        return productRepository.find(id.getId())
                 .map(productConverter::convertToDomain);
     }
 
@@ -45,8 +46,8 @@ public class ProductService implements CrudService<Product, Long> {
     }
 
     @Override
-    public void delete(Long id) {
-        productRepository.delete(id);
+    public void delete(ProductId id) {
+        productRepository.delete(id.getId());
     }
 
     private Product upsert(Function<ProductEntity, ProductEntity> upsert, Product product) {
