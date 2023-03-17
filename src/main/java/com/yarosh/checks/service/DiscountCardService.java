@@ -1,6 +1,7 @@
 package com.yarosh.checks.service;
 
 import com.yarosh.checks.domain.DiscountCard;
+import com.yarosh.checks.domain.id.DiscountCardId;
 import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.DiscountCardEntity;
 import com.yarosh.checks.service.util.BidirectionalConverter;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class DiscountCardService implements CrudService<DiscountCard, Long> {
+public class DiscountCardService implements CrudService<DiscountCard, DiscountCardId> {
 
     private final CrudRepository<DiscountCardEntity, Long> discountCardRepository;
     private final BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter;
@@ -26,8 +27,8 @@ public class DiscountCardService implements CrudService<DiscountCard, Long> {
     }
 
     @Override
-    public Optional<DiscountCard> get(Long id) {
-        return discountCardRepository.find(id)
+    public Optional<DiscountCard> get(DiscountCardId id) {
+        return discountCardRepository.find(id.getId())
                 .map(discountCardConverter::convertToDomain);
     }
 
@@ -45,8 +46,8 @@ public class DiscountCardService implements CrudService<DiscountCard, Long> {
     }
 
     @Override
-    public void delete(Long id) {
-        discountCardRepository.delete(id);
+    public void delete(DiscountCardId id) {
+        discountCardRepository.delete(id.getId());
     }
 
     private DiscountCard upsert(Function<DiscountCardEntity, DiscountCardEntity> upsert, DiscountCard discountCard) {
