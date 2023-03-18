@@ -1,21 +1,43 @@
-package com.yarosh.checks.repository.pool;
+package com.yarosh.checks.repository.pool.connection;
 
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.CallableStatement;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.NClob;
+import java.sql.PreparedStatement;
+import java.sql.SQLClientInfoException;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.SQLXML;
+import java.sql.Savepoint;
+import java.sql.Statement;
+import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public class PooledConnection implements Connection {
 
-   private final Connection connection;
+    private final Connection connection;
 
     public PooledConnection(Connection connection) {
         this.connection = connection;
     }
 
+    public Connection getConnection() {
+        return connection;
+    }
+
     @Override
-    public Statement createStatement() throws SQLException {
-        return connection.createStatement();
+    public Statement createStatement() {
+        try {
+            return connection.createStatement();
+        } catch (SQLException e) {
+            throw new PooledConnectionException("Exception during creating statement, e: {0}", e);
+        }
     }
 
     @Override
