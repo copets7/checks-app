@@ -9,7 +9,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.IntStream;
 
-public class DatabaseConnectionPool implements AutoCloseable{
+public class DatabaseConnectionPool implements AutoCloseable {
 
     private final String url;
     private final String username;
@@ -41,28 +41,40 @@ public class DatabaseConnectionPool implements AutoCloseable{
         }
     }
 
+    public void releaseConnection(Connection connection) {
+        freeConnections.add(connection);
+        usedConnections.remove(connection);
+    }
+
     @Override
-    public void close() throws SQLException {
-        try {
-            usedConnections.forEach(Connection::close);
-            freeConnections.forEach(connection -> {
-                ((PooledConnection) connection).getConnection().close();
-            });
-        } catch (SQLException e) {
-            throw new DatabaseConnectionPoolException(" ", e);
-        }
+    public void close() {
+        closeConnections(usedConnections);
+        closeConnections(freeConnections);
     }
 
     private void init() {
         IntStream.of(poolSize).peek(i -> {
             try {
                 Connection connection = DriverManager.getConnection(url, username, password);
-                freeConnections.add(new PooledConnection(connection));
+                freeConnections.add(new PooledConnection(connection, this));
             } catch (SQLException e) {
                 throw new DatabaseConnectionPoolException("Connection pool init() failed, e: {0}", e);
             }
         });
     }
 
+    private void close(Connection connection) {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            throw new DatabaseConnectionPoolException("Exception during closing SQL connection, e: {0}", e);
+        }
+    }
 
+    private void closeConnections(BlockingQueue<Connection> connections) {
+        connections.stream()
+                .map(connection -> (PooledConnection) connection)
+                .map(PooledConnection::getConnection)
+                .forEach(this::close);
+    }
 }
