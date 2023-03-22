@@ -2,6 +2,7 @@ package com.yarosh.checks.repository.jdbc;
 
 import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.DiscountCardEntity;
+import com.yarosh.checks.repository.pool.DatabaseConnectionPool;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,14 +16,10 @@ public class DiscountCardRepository implements CrudRepository<DiscountCardEntity
 
     private static final String SQL_SELECT_ALL = "";
 
-    private final String url;
-    private final String username;
-    private final String password;
+    private final DatabaseConnectionPool connectionPool;
 
-    public DiscountCardRepository(String url, String username, String password) {
-        this.url = url;
-        this.username = username;
-        this.password = password;
+    public DiscountCardRepository(DatabaseConnectionPool connectionPool) {
+        this.connectionPool = connectionPool;
     }
 
     @Override
@@ -38,7 +35,7 @@ public class DiscountCardRepository implements CrudRepository<DiscountCardEntity
     @Override
     public List<DiscountCardEntity> findAll() {
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
+        try (Connection connection = connectionPool.getConnection();
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL);
         ) {
