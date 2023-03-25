@@ -42,8 +42,8 @@ public class DatabaseConnectionPool implements AutoCloseable {
     }
 
     public void releaseConnection(Connection connection) {
-        freeConnections.add(connection);
         usedConnections.remove(connection);
+        freeConnections.add(connection);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class DatabaseConnectionPool implements AutoCloseable {
             } catch (SQLException e) {
                 throw new DatabaseConnectionPoolException("Connection pool init() failed, e: {0}", e);
             }
-        });
+        }).sum();
     }
 
     private void close(Connection connection) {
