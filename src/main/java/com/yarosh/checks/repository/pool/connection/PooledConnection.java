@@ -36,12 +36,8 @@ public class PooledConnection implements Connection {
     }
 
     @Override
-    public Statement createStatement() {
-        try {
-            return connection.createStatement();
-        } catch (SQLException e) {
-            throw new PooledConnectionException("Exception during creating statement, e: {0}", e);
-        }
+    public Statement createStatement() throws SQLException {
+        return connection.createStatement();
     }
 
     @Override
@@ -80,8 +76,8 @@ public class PooledConnection implements Connection {
     }
 
     @Override
-    public void close() throws SQLException {
-        pool.releaseConnection(connection);
+    public void close() {
+        pool.releaseConnection(this);
     }
 
     @Override
@@ -186,7 +182,7 @@ public class PooledConnection implements Connection {
 
     @Override
     public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-         connection.releaseSavepoint(savepoint);
+        connection.releaseSavepoint(savepoint);
     }
 
     @Override
