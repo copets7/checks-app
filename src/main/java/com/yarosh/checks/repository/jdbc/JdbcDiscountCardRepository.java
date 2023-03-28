@@ -15,9 +15,9 @@ import java.util.Optional;
 
 public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEntity, Long> {
 
-    private static final String SQL_SELECT_ALL = "SELECT id, discount FROM discount_cards";
     private static final String SQL_INSERT = "INSERT INTO discount_cards (discount) VALUES (?)";
     private static final String SQL_FIND_BY_ID = "SELECT id, discount FROM discount_cards WHERE id = ?";
+    private static final String SQL_SELECT_ALL = "SELECT id, discount FROM discount_cards";
     private static final String SQL_UPDATE = "UPDATE discount_cards SET discount = ? WHERE id = ?";
     private static final String SQL_DELETE = "DELETE FROM discount_cards WHERE id = ?";
 
