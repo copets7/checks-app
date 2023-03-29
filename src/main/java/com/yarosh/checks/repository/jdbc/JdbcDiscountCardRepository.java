@@ -2,8 +2,8 @@ package com.yarosh.checks.repository.jdbc;
 
 import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.DiscountCardEntity;
-import com.yarosh.checks.repository.pool.DatabaseConnectionPool;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,22 +26,26 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
 
     private static final int NO_ROWS_AFFECTED = 0;
 
-    private final DatabaseConnectionPool connectionPool;
+    private final DataSource dataSource;
 
-    public JdbcDiscountCardRepository(DatabaseConnectionPool connectionPool) {
-        this.connectionPool = connectionPool;
+    public JdbcDiscountCardRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
     public DiscountCardEntity insert(DiscountCardEntity card) {
-        try (Connection connection = connectionPool.getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement prepareStatement = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
         ) {
             prepareStatement.setDouble(1, card.getDiscount());
             prepareStatement.executeUpdate();
 
             try (ResultSet resultSet = prepareStatement.getGeneratedKeys()) {
-                return new DiscountCardEntity(resultSet.getLong(DISCOUNT_CARDS_ID_FIELD), card.getDiscount());
+                if (resultSet.next()) {
+                    return new DiscountCardEntity(resultSet.getLong(1), card.getDiscount());
+                }
+
+                throw new JdbcRepositoryException("ResultSet is empty after inserting, product: {0}", card);
             }
         } catch (SQLException e) {
             throw new JdbcRepositoryException("SQL insert query failed, e: {0}", e);
@@ -50,7 +54,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
 
     @Override
     public Optional<DiscountCardEntity> find(Long id) {
-        try (Connection connection = connectionPool.getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID)
         ) {
             DiscountCardEntity card = null;
@@ -73,7 +77,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
 
     @Override
     public List<DiscountCardEntity> findAll() {
-        try (Connection connection = connectionPool.getConnection();
+        try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL)
         ) {
@@ -94,7 +98,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
 
     @Override
     public DiscountCardEntity update(DiscountCardEntity card) {
-        try (Connection connection = connectionPool.getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)
         ) {
             statement.setDouble(1, card.getDiscount());
@@ -112,7 +116,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
 
     @Override
     public void delete(Long id) {
-        try (Connection connection = connectionPool.getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)
         ) {
             statement.setLong(1, id);
