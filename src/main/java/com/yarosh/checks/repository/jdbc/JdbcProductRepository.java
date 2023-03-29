@@ -2,8 +2,8 @@ package com.yarosh.checks.repository.jdbc;
 
 import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.ProductEntity;
-import com.yarosh.checks.repository.pool.DatabaseConnectionPool;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,15 +28,15 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
 
     private static final int NO_ROWS_AFFECTED = 0;
 
-    private final DatabaseConnectionPool connectionPool;
+    private final DataSource dataSource;
 
-    public JdbcProductRepository(DatabaseConnectionPool connectionPool) {
-        this.connectionPool = connectionPool;
+    public JdbcProductRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
     public ProductEntity insert(ProductEntity product) {
-        try (Connection connection = connectionPool.getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)
         ) {
             preparedStatement.setString(1, product.getDescription());
@@ -45,11 +45,11 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
             preparedStatement.executeUpdate();
 
             try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
-                ProductEntity newProduct = null;
-                if(resultSet.next()) {
-                    newProduct = new ProductEntity(resultSet.getLong(1), product.getDescription(), product.getPrice(), product.getDiscount());
+                if (resultSet.next()) {
+                    return new ProductEntity(resultSet.getLong(1), product.getDescription(), product.getPrice(), product.getDiscount());
                 }
-                return newProduct;
+
+                throw new JdbcRepositoryException("ResultSet is empty after inserting, product: {0}", product);
             }
         } catch (SQLException e) {
             throw new JdbcRepositoryException("SQL insert query failed, e: {0}", e);
@@ -58,7 +58,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
 
     @Override
     public Optional<ProductEntity> find(Long id) {
-        try (Connection connection = connectionPool.getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SQL_FIND_BY_ID);
         ) {
             ProductEntity product = null;
@@ -82,7 +82,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
 
     @Override
     public List<ProductEntity> findAll() {
-        try (Connection connection = connectionPool.getConnection();
+        try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL)
         ) {
@@ -104,7 +104,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
 
     @Override
     public ProductEntity update(ProductEntity product) {
-        try (Connection connection = connectionPool.getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SQL_UPDATE);
         ) {
             preparedStatement.setString(1, product.getDescription());
@@ -124,7 +124,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
 
     @Override
     public void delete(Long id) {
-        try (Connection connection = connectionPool.getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE)
         ) {
             preparedStatement.setLong(1, id);
