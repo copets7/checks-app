@@ -2,14 +2,18 @@ package com.yarosh.checks.repository.pool;
 
 import com.yarosh.checks.repository.pool.connection.PooledConnection;
 
+import javax.sql.DataSource;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
-public class DatabaseConnectionPool implements AutoCloseable {
+public class DatabaseConnectionPool implements DataSource, AutoCloseable {
 
     private final String url;
     private final String username;
@@ -18,6 +22,8 @@ public class DatabaseConnectionPool implements AutoCloseable {
 
     private final BlockingQueue<Connection> freeConnections;
     private final BlockingQueue<Connection> usedConnections;
+
+    private AtomicBoolean isClosed = new AtomicBoolean();
 
     public DatabaseConnectionPool(String url, String username, String password, int poolSize) {
         this.url = url;
@@ -30,7 +36,26 @@ public class DatabaseConnectionPool implements AutoCloseable {
         init();
     }
 
+    public void releaseConnection(Connection connection) {
+        usedConnections.remove(connection);
+        freeConnections.add(connection);
+    }
+
+    public boolean isClosed() {
+        return isClosed.get();
+    }
+
+    @Override
+    public Connection getConnection(String username, String password) {
+        return getConnection();
+    }
+
+    @Override
     public Connection getConnection() {
+        if (isClosed()) {
+            throw new DatabaseConnectionPoolException("Can't get SQL connection because pool is closed");
+        }
+
         try {
             Connection connection = freeConnections.take();
             usedConnections.add(connection);
@@ -41,15 +66,48 @@ public class DatabaseConnectionPool implements AutoCloseable {
         }
     }
 
-    public void releaseConnection(Connection connection) {
-        usedConnections.remove(connection);
-        freeConnections.add(connection);
+    @Override
+    public PrintWriter getLogWriter() {
+        throw new UnsupportedOperationException("getLogWriter is not supported");
+    }
+
+    @Override
+    public void setLogWriter(PrintWriter out) {
+        throw new UnsupportedOperationException("setLogWriter is not supported");
+    }
+
+    @Override
+    public void setLoginTimeout(int seconds) {
+        throw new UnsupportedOperationException("setLoginTimeout is not supported");
+    }
+
+    @Override
+    public int getLoginTimeout() {
+        throw new UnsupportedOperationException("getLoginTimeout is not supported");
+    }
+
+    @Override
+    public Logger getParentLogger() {
+        throw new UnsupportedOperationException("getParentLogger is not supported");
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> iface) {
+        throw new UnsupportedOperationException("unwrap is not supported");
+    }
+
+    @Override
+    public boolean isWrapperFor(Class<?> iface) {
+        throw new UnsupportedOperationException("isWrapperFor is not supported");
     }
 
     @Override
     public void close() {
-        closeConnections(usedConnections);
-        closeConnections(freeConnections);
+        if (!isClosed()) {
+            closeConnections(usedConnections);
+            closeConnections(freeConnections);
+            isClosed.set(true);
+        }
     }
 
     private void init() {
@@ -77,4 +135,5 @@ public class DatabaseConnectionPool implements AutoCloseable {
                 .map(PooledConnection::getConnection)
                 .forEach(this::close);
     }
+
 }
