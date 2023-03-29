@@ -1,4 +1,4 @@
-package com.yarosh.checks.repository.jdbc;
+package com.yarosh.checks.repository.jdbc.executor;
 
 import com.yarosh.checks.repository.entity.Entity;
 import com.yarosh.checks.repository.pool.DatabaseConnectionPool;
