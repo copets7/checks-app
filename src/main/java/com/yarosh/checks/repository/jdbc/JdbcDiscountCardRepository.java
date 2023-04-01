@@ -2,6 +2,7 @@ package com.yarosh.checks.repository.jdbc;
 
 import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.DiscountCardEntity;
+import com.yarosh.checks.repository.jdbc.executor.SqlExecutor;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -27,9 +28,11 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
     private static final int NO_ROWS_AFFECTED = 0;
 
     private final DataSource dataSource;
+    private final SqlExecutor<DiscountCardEntity, Long> sqlExecutor;
 
     public JdbcDiscountCardRepository(DataSource dataSource) {
         this.dataSource = dataSource;
+        this.sqlExecutor = new SqlExecutor<>(dataSource);
     }
 
     @Override
@@ -76,24 +79,8 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
     }
 
     @Override
-    public List<DiscountCardEntity> findAll() {
-        try (Connection connection = dataSource.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL)
-        ) {
-            List<DiscountCardEntity> cards = new ArrayList<>();
-            while (resultSet.next()) {
-                DiscountCardEntity card = new DiscountCardEntity(
-                        resultSet.getLong(DISCOUNT_CARDS_ID_FIELD),
-                        resultSet.getDouble(DISCOUNT_CARDS_DISCOUNT_FIELD)
-                );
-                cards.add(card);
-            }
-
-            return cards;
-        } catch (SQLException e) {
-            throw new JdbcRepositoryException("SQL select all query failed, e: {0}", e);
-        }
+    public List<DiscountCardEntity> selectAll() {
+        return sqlExecutor.selectAll(SQL_SELECT_ALL, this::convertToEntity);
     }
 
     @Override
@@ -123,6 +110,17 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new JdbcRepositoryException("SQL delete query failed, e: {0}", e);
+        }
+    }
+
+    private DiscountCardEntity convertToEntity(ResultSet resultSet) {
+        try {
+            return new DiscountCardEntity(
+                    resultSet.getLong(DISCOUNT_CARDS_ID_FIELD),
+                    resultSet.getDouble(DISCOUNT_CARDS_DISCOUNT_FIELD)
+            );
+        } catch (SQLException e) {
+            throw new JdbcRepositoryException("Converting result set to discount card failed, e: {0}", e);
         }
     }
 }
