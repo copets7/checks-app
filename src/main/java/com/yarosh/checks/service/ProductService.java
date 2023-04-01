@@ -34,7 +34,7 @@ public class ProductService implements CrudService<Product, ProductId> {
 
     @Override
     public List<Product> getAll() {
-        return productRepository.findAll()
+        return productRepository.selectAll()
                 .stream()
                 .map(productConverter::convertToDomain)
                 .toList();

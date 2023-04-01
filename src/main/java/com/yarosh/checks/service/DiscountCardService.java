@@ -34,7 +34,7 @@ public class DiscountCardService implements CrudService<DiscountCard, DiscountCa
 
     @Override
     public List<DiscountCard> getAll() {
-        return discountCardRepository.findAll()
+        return discountCardRepository.selectAll()
                 .stream()
                 .map(discountCardConverter::convertToDomain)
                 .toList();
