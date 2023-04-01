@@ -81,7 +81,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     }
 
     @Override
-    public List<ProductEntity> findAll() {
+    public List<ProductEntity> selectAll() {
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL)
