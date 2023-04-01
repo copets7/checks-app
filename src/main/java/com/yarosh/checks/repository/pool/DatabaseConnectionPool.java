@@ -23,7 +23,7 @@ public class DatabaseConnectionPool implements DataSource, AutoCloseable {
     private final BlockingQueue<Connection> freeConnections;
     private final BlockingQueue<Connection> usedConnections;
 
-    private AtomicBoolean isClosed = new AtomicBoolean();
+    private final AtomicBoolean isClosed = new AtomicBoolean();
 
     public DatabaseConnectionPool(String url, String username, String password, int poolSize) {
         this.url = url;
@@ -135,5 +135,4 @@ public class DatabaseConnectionPool implements DataSource, AutoCloseable {
             throw new DatabaseConnectionPoolException("Exception during closing SQL connection, e: {0}", e);
         }
     }
-
 }
