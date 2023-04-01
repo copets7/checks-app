@@ -121,19 +121,19 @@ public class DatabaseConnectionPool implements DataSource, AutoCloseable {
         }).sum();
     }
 
+    private void closeConnections(BlockingQueue<Connection> connections) {
+        connections.stream()
+                .map(connection -> (PooledConnection) connection)
+                .map(PooledConnection::getConnection)
+                .forEach(this::close);
+    }
+
     private void close(Connection connection) {
         try {
             connection.close();
         } catch (SQLException e) {
             throw new DatabaseConnectionPoolException("Exception during closing SQL connection, e: {0}", e);
         }
-    }
-
-    private void closeConnections(BlockingQueue<Connection> connections) {
-        connections.stream()
-                .map(connection -> (PooledConnection) connection)
-                .map(PooledConnection::getConnection)
-                .forEach(this::close);
     }
 
 }
