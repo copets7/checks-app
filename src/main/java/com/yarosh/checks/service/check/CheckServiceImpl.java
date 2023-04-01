@@ -70,7 +70,7 @@ public class CheckServiceImpl implements CheckService {
 
     @Override
     public List<Check> getAll() {
-        return checkRepository.findAll()
+        return checkRepository.selectAll()
                 .stream()
                 .map(checkConverter::convertToDomain)
                 .toList();
