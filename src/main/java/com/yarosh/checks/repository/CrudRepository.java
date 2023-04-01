@@ -11,7 +11,7 @@ public interface CrudRepository<E extends Entity, ID> {
 
     Optional<E> find(ID id);
 
-    List<E> findAll();
+    List<E> selectAll();
 
     E update(E entity);
 
