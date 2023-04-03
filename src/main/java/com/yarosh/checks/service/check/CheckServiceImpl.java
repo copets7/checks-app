@@ -64,7 +64,7 @@ public class CheckServiceImpl implements CheckService {
 
     @Override
     public Optional<Check> get(CheckId id) {
-        return checkRepository.find(id.getId())
+        return checkRepository.select(id.getId())
                 .map(checkConverter::convertToDomain);
     }
 
