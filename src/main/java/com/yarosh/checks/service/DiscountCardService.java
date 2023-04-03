@@ -28,7 +28,7 @@ public class DiscountCardService implements CrudService<DiscountCard, DiscountCa
 
     @Override
     public Optional<DiscountCard> get(DiscountCardId id) {
-        return discountCardRepository.find(id.getId())
+        return discountCardRepository.select(id.getId())
                 .map(discountCardConverter::convertToDomain);
     }
 
