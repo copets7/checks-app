@@ -57,7 +57,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     }
 
     @Override
-    public Optional<ProductEntity> find(Long id) {
+    public Optional<ProductEntity> select(Long id) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SQL_FIND_BY_ID);
         ) {
