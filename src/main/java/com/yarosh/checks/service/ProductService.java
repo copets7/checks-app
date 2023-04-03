@@ -28,7 +28,7 @@ public class ProductService implements CrudService<Product, ProductId> {
 
     @Override
     public Optional<Product> get(ProductId id) {
-        return productRepository.find(id.getId())
+        return productRepository.select(id.getId())
                 .map(productConverter::convertToDomain);
     }
 
