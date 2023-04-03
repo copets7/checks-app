@@ -2,6 +2,7 @@ package com.yarosh.checks.repository.jdbc;
 
 import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.ProductEntity;
+import com.yarosh.checks.repository.jdbc.executor.SqlExecutor;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -16,7 +17,7 @@ import java.util.Optional;
 public class JdbcProductRepository implements CrudRepository<ProductEntity, Long> {
 
     private static final String SQL_INSERT = "INSERT INTO products (description, price, discount) VALUES (?,?,?)";
-    private static final String SQL_FIND_BY_ID = "SELECT id, description, price, discount FROM products WHERE id = ?";
+    private static final String SQL_SELECT = "SELECT id, description, price, discount FROM products WHERE id = ?";
     private static final String SQL_SELECT_ALL = "SELECT id, description, price, discount FROM products";
     private static final String SQL_UPDATE = "UPDATE products SET description = ?, price = ?, discount = ? WHERE id = ?";
     private static final String SQL_DELETE = "DELETE FROM products WHERE id = ?";
@@ -26,12 +27,12 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     private static final String PRODUCT_PRICE_FIELD = "price";
     private static final String PRODUCT_DISCOUNT_FIELD = "discount";
 
-    private static final int NO_ROWS_AFFECTED = 0;
-
     private final DataSource dataSource;
+    private final SqlExecutor<ProductEntity, Long> sqlExecutor;
 
     public JdbcProductRepository(DataSource dataSource) {
         this.dataSource = dataSource;
+        this.sqlExecutor = new SqlExecutor<>(dataSource, this::convertToEntity);
     }
 
     @Override
@@ -58,79 +59,44 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
 
     @Override
     public Optional<ProductEntity> select(Long id) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL_FIND_BY_ID);
-        ) {
-            ProductEntity product = null;
-            preparedStatement.setLong(1, id);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    product = new ProductEntity(resultSet.getLong(PRODUCT_ID_FIELD),
-                            resultSet.getString(PRODUCT_DESCRIPTION_FIELD),
-                            resultSet.getDouble(PRODUCT_PRICE_FIELD),
-                            resultSet.getDouble(PRODUCT_DISCOUNT_FIELD)
-                    );
-                }
-            }
-
-            return Optional.ofNullable(product);
-        } catch (SQLException e) {
-            throw new JdbcRepositoryException("SQL find by id query failed, e: {0}", e);
-        }
+        return sqlExecutor.select(SQL_SELECT, id);
     }
 
     @Override
     public List<ProductEntity> selectAll() {
-        try (Connection connection = dataSource.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL)
-        ) {
-            List<ProductEntity> products = new ArrayList<>();
-            while (resultSet.next()) {
-                ProductEntity product = new ProductEntity(resultSet.getLong(PRODUCT_ID_FIELD),
-                        resultSet.getString(PRODUCT_DESCRIPTION_FIELD),
-                        resultSet.getDouble(PRODUCT_PRICE_FIELD),
-                        resultSet.getDouble(PRODUCT_DISCOUNT_FIELD)
-                );
-                products.add(product);
-            }
-
-            return products;
-        } catch (SQLException e) {
-            throw new JdbcRepositoryException("SQL find all query failed, e: {0}", e);
-        }
+        return sqlExecutor.selectAll(SQL_SELECT_ALL);
     }
 
     @Override
     public ProductEntity update(ProductEntity product) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL_UPDATE);
-        ) {
-            preparedStatement.setString(1, product.getDescription());
-            preparedStatement.setDouble(2, product.getPrice());
-            preparedStatement.setDouble(3, product.getDiscount());
-            preparedStatement.setLong(4, product.getId());
-
-            if (preparedStatement.executeUpdate() == NO_ROWS_AFFECTED) {
-                throw new JdbcRepositoryException("SQL update query failed, there is no ID {0} in discount cards table", product.getId());
-            }
-
-            return product;
-        } catch (SQLException e) {
-            throw new JdbcRepositoryException("SQL update query failed, e: {0}", e);
-        }
+        return sqlExecutor.update(SQL_UPDATE, product, this::convertToParams);
     }
 
     @Override
     public void delete(Long id) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE)
-        ) {
-            preparedStatement.setLong(1, id);
-            preparedStatement.executeUpdate();
+        sqlExecutor.delete(SQL_DELETE, id);
+    }
+
+    private ProductEntity convertToEntity(ResultSet resultSet) {
+        try {
+            return new ProductEntity(
+                    resultSet.getLong(PRODUCT_ID_FIELD),
+                    resultSet.getString(PRODUCT_DESCRIPTION_FIELD),
+                    resultSet.getDouble(PRODUCT_PRICE_FIELD),
+                    resultSet.getDouble(PRODUCT_DISCOUNT_FIELD)
+            );
         } catch (SQLException e) {
-            throw new JdbcRepositoryException("SQL delete query failed, e: {0}", e);
+            throw new JdbcRepositoryException("Converting result set to product failed, e: {0}", e);
         }
+    }
+
+    private List<Object> convertToParams(ProductEntity product) {
+        List<Object> params = new ArrayList<>();
+        params.add(product.getDescription());
+        params.add(product.getPrice());
+        params.add(product.getDiscount());
+        params.add(product.getId());
+
+        return params;
     }
 }
