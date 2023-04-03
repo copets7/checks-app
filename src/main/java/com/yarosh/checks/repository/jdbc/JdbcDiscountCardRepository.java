@@ -17,7 +17,7 @@ import java.util.Optional;
 public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEntity, Long> {
 
     private static final String SQL_INSERT = "INSERT INTO discount_cards (discount) VALUES (?)";
-    private static final String SQL_FIND_BY_ID = "SELECT id, discount FROM discount_cards WHERE id = ?";
+    private static final String SQL_SELECT = "SELECT id, discount FROM discount_cards WHERE id = ?";
     private static final String SQL_SELECT_ALL = "SELECT id, discount FROM discount_cards";
     private static final String SQL_UPDATE = "UPDATE discount_cards SET discount = ? WHERE id = ?";
     private static final String SQL_DELETE = "DELETE FROM discount_cards WHERE id = ?";
@@ -25,14 +25,12 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
     private static final String DISCOUNT_CARDS_ID_FIELD = "id";
     private static final String DISCOUNT_CARDS_DISCOUNT_FIELD = "discount";
 
-    private static final int NO_ROWS_AFFECTED = 0;
-
     private final DataSource dataSource;
     private final SqlExecutor<DiscountCardEntity, Long> sqlExecutor;
 
     public JdbcDiscountCardRepository(DataSource dataSource) {
         this.dataSource = dataSource;
-        this.sqlExecutor = new SqlExecutor<>(dataSource);
+        this.sqlExecutor = new SqlExecutor<>(dataSource, this::convertToEntity);
     }
 
     @Override
@@ -56,61 +54,23 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
     }
 
     @Override
-    public Optional<DiscountCardEntity> find(Long id) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID)
-        ) {
-            DiscountCardEntity card = null;
-            statement.setLong(1, id);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    card = new DiscountCardEntity(
-                            resultSet.getLong(DISCOUNT_CARDS_ID_FIELD),
-                            resultSet.getDouble(DISCOUNT_CARDS_DISCOUNT_FIELD)
-                    );
-                }
-            }
-
-            return Optional.ofNullable(card);
-        } catch (SQLException e) {
-            throw new JdbcRepositoryException("SQL find by id query failed, e: {0}", e);
-        }
+    public Optional<DiscountCardEntity> select(Long id) {
+        return sqlExecutor.select(SQL_SELECT, id);
     }
 
     @Override
     public List<DiscountCardEntity> selectAll() {
-        return sqlExecutor.selectAll(SQL_SELECT_ALL, this::convertToEntity);
+        return sqlExecutor.selectAll(SQL_SELECT_ALL);
     }
 
     @Override
     public DiscountCardEntity update(DiscountCardEntity card) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)
-        ) {
-            statement.setDouble(1, card.getDiscount());
-            statement.setLong(2, card.getId());
-
-            if (statement.executeUpdate() == NO_ROWS_AFFECTED) {
-                throw new JdbcRepositoryException("SQL update query failed, there is no ID {0} in discount cards table", card.getId());
-            }
-
-            return card;
-        } catch (SQLException e) {
-            throw new JdbcRepositoryException("SQL update query failed, e: {0}", e);
-        }
+        return sqlExecutor.update(SQL_UPDATE, card, this::convertToParams);
     }
 
     @Override
     public void delete(Long id) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_DELETE)
-        ) {
-            statement.setLong(1, id);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new JdbcRepositoryException("SQL delete query failed, e: {0}", e);
-        }
+        sqlExecutor.delete(SQL_DELETE, id);
     }
 
     private DiscountCardEntity convertToEntity(ResultSet resultSet) {
@@ -122,5 +82,13 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
         } catch (SQLException e) {
             throw new JdbcRepositoryException("Converting result set to discount card failed, e: {0}", e);
         }
+    }
+
+    private List<Object> convertToParams(DiscountCardEntity card) {
+        List<Object> params = new ArrayList<>();
+        params.add(card.getDiscount());
+        params.add(card.getId());
+
+        return params;
     }
 }
