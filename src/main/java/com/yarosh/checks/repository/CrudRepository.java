@@ -9,7 +9,7 @@ public interface CrudRepository<E extends Entity, ID> {
 
     E insert(E entity);
 
-    Optional<E> find(ID id);
+    Optional<E> select(ID id);
 
     List<E> selectAll();
 
