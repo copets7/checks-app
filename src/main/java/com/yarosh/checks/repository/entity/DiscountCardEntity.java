@@ -8,10 +8,6 @@ public class DiscountCardEntity implements Entity {
     public DiscountCardEntity() {
     }
 
-    public DiscountCardEntity(double discount) {
-        this.discount = discount;
-    }
-
     public DiscountCardEntity(Long id, double discount) {
         this.id = id;
         this.discount = discount;
