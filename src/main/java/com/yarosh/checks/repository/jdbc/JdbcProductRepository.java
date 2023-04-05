@@ -5,11 +5,8 @@ import com.yarosh.checks.repository.entity.ProductEntity;
 import com.yarosh.checks.repository.jdbc.executor.SqlExecutor;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,32 +26,16 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
 
     private final DataSource dataSource;
     private final SqlExecutor<ProductEntity, Long> sqlExecutor;
+    private static final int GENERATED_KEY_COLUMN_NUMBER = 1;
 
     public JdbcProductRepository(DataSource dataSource) {
         this.dataSource = dataSource;
-        this.sqlExecutor = new SqlExecutor<>(dataSource, this::convertToEntity);
+        this.sqlExecutor = new SqlExecutor<>(dataSource, this::convertToEntity, this::convertToParams);
     }
 
     @Override
     public ProductEntity insert(ProductEntity product) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)
-        ) {
-            preparedStatement.setString(1, product.getDescription());
-            preparedStatement.setDouble(2, product.getPrice());
-            preparedStatement.setDouble(3, product.getDiscount());
-            preparedStatement.executeUpdate();
-
-            try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
-                if (resultSet.next()) {
-                    return new ProductEntity(resultSet.getLong(1), product.getDescription(), product.getPrice(), product.getDiscount());
-                }
-
-                throw new JdbcRepositoryException("ResultSet is empty after inserting, product: {0}", product);
-            }
-        } catch (SQLException e) {
-            throw new JdbcRepositoryException("SQL insert query failed, e: {0}", e);
-        }
+        return sqlExecutor.insert(SQL_INSERT, product, this::convertToEntity);
     }
 
     @Override
@@ -69,7 +50,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
 
     @Override
     public ProductEntity update(ProductEntity product) {
-        return sqlExecutor.update(SQL_UPDATE, product, this::convertToParams);
+        return sqlExecutor.update(SQL_UPDATE, product);
     }
 
     @Override
@@ -90,12 +71,27 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
         }
     }
 
+    private ProductEntity convertToEntity(ResultSet resultSet, ProductEntity product) {
+        try {
+            return new ProductEntity(resultSet.getLong(GENERATED_KEY_COLUMN_NUMBER),
+                    product.getDescription(),
+                    product.getPrice(),
+                    product.getDiscount());
+
+        } catch (SQLException e) {
+            throw new JdbcRepositoryException("Converting result set to product after insert failed, e: {0}", e);
+        }
+    }
+
     private List<Object> convertToParams(ProductEntity product) {
         List<Object> params = new ArrayList<>();
         params.add(product.getDescription());
         params.add(product.getPrice());
         params.add(product.getDiscount());
-        params.add(product.getId());
+
+        if (product.getId() != null) {
+            params.add(product.getId());
+        }
 
         return params;
     }
