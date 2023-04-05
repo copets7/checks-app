@@ -5,11 +5,8 @@ import com.yarosh.checks.repository.entity.DiscountCardEntity;
 import com.yarosh.checks.repository.jdbc.executor.SqlExecutor;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,33 +21,19 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
 
     private static final String DISCOUNT_CARDS_ID_FIELD = "id";
     private static final String DISCOUNT_CARDS_DISCOUNT_FIELD = "discount";
+    private static final int GENERATED_KEY_COLUMN_NUMBER = 1;
 
     private final DataSource dataSource;
     private final SqlExecutor<DiscountCardEntity, Long> sqlExecutor;
 
     public JdbcDiscountCardRepository(DataSource dataSource) {
         this.dataSource = dataSource;
-        this.sqlExecutor = new SqlExecutor<>(dataSource, this::convertToEntity);
+        this.sqlExecutor = new SqlExecutor<>(dataSource, this::convertToEntity, this::convertToParams);
     }
 
     @Override
     public DiscountCardEntity insert(DiscountCardEntity card) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement prepareStatement = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
-        ) {
-            prepareStatement.setDouble(1, card.getDiscount());
-            prepareStatement.executeUpdate();
-
-            try (ResultSet resultSet = prepareStatement.getGeneratedKeys()) {
-                if (resultSet.next()) {
-                    return new DiscountCardEntity(resultSet.getLong(1), card.getDiscount());
-                }
-
-                throw new JdbcRepositoryException("ResultSet is empty after inserting, product: {0}", card);
-            }
-        } catch (SQLException e) {
-            throw new JdbcRepositoryException("SQL insert query failed, e: {0}", e);
-        }
+        return sqlExecutor.insert(SQL_INSERT, card, this::convertToEntity);
     }
 
     @Override
@@ -65,7 +48,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
 
     @Override
     public DiscountCardEntity update(DiscountCardEntity card) {
-        return sqlExecutor.update(SQL_UPDATE, card, this::convertToParams);
+        return sqlExecutor.update(SQL_UPDATE, card);
     }
 
     @Override
@@ -84,10 +67,21 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
         }
     }
 
+    private DiscountCardEntity convertToEntity(ResultSet resultSet, DiscountCardEntity card) {
+        try {
+            return new DiscountCardEntity(resultSet.getLong(GENERATED_KEY_COLUMN_NUMBER), card.getDiscount());
+        } catch (SQLException e) {
+            throw new JdbcRepositoryException("Converting result set to discount card after insert failed, e: {0}", e);
+        }
+    }
+
     private List<Object> convertToParams(DiscountCardEntity card) {
         List<Object> params = new ArrayList<>();
         params.add(card.getDiscount());
-        params.add(card.getId());
+
+        if (card.getId() != null) {
+            params.add(card.getId());
+        }
 
         return params;
     }
