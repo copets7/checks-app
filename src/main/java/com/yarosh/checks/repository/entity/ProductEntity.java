@@ -9,12 +9,6 @@ public class ProductEntity implements Entity {
 
     public ProductEntity() { }
 
-    public ProductEntity(String description, double price, double discount) {
-        this.description = description;
-        this.price = price;
-        this.discount = discount;
-    }
-
     public ProductEntity(Long id,
                          String description,
                          double price,
