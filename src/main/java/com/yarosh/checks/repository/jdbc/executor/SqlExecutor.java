@@ -1,6 +1,8 @@
 package com.yarosh.checks.repository.jdbc.executor;
 
 import com.yarosh.checks.repository.entity.Entity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -11,19 +13,37 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class SqlExecutor<E extends Entity, ID> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SqlExecutor.class);
+
     private static final int NO_ROWS_AFFECTED = 0;
 
     private final DataSource dataSource;
     private final Function<ResultSet, E> converterToEntity;
+    private final Function<E, List<Object>> converterToParams;
 
-    public SqlExecutor(DataSource dataSource, Function<ResultSet, E> converterToEntity) {
+    public SqlExecutor(DataSource dataSource,
+                       Function<ResultSet, E> converterToEntity,
+                       Function<E, List<Object>> converterToParams) {
         this.dataSource = dataSource;
         this.converterToEntity = converterToEntity;
+        this.converterToParams = converterToParams;
+    }
+
+    public E insert(String sql, E entity, BiFunction<ResultSet, E, E> customConverterToEntity) {
+        LOGGER.debug("SQL executor starts insert, entity: {}", entity);
+        return execute(sql, converterToParams.apply(entity), preparedStatement ->
+                performInsertFunction(entity, customConverterToEntity).apply(preparedStatement), Statement.RETURN_GENERATED_KEYS
+        ).orElseThrow();
+    }
+
+    public E update(String sql, E entity) {
+        return update(sql, entity, converterToParams);
     }
 
     @SuppressWarnings("UNCHECKED_CAST")
@@ -94,6 +114,24 @@ public class SqlExecutor<E extends Entity, ID> {
         } catch (SQLException e) {
             throw new SqlExecutorException("SQL executing failed, e: {0} ", e);
         }
+    }
+
+    private Function<PreparedStatement, E> performInsertFunction(E entity, BiFunction<ResultSet, E, E> customConverterToEntity) {
+        return preparedStatement -> {
+            try {
+                preparedStatement.executeUpdate();
+
+                try (ResultSet generatedKey = preparedStatement.getGeneratedKeys()) {
+                    if (!generatedKey.next()) {
+                        throw new SqlExecutorException("There is no generated key after insert, entity: {0}", entity);
+                    }
+                    return customConverterToEntity.apply(generatedKey, entity);
+                }
+
+            } catch (SQLException e) {
+                throw new SqlExecutorException("Exception during SQL insert, e: {0}", e);
+            }
+        };
     }
 
     private Consumer<PreparedStatement> performSelectAllConsumer(List<E> result, Function<ResultSet, E> customConverterToEntity) {
