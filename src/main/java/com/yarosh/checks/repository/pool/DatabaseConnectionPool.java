@@ -1,29 +1,30 @@
 package com.yarosh.checks.repository.pool;
 
 import com.yarosh.checks.repository.pool.connection.PooledConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Logger;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.stream.IntStream;
 
-public class DatabaseConnectionPool implements DataSource, AutoCloseable {
+public class DatabaseConnectionPool implements ConnectionPool {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseConnectionPool.class);
 
     private final String url;
     private final String username;
     private final String password;
     private final int poolSize;
 
-    private final BlockingQueue<Connection> freeConnections;
-    private final BlockingQueue<Connection> usedConnections;
+    private final Queue<Connection> freeConnections = new LinkedList<>();
+    private final Queue<Connection> usedConnections = new LinkedList<>();
 
-    private final AtomicBoolean isClosed = new AtomicBoolean();
+    private boolean isClosed;
 
     public DatabaseConnectionPool(String url, String username, String password, int poolSize) {
         this.url = url;
@@ -31,18 +32,18 @@ public class DatabaseConnectionPool implements DataSource, AutoCloseable {
         this.password = password;
         this.poolSize = poolSize;
 
-        this.freeConnections = new ArrayBlockingQueue<>(poolSize);
-        this.usedConnections = new ArrayBlockingQueue<>(poolSize);
         init();
     }
 
+    @Override
     public void releaseConnection(Connection connection) {
         usedConnections.remove(connection);
         freeConnections.add(connection);
     }
 
+    @Override
     public boolean isClosed() {
-        return isClosed.get();
+        return isClosed;
     }
 
     @Override
@@ -53,17 +54,14 @@ public class DatabaseConnectionPool implements DataSource, AutoCloseable {
     @Override
     public Connection getConnection() {
         if (isClosed()) {
+            LOGGER.error("Can't get SQL connection because pool is closed");
             throw new DatabaseConnectionPoolException("Can't get SQL connection because pool is closed");
         }
 
-        try {
-            Connection connection = freeConnections.take();
-            usedConnections.add(connection);
+        Connection connection = freeConnections.poll();
+        usedConnections.add(connection);
 
-            return connection;
-        } catch (InterruptedException e) {
-            throw new DatabaseConnectionPoolException("Exception during getting connection from pool, e: {0}", e);
-        }
+        return connection;
     }
 
     @Override
@@ -87,7 +85,7 @@ public class DatabaseConnectionPool implements DataSource, AutoCloseable {
     }
 
     @Override
-    public Logger getParentLogger() {
+    public java.util.logging.Logger getParentLogger() {
         throw new UnsupportedOperationException("getParentLogger is not supported");
     }
 
@@ -104,9 +102,13 @@ public class DatabaseConnectionPool implements DataSource, AutoCloseable {
     @Override
     public void close() {
         if (!isClosed()) {
+            LOGGER.debug("Database connection pool closing starts, is closed: {}", isClosed);
+
             closeConnections(usedConnections);
             closeConnections(freeConnections);
-            isClosed.set(true);
+            isClosed = true;
+
+            LOGGER.debug("Database connection pool closing processed, is closed: {}", isClosed);
         }
     }
 
@@ -114,14 +116,20 @@ public class DatabaseConnectionPool implements DataSource, AutoCloseable {
         IntStream.of(poolSize).peek(i -> {
             try {
                 Connection connection = DriverManager.getConnection(url, username, password);
+                LOGGER.info("SQL connection created, number: {}", i);
+
                 freeConnections.add(new PooledConnection(connection, this));
             } catch (SQLException e) {
+                LOGGER.error("Connection pool init() failed, message: {}", e.getMessage());
+                LOGGER.debug("Connection pool init() failed", e);
                 throw new DatabaseConnectionPoolException("Connection pool init() failed, e: {0}", e);
             }
         }).sum();
+
+        LOGGER.info("Database connection pool created, url: {}, username: #####, password: #####, pool size: {}", url, poolSize);
     }
 
-    private void closeConnections(BlockingQueue<Connection> connections) {
+    private void closeConnections(Queue<Connection> connections) {
         connections.stream()
                 .map(connection -> (PooledConnection) connection)
                 .map(PooledConnection::getConnection)
@@ -130,8 +138,12 @@ public class DatabaseConnectionPool implements DataSource, AutoCloseable {
 
     private void close(Connection connection) {
         try {
+            LOGGER.debug("SQL connection closing starts, is closed: {}", connection.isClosed());
             connection.close();
+            LOGGER.trace("SQL connection closing processed, is closed: {}", connection.isClosed());
         } catch (SQLException e) {
+            LOGGER.error("Exception during closing SQL connection, message: {}", e.getMessage());
+            LOGGER.debug("Exception during closing SQL connection", e);
             throw new DatabaseConnectionPoolException("Exception during closing SQL connection, e: {0}", e);
         }
     }
