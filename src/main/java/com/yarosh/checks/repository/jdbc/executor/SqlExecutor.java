@@ -37,9 +37,13 @@ public class SqlExecutor<E extends Entity, ID> {
 
     public E insert(String sql, E entity, BiFunction<ResultSet, E, E> customConverterToEntity) {
         LOGGER.debug("SQL executor starts insert, entity: {}", entity);
-        return execute(sql, converterToParams.apply(entity), preparedStatement ->
+        E inserted = execute(sql, converterToParams.apply(entity), preparedStatement ->
                 performInsertFunction(entity, customConverterToEntity).apply(preparedStatement), Statement.RETURN_GENERATED_KEYS
         ).orElseThrow();
+        LOGGER.debug("SQL insert processed, generated ID: {}", inserted.getId());
+        LOGGER.trace("SQL insert processed, inserted entity: {}", inserted);
+
+        return inserted;
     }
 
     public E update(String sql, E entity) {
