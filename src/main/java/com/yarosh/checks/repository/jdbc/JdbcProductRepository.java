@@ -39,36 +39,47 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
 
     @Override
     public ProductEntity insert(ProductEntity product) {
-        LOGGER.info("JdbcProductRepository starts inserting product");
-        return sqlExecutor.insert(SQL_INSERT, product, this::convertToEntity);
+        LOGGER.debug("JDBC SQL product inserting starts, product: {}", product);
+        ProductEntity inserted = sqlExecutor.insert(SQL_INSERT, product, this::convertToEntity);
+        LOGGER.debug("JDBC SQL product inserting processed, ID: {}", inserted.getId());
+        LOGGER.trace("Inserted product: {}", inserted);
+
+        return inserted;
     }
 
     @Override
     public Optional<ProductEntity> select(Long id) {
-        LOGGER.info("JdbcProductRepository starts searching product by id");
-        return sqlExecutor.select(SQL_SELECT, id);
+        LOGGER.debug("JDBC SQL product searching by id starts, id: {}", id);
+        Optional<ProductEntity> selected = sqlExecutor.select(SQL_SELECT, id);
+        LOGGER.debug("JDBC SQL product searching by id processed, ID: {}", selected.get().getId());
+        LOGGER.trace("Selected product: {}", selected);
+
+        return selected;
     }
 
     @Override
     public List<ProductEntity> selectAll() {
-        LOGGER.info("JdbcProductRepository starts selecting all products");
+        LOGGER.debug("JDBC SQL selecting all products starts");
         return sqlExecutor.selectAll(SQL_SELECT_ALL);
     }
 
     @Override
     public ProductEntity update(ProductEntity product) {
-        LOGGER.info("JdbcProductRepository starts updating product");
-        return sqlExecutor.update(SQL_UPDATE, product);
+        LOGGER.debug("JDBC SQL updating product starts, product: {}", product);
+        ProductEntity updated = sqlExecutor.update(SQL_UPDATE, product);
+        LOGGER.debug("JDBC SQL updating product processed, product: {}", updated);
+        LOGGER.trace("Updated product: {}", updated);
+
+        return updated;
     }
 
     @Override
     public void delete(Long id) {
-        LOGGER.info("JdbcProductRepository starts deleting product");
+        LOGGER.debug("JDBC SQL deleting product starts, id: {}", id);
         sqlExecutor.delete(SQL_DELETE, id);
     }
 
     private ProductEntity convertToEntity(ResultSet resultSet) {
-        LOGGER.debug("JdbcProductRepository starts convert Result set to product, result set: {}", resultSet);
         try {
             return new ProductEntity(
                     resultSet.getLong(PRODUCT_ID_FIELD),
@@ -85,7 +96,6 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     }
 
     private ProductEntity convertToEntity(ResultSet resultSet, ProductEntity product) {
-        LOGGER.debug("JdbcProductRepository starts convert Result set to product, result set: {}", resultSet);
         try {
             return new ProductEntity(resultSet.getLong(GENERATED_KEY_COLUMN_NUMBER),
                     product.getDescription(),
@@ -94,13 +104,13 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
 
         } catch (SQLException e) {
             LOGGER.error("Converting result set to product after insert failed, message: {}", e.getMessage());
-            LOGGER.debug("Converting result set to product after insert failed, {0}", e);
+            LOGGER.debug("Converting result set to product after insert failed", e);
             throw new JdbcRepositoryException("Converting result set to product after insert failed, e: {0}", e);
         }
     }
 
     private List<Object> convertToParams(ProductEntity product) {
-        LOGGER.debug("JdbcProductRepository starts convert product to params, product: {}", product);
+        LOGGER.trace("Converting product to params starts, product: {}", product);
         List<Object> params = new ArrayList<>();
         params.add(product.getDescription());
         params.add(product.getPrice());
@@ -110,7 +120,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
             params.add(product.getId());
         }
 
-        LOGGER.debug("JdbcProductRepository starts return params, {}", params);
+        LOGGER.trace("Converted product to params returning, {}", params);
         return params;
     }
 }
