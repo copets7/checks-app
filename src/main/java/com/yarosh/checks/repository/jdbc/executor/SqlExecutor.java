@@ -36,14 +36,9 @@ public class SqlExecutor<E extends Entity, ID> {
     }
 
     public E insert(String sql, E entity, BiFunction<ResultSet, E, E> customConverterToEntity) {
-        LOGGER.debug("SQL executor starts insert, entity: {}", entity);
-        E inserted = execute(sql, converterToParams.apply(entity), preparedStatement ->
+        return execute(sql, converterToParams.apply(entity), preparedStatement ->
                 performInsertFunction(entity, customConverterToEntity).apply(preparedStatement), Statement.RETURN_GENERATED_KEYS
         ).orElseThrow();
-        LOGGER.debug("SQL insert processed, generated ID: {}", inserted.getId());
-        LOGGER.trace("SQL insert processed, inserted entity: {}", inserted);
-
-        return inserted;
     }
 
     public E update(String sql, E entity) {
@@ -113,10 +108,17 @@ public class SqlExecutor<E extends Entity, ID> {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement prepareStatement = connection.prepareStatement(sql, statementKey)
         ) {
+            LOGGER.debug("SQL executing starts, params: {}", params);
+
             setParams(prepareStatement, params);
-            return Optional.ofNullable(customConverterToEntity.apply(prepareStatement));
+            Optional<E> result = Optional.ofNullable(customConverterToEntity.apply(prepareStatement));
+            LOGGER.debug("SQL executing processed, result: {}", result);
+
+            return result;
         } catch (SQLException e) {
-            throw new SqlExecutorException("SQL executing failed, e: {0} ", e);
+            LOGGER.error("SQL executing failed, message: {}", e.getMessage());
+            LOGGER.debug("SQL executing failed", e);
+            throw new SqlExecutorException("SQL executing failed, e: {0}", e);
         }
     }
 
@@ -126,13 +128,18 @@ public class SqlExecutor<E extends Entity, ID> {
                 preparedStatement.executeUpdate();
 
                 try (ResultSet generatedKey = preparedStatement.getGeneratedKeys()) {
+                    LOGGER.trace("SQL result set converting starts, metadata: {}", generatedKey.getMetaData());
+
                     if (!generatedKey.next()) {
+                        LOGGER.error("There is no generated key after insert, entity: {}", entity);
                         throw new SqlExecutorException("There is no generated key after insert, entity: {0}", entity);
                     }
                     return customConverterToEntity.apply(generatedKey, entity);
                 }
 
             } catch (SQLException e) {
+                LOGGER.error("Exception during SQL insert, message: {}", e.getMessage());
+                LOGGER.debug("Exception during SQL insert", e);
                 throw new SqlExecutorException("Exception during SQL insert, e: {0}", e);
             }
         };
@@ -142,32 +149,29 @@ public class SqlExecutor<E extends Entity, ID> {
         return preparedStatement -> {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
 
+                LOGGER.trace("SQL result set converting starts, metadata: {}", resultSet.getMetaData());
                 while (resultSet.next()) {
                     result.add(customConverterToEntity.apply(resultSet));
                 }
 
             } catch (SQLException e) {
+                LOGGER.error("Performing result set for SQL select all failed, message: {}", e.getMessage());
+                LOGGER.debug("Performing result set for SQL select all failed", e);
                 throw new SqlExecutorException("Performing result set for SQL select all failed, e: {0}", e);
             }
         };
     }
 
-    private void setParams(PreparedStatement preparedStatement, List<Object> params) {
-        try {
-            for (int i = 0; i != params.size(); i++) {
-                int parameterIndex = i + 1;
-                preparedStatement.setObject(parameterIndex, params.get(i));
-            }
-        } catch (SQLException e) {
-            throw new SqlExecutorException("Setting params to prepared statement failed, e: {0} ", e);
-        }
-    }
-
     private Function<PreparedStatement, E> performSelectFunction(Function<ResultSet, E> customConverterToEntity) {
         return preparedStatement -> {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                LOGGER.trace("SQL result set converting starts, metadata: {}", resultSet.getMetaData());
                 return (resultSet.next()) ? customConverterToEntity.apply(resultSet) : null;
+
             } catch (SQLException e) {
+                LOGGER.error("Performing result set for SQL select failed, message: {}", e.getMessage());
+                LOGGER.debug("Performing result set for SQL select failed", e);
                 throw new SqlExecutorException("Performing result set for SQL select failed, e: {0}", e);
             }
         };
@@ -176,12 +180,35 @@ public class SqlExecutor<E extends Entity, ID> {
     private Consumer<PreparedStatement> performUpdateConsumer(ID id) {
         return preparedStatement -> {
             try {
-                if (preparedStatement.executeUpdate() == NO_ROWS_AFFECTED) {
+                int modifiedRows = preparedStatement.executeUpdate();
+
+                if (modifiedRows == NO_ROWS_AFFECTED) {
+                    LOGGER.error("There is no record with ID {}", id);
                     throw new SqlExecutorException("There is no record with ID {0}", id);
                 }
+
+                LOGGER.trace("SQL prepared statement update processed, modified rows: {}", modifiedRows);
             } catch (SQLException e) {
+                LOGGER.error("Executing SQL update failed, message: {}", e.getMessage());
+                LOGGER.debug("Executing SQL update failed", e);
                 throw new SqlExecutorException("Executing SQL update failed, e: {0}", e);
             }
         };
+    }
+
+    private void setParams(PreparedStatement preparedStatement, List<Object> params) {
+        try {
+            for (int i = 0; i != params.size(); i++) {
+                int paramIndex = i + 1;
+                Object param = params.get(i);
+                preparedStatement.setObject(paramIndex, param);
+
+                LOGGER.trace("SQL param was set, index: {}, param: {}", paramIndex, param);
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Setting params to prepared statement failed, message: {}", e.getMessage());
+            LOGGER.debug("Setting params to prepared statement failed", e);
+            throw new SqlExecutorException("Setting params to prepared statement failed, e: {0} ", e);
+        }
     }
 }
