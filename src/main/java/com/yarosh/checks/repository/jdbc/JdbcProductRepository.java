@@ -2,6 +2,7 @@ package com.yarosh.checks.repository.jdbc;
 
 import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.ProductEntity;
+import com.yarosh.checks.repository.jdbc.executor.DefaultSqlExecutor;
 import com.yarosh.checks.repository.jdbc.executor.SqlExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,19 +29,21 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     private static final String PRODUCT_PRICE_FIELD = "price";
     private static final String PRODUCT_DISCOUNT_FIELD = "discount";
 
-    private final DataSource dataSource;
     private final SqlExecutor<ProductEntity, Long> sqlExecutor;
     private static final int GENERATED_KEY_COLUMN_NUMBER = 1;
 
     public JdbcProductRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
-        this.sqlExecutor = new SqlExecutor<>(dataSource, this::convertToEntity, this::convertToParams);
+        this.sqlExecutor = new DefaultSqlExecutor<>(dataSource);
+    }
+
+    public JdbcProductRepository(SqlExecutor<ProductEntity, Long> sqlExecutor) {
+        this.sqlExecutor = sqlExecutor;
     }
 
     @Override
     public ProductEntity insert(ProductEntity product) {
         LOGGER.debug("JDBC SQL product inserting starts, product: {}", product);
-        ProductEntity inserted = sqlExecutor.insert(SQL_INSERT, product, this::convertToEntity);
+        ProductEntity inserted = sqlExecutor.insert(SQL_INSERT, product, this::convertToEntity, this::convertToParams);
         LOGGER.debug("JDBC SQL product inserting processed, ID: {}", inserted.getId());
         LOGGER.trace("Inserted product: {}", inserted);
 
@@ -50,7 +53,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     @Override
     public Optional<ProductEntity> select(Long id) {
         LOGGER.debug("JDBC SQL product searching by id starts, id: {}", id);
-        Optional<ProductEntity> selected = sqlExecutor.select(SQL_SELECT, id);
+        Optional<ProductEntity> selected = sqlExecutor.select(SQL_SELECT, id, this::convertToEntity);
         LOGGER.debug("JDBC SQL product searching by id processed, ID: {}", selected.get().getId());
         LOGGER.trace("Selected product: {}", selected);
 
@@ -60,13 +63,13 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     @Override
     public List<ProductEntity> selectAll() {
         LOGGER.debug("JDBC SQL selecting all products starts");
-        return sqlExecutor.selectAll(SQL_SELECT_ALL);
+        return sqlExecutor.selectAll(SQL_SELECT_ALL, this::convertToEntity);
     }
 
     @Override
     public ProductEntity update(ProductEntity product) {
         LOGGER.debug("JDBC SQL updating product starts, product: {}", product);
-        ProductEntity updated = sqlExecutor.update(SQL_UPDATE, product);
+        ProductEntity updated = sqlExecutor.update(SQL_UPDATE, product, this::convertToParams);
         LOGGER.debug("JDBC SQL updating product processed, product: {}", updated);
         LOGGER.trace("Updated product: {}", updated);
 
