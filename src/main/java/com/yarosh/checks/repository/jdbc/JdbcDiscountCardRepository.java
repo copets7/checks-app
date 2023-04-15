@@ -52,7 +52,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
     public Optional<DiscountCardEntity> select(Long id) {
         LOGGER.debug("JDBC SQL discount card searching by id starts, id: {}", id);
         Optional<DiscountCardEntity> selected = sqlExecutor.select(SQL_SELECT, id, this::convertToEntity);
-        LOGGER.debug("JDBC SQL discount card searching by id processed, ID: {}", selected.get().getId());
+        LOGGER.debug("JDBC SQL discount card searching by id processed, is present: {}", selected.isPresent());
         LOGGER.trace("Selected discount card: {}", selected);
 
         return selected;
