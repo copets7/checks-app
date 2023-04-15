@@ -2,6 +2,7 @@ package com.yarosh.checks.repository.jdbc;
 
 import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.DiscountCardEntity;
+import com.yarosh.checks.repository.jdbc.executor.DefaultSqlExecutor;
 import com.yarosh.checks.repository.jdbc.executor.SqlExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +31,17 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
     private final SqlExecutor<DiscountCardEntity, Long> sqlExecutor;
 
     public JdbcDiscountCardRepository(DataSource dataSource) {
-        this.sqlExecutor = new SqlExecutor<>(dataSource, this::convertToEntity, this::convertToParams);
+        this.sqlExecutor = new DefaultSqlExecutor<>(dataSource);
+    }
+
+    public JdbcDiscountCardRepository(SqlExecutor<DiscountCardEntity, Long> sqlExecutor) {
+        this.sqlExecutor = sqlExecutor;
     }
 
     @Override
     public DiscountCardEntity insert(DiscountCardEntity card) {
         LOGGER.debug("JDBC SQL card inserting starts, card: {}", card);
-        DiscountCardEntity inserted = sqlExecutor.insert(SQL_INSERT, card, this::convertToEntity);
+        DiscountCardEntity inserted = sqlExecutor.insert(SQL_INSERT, card, this::convertToEntity, this::convertToParams);
         LOGGER.debug("JDBC SQL card inserting processed, ID: {}", inserted.getId());
         LOGGER.trace("Inserted discount card: {}", inserted);
 
@@ -46,7 +51,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
     @Override
     public Optional<DiscountCardEntity> select(Long id) {
         LOGGER.debug("JDBC SQL discount card searching by id starts, id: {}", id);
-        Optional<DiscountCardEntity> selected = sqlExecutor.select(SQL_SELECT, id);
+        Optional<DiscountCardEntity> selected = sqlExecutor.select(SQL_SELECT, id, this::convertToEntity);
         LOGGER.debug("JDBC SQL discount card searching by id processed, ID: {}", selected.get().getId());
         LOGGER.trace("Selected discount card: {}", selected);
 
@@ -56,13 +61,13 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
     @Override
     public List<DiscountCardEntity> selectAll() {
         LOGGER.debug("JDBC SQL selecting all discount cards starts");
-        return sqlExecutor.selectAll(SQL_SELECT_ALL);
+        return sqlExecutor.selectAll(SQL_SELECT_ALL, this::convertToEntity);
     }
 
     @Override
     public DiscountCardEntity update(DiscountCardEntity card) {
         LOGGER.debug("JDBC SQL updating discount card starts, discount card: {}", card);
-        DiscountCardEntity updated = sqlExecutor.update(SQL_UPDATE, card);
+        DiscountCardEntity updated = sqlExecutor.update(SQL_UPDATE, card, this::convertToParams);
         LOGGER.debug("JDBC SQL updating discount card processed, product: {}", updated);
         LOGGER.trace("Updated discount card: {}", updated);
 
