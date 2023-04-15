@@ -54,7 +54,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     public Optional<ProductEntity> select(Long id) {
         LOGGER.debug("JDBC SQL product searching by id starts, id: {}", id);
         Optional<ProductEntity> selected = sqlExecutor.select(SQL_SELECT, id, this::convertToEntity);
-        LOGGER.debug("JDBC SQL product searching by id processed, ID: {}", selected.get().getId());
+        LOGGER.debug("JDBC SQL product searching by id processed, is present: {}", selected.isPresent());
         LOGGER.trace("Selected product: {}", selected);
 
         return selected;
