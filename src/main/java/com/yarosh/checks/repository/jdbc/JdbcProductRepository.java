@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.yarosh.checks.repository.jdbc.executor.SqlExecutor.GENERATED_KEY_COLUMN_NUMBER;
+
 public class JdbcProductRepository implements CrudRepository<ProductEntity, Long> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcProductRepository.class);
@@ -30,7 +32,6 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     private static final String PRODUCT_DISCOUNT_FIELD = "discount";
 
     private final SqlExecutor<ProductEntity, Long> sqlExecutor;
-    private static final int GENERATED_KEY_COLUMN_NUMBER = 1;
 
     public JdbcProductRepository(DataSource dataSource) {
         this.sqlExecutor = new DefaultSqlExecutor<>(dataSource);
@@ -43,7 +44,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     @Override
     public ProductEntity insert(ProductEntity product) {
         LOGGER.debug("JDBC SQL product inserting starts, product: {}", product);
-        ProductEntity inserted = sqlExecutor.insert(SQL_INSERT, product, this::convertToEntity, this::convertToParams);
+        ProductEntity inserted = sqlExecutor.insert(SQL_INSERT, product, this::convertToParams, this::convertToEntity);
         LOGGER.debug("JDBC SQL product inserting processed, ID: {}", inserted.getId());
         LOGGER.trace("Inserted product: {}", inserted);
 
