@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.yarosh.checks.repository.jdbc.executor.SqlExecutor.GENERATED_KEY_COLUMN_NUMBER;
+
 public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEntity, Long> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcDiscountCardRepository.class);
@@ -26,7 +28,6 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
 
     private static final String DISCOUNT_CARDS_ID_FIELD = "id";
     private static final String DISCOUNT_CARDS_DISCOUNT_FIELD = "discount";
-    private static final int GENERATED_KEY_COLUMN_NUMBER = 1;
 
     private final SqlExecutor<DiscountCardEntity, Long> sqlExecutor;
 
@@ -41,7 +42,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
     @Override
     public DiscountCardEntity insert(DiscountCardEntity card) {
         LOGGER.debug("JDBC SQL card inserting starts, card: {}", card);
-        DiscountCardEntity inserted = sqlExecutor.insert(SQL_INSERT, card, this::convertToEntity, this::convertToParams);
+        DiscountCardEntity inserted = sqlExecutor.insert(SQL_INSERT, card, this::convertToParams, this::convertToEntity);
         LOGGER.debug("JDBC SQL card inserting processed, ID: {}", inserted.getId());
         LOGGER.trace("Inserted discount card: {}", inserted);
 
