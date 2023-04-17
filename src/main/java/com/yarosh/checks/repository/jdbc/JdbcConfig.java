@@ -6,12 +6,15 @@ import com.yarosh.checks.repository.entity.ProductEntity;
 import com.yarosh.checks.repository.jdbc.executor.DefaultSqlExecutor;
 import com.yarosh.checks.repository.jdbc.executor.SqlExecutor;
 import com.yarosh.checks.repository.pool.DatabaseConnectionPool;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 import javax.sql.DataSource;
 
 @Configuration
+@PropertySource("classpath:application.properties")
 public class JdbcConfig {
 
     @Bean
@@ -34,11 +37,11 @@ public class JdbcConfig {
         return new DefaultSqlExecutor<>(dataSource);
     }
 
-
     @Bean
-    public DataSource dataSource() {
-        try (DatabaseConnectionPool pool = new DatabaseConnectionPool("jdbc:mysql://localhost:3306/checks", "root", "70286_CopetS", 5)) {
-            return pool;
-        }
+    public DataSource dataSource(@Value("${connection.pool.url}") String url,
+                                 @Value("${connection.pool.username}") String username,
+                                 @Value("${connection.pool.password}") String password,
+                                 @Value("${connection.pool.size}") int size) {
+        return new DatabaseConnectionPool(url, username, password, size);
     }
 }
