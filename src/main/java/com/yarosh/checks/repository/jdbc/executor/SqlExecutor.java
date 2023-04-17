@@ -11,25 +11,27 @@ import java.util.function.Function;
 
 public interface SqlExecutor<E extends Entity, ID> {
 
-    E insert(String sql, E entity, BiFunction<ResultSet, E, E> customConverterToEntity, Function<E, List<Object>> converterToParams);
+    int GENERATED_KEY_COLUMN_NUMBER = 1;
 
-    E update(String sql, E entity, Function<E, List<Object>> customConverterToParams);
+    E insert(String sql, E entity, Function<E, List<Object>> converterToParams, BiFunction<ResultSet, E, E> converterToEntity);
 
-    List<E> selectAll(String sql, Function<ResultSet, E> customConverterToEntity);
+    E update(String sql, E entity, Function<E, List<Object>> converterToParams);
 
-    Optional<E> select(String sql, ID id, Function<ResultSet, E> customConverterToEntity);
+    List<E> selectAll(String sql, Function<ResultSet, E> converterToEntity);
+
+    Optional<E> select(String sql, ID id, Function<ResultSet, E> converterToEntity);
 
     void delete(String sql, ID id);
 
-    void executeWithoutResponse(String sql, Function<PreparedStatement, E> customConverterToEntity);
+    void executeWithoutResponse(String sql, Function<PreparedStatement, E> converterToEntity);
 
-    void executeWithoutResponse(String sql, List<Object> params, Function<PreparedStatement, E> customConverterToEntity);
+    void executeWithoutResponse(String sql, List<Object> params, Function<PreparedStatement, E> converterToEntity);
 
-    Optional<E> execute(String sql, Function<PreparedStatement, E> customConverterToEntity, int statementKey);
+    Optional<E> execute(String sql, Function<PreparedStatement, E> converterToEntity, int statementKey);
 
-    Optional<E> execute(String sql, Function<PreparedStatement, E> customConverterToEntity);
+    Optional<E> execute(String sql, Function<PreparedStatement, E> converterToEntity);
 
-    Optional<E> execute(String sql, List<Object> params, Function<PreparedStatement, E> customConverterToEntity);
+    Optional<E> execute(String sql, List<Object> params, Function<PreparedStatement, E> converterToEntity);
 
-    Optional<E> execute(String sql, List<Object> params, Function<PreparedStatement, E> customConverterToEntity, int statementKey);
+    Optional<E> execute(String sql, List<Object> params, Function<PreparedStatement, E> converterToEntity, int statementKey);
 }
