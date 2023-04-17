@@ -6,6 +6,7 @@ import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.DiscountCardEntity;
 import com.yarosh.checks.service.util.BidirectionalConverter;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -15,6 +16,7 @@ public class DiscountCardService implements CrudService<DiscountCard, DiscountCa
     private final CrudRepository<DiscountCardEntity, Long> discountCardRepository;
     private final BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter;
 
+    @Inject
     public DiscountCardService(CrudRepository<DiscountCardEntity, Long> discountCardRepository,
                                BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter) {
         this.discountCardRepository = discountCardRepository;
