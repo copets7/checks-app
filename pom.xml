@@ -17,6 +17,7 @@
 
         <commons.lang3.version>3.12.0</commons.lang3.version>
         <mysql.connector.version>8.0.32</mysql.connector.version>
+        <org.apache.logging.log4j.version>2.20.0</org.apache.logging.log4j.version>
         <javax.inject.version>1</javax.inject.version>
         <org.springframework.version>6.0.8</org.springframework.version>
     </properties>
@@ -32,6 +33,24 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql.connector.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${org.apache.logging.log4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${org.apache.logging.log4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${org.apache.logging.log4j.version}</version>
         </dependency>
 
         <dependency>
