@@ -4,8 +4,13 @@ import com.yarosh.checks.repository.entity.Entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,13 +26,15 @@ public class DefaultSqlExecutor<E extends Entity, ID> implements SqlExecutor<E, 
 
     private final DataSource dataSource;
 
+    @Inject
     public DefaultSqlExecutor(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
     @Override
-    public E insert(String sql, E entity, BiFunction<ResultSet, E, E> converterToEntity, Function<E, List<Object>> converterToParams) {
-        LOGGER.debug("Sql starts inserting, entity: {}", entity);
+    public E insert(String sql, E entity, Function<E, List<Object>> converterToParams, BiFunction<ResultSet, E, E> converterToEntity) {
+        LOGGER.debug("Sql starts inserting, entity");
+
         return execute(sql, converterToParams.apply(entity), preparedStatement ->
                 performInsertFunction(entity, converterToEntity).apply(preparedStatement), Statement.RETURN_GENERATED_KEYS
         ).orElseThrow();
@@ -36,7 +43,8 @@ public class DefaultSqlExecutor<E extends Entity, ID> implements SqlExecutor<E, 
     @Override
     @SuppressWarnings("UNCHECKED_CAST")
     public E update(String sql, E entity, Function<E, List<Object>> converterToParams) {
-        LOGGER.debug("Sql starts updating, entity: {}", entity);
+        LOGGER.debug("Sql starts updating, entity");
+
         List<Object> params = converterToParams.apply(entity);
         return execute(sql, params, preparedStatement -> {
             performUpdateConsumer((ID) params.get(params.size() - 1)).accept(preparedStatement);
@@ -47,12 +55,13 @@ public class DefaultSqlExecutor<E extends Entity, ID> implements SqlExecutor<E, 
     @Override
     public List<E> selectAll(String sql, Function<ResultSet, E> converterToEntity) {
         LOGGER.debug("Sql starts selecting all");
+
         List<E> entities = new ArrayList<>();
         executeWithoutResponse(sql, preparedStatement -> {
             performSelectAllConsumer(entities, converterToEntity).accept(preparedStatement);
             return null;
         });
-        LOGGER.debug("Finished select all: {}", !entities.isEmpty());
+
         return entities;
     }
 
@@ -65,6 +74,7 @@ public class DefaultSqlExecutor<E extends Entity, ID> implements SqlExecutor<E, 
     @Override
     public void delete(String sql, ID id) {
         LOGGER.debug("Sql starts deleting");
+
         executeWithoutResponse(sql, List.of(id), preparedStatement -> {
             performUpdateConsumer(id).accept(preparedStatement);
             return null;
