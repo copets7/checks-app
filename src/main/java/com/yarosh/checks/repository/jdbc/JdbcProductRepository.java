@@ -7,6 +7,7 @@ import com.yarosh.checks.repository.jdbc.executor.SqlExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,6 +38,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
         this.sqlExecutor = new DefaultSqlExecutor<>(dataSource);
     }
 
+    @Inject
     public JdbcProductRepository(SqlExecutor<ProductEntity, Long> sqlExecutor) {
         this.sqlExecutor = sqlExecutor;
     }
