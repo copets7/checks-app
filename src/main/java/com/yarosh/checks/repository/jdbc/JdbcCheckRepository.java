@@ -2,31 +2,41 @@ package com.yarosh.checks.repository.jdbc;
 
 import com.yarosh.checks.repository.CrudRepository;
 import com.yarosh.checks.repository.entity.CheckEntity;
+import com.yarosh.checks.repository.jdbc.executor.DefaultSqlExecutor;
 import com.yarosh.checks.repository.jdbc.executor.SqlExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.yarosh.checks.repository.jdbc.executor.SqlExecutor.GENERATED_KEY_COLUMN_NUMBER;
+
 public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcCheckRepository.class);
 
-    private static final String SQL_INSERT =
-            "INSERT INTO checks (market_name, cashier_name, date, time, products, discount_card_id, total_price) VALUES (?)";
-    private static final String SQL_SELECT =
-            "SELECT id, market_name, cashier_name, date, time, products, discount_card_id, total_price FROM checks WHERE id = ?";
+    private static final String SQL_INSERT = """
+            INSERT INTO checks (market_name, cashier_name, date, time, products, discount_card_id, total_price)
+            VALUES (?,?,?,?,?,?,?)
+            """;
+    private static final String SQL_SELECT = """
+            SELECT c.id, c.market_name, c.cashier_name, c.date, c.time, c.products, c.discount_card_id, c.total_price,
+            d.id, d.discount
+            FROM checks AS c LEFT JOIN discount_cards AS d ON c.discount_card_id = d.id WHERE c.id = ?
+            """;
     private static final String SQL_SELECT_ALL =
             "SELECT id, market_name, cashier_name, date, time, products, discount_card_id, total_price FROM checks";
-    private static final String SQL_UPDATE =
-            "UPDATE checks SET market_name = ?, cashier_name = ?, date = ?, time = ?,  products = ?, discount_card_id = ?, total_price = ? WHERE id = ?";
-    private static final String SQL_DELETE =
-            "DELETE FROM checks WHERE id = ?";
+    private static final String SQL_UPDATE = """
+            UPDATE checks SET market_name = ?, cashier_name = ?, date = ?, time = ?,  products = ?, discount_card_id = ?,
+            total_price = ? WHERE id = ?
+            """;
+    private static final String SQL_DELETE = "DELETE FROM checks WHERE id = ?";
 
     private static final String CHECK_ID_FIELD = "id";
     private static final String CHECK_MARKET_NAME_FIELD = "market_name";
@@ -38,6 +48,10 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
     private static final String CHECK_TOTAL_PRICE_FIELD = "total_price";
 
     private final SqlExecutor<CheckEntity, Long> sqlExecutor;
+
+    public JdbcCheckRepository(DataSource dataSource) {
+        this.sqlExecutor = new DefaultSqlExecutor<>(dataSource);
+    }
 
     @Inject
     public JdbcCheckRepository(SqlExecutor<CheckEntity, Long> sqlExecutor) {
@@ -70,29 +84,30 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
     }
 
     private CheckEntity convertToEntity(ResultSet resultSet) {
-        try {
-            return new CheckEntity(
-                    resultSet.getLong(CHECK_ID_FIELD),
-                    resultSet.getString(CHECK_MARKET_NAME_FIELD),
-                    resultSet.getString(CHECK_CASHIER_NAME_FIELD),
-                    resultSet.getDate(CHECK_DATE_FIELD).toLocalDate(),
-                    resultSet.getTime(CHECK_TIME_FIELD).toLocalTime(),
-                    resultSet.getString(CHECK_PRODUCTS_FIELD),
-                    resultSet.getLong(CHECK_DISCOUNT_CARD_ID_FIELD),
-                    resultSet.getDouble(CHECK_TOTAL_PRICE_FIELD)
-            );
-
-        } catch (SQLException e) {
-            LOGGER.error("Converting result set to check failed, message: {}", e.getMessage());
-            LOGGER.debug("Converting result set to check failed", e);
-            throw new JdbcRepositoryException("Converting result set to check failed, e: {0}", e);
-        }
+//        try {
+//            return new CheckEntity(
+//                    resultSet.getLong(CHECK_ID_FIELD),
+//                    resultSet.getString(CHECK_MARKET_NAME_FIELD),
+//                    resultSet.getString(CHECK_CASHIER_NAME_FIELD),
+//                    resultSet.getDate(CHECK_DATE_FIELD).toLocalDate(),
+//                    resultSet.getTime(CHECK_TIME_FIELD).toLocalTime(),
+//                    resultSet.getString(CHECK_PRODUCTS_FIELD),
+//                    resultSet.getLong(CHECK_DISCOUNT_CARD_ID_FIELD),
+//                    resultSet.getDouble(CHECK_TOTAL_PRICE_FIELD)
+//            );
+//
+//        } catch (SQLException e) {
+//            LOGGER.error("Converting result set to check failed, message: {}", e.getMessage());
+//            LOGGER.debug("Converting result set to check failed", e);
+//            throw new JdbcRepositoryException("Converting result set to check failed, e: {0}", e);
+//        }
+        return null;
     }
 
     private CheckEntity convertToEntity(ResultSet resultSet, CheckEntity check) {
         try {
             return new CheckEntity(
-                    resultSet.getLong(SqlExecutor.GENERATED_KEY_COLUMN_NUMBER),
+                    resultSet.getLong(GENERATED_KEY_COLUMN_NUMBER),
                     check.getMarketName(),
                     check.getCashierName(),
                     check.getDate(),
