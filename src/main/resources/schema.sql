@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS checks(
     date DATE NOT NULL,
     time TIME NOT NULL,
     products JSON NOT NULL,
-    discount_card_id BIGINT NOT NULL,
+    discount_card_id BIGINT,
     total_price DOUBLE NOT NULL,
     FOREIGN KEY(discount_card_id) REFERENCES discount_cards (id)
 );
