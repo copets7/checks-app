@@ -1,42 +1,73 @@
 package com.yarosh.checks.controller;
 
+import com.yarosh.checks.controller.dto.ProductDto;
+import com.yarosh.checks.controller.view.ProductView;
 import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.ProductId;
 import com.yarosh.checks.service.CrudService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @RestController
-@RequestMapping(value = "/products")
+@RequestMapping(path = "/product")
 public class ProductController {
 
-   private final CrudService<Product, ProductId> productService;
+    private final CrudService<Product, ProductId> productService;
 
     public ProductController(CrudService<Product, ProductId> productService) {
         this.productService = productService;
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Product>> getAllProduct() {
-        List<Product> products = productService.getAll();
+    @RequestMapping(path = "/add", method = RequestMethod.POST)
+    public ResponseEntity<ProductDto> add(@RequestBody ProductDto productDto) {
+        Product product = new Product(
+                Optional.empty(),
+                productDto.getDescription(),
+                Optional.empty(),
+                productDto.getPrice(),
+                productDto.getDiscount());
 
-        return products != null && !products.isEmpty()
-                ? new ResponseEntity<>(products, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        productService.add(product);
+
+        return new ResponseEntity<>(productDto, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Product> getById(@PathVariable("id") ProductId id) {
-       Optional<Product> product = productService.get(id);
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
+        Stream<ProductView> product = productService.get(new ProductId(id))
+                .stream()
+                .map(p -> new ProductView(
+                        p.getDescription(),
+                        p.getPrice(),
+                        p.getDiscount()));
 
-       return product.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
+
+    @RequestMapping(path = "/all", method = RequestMethod.GET)
+    public ResponseEntity<?> getAll() {
+        List<ProductView> products = productService
+                .getAll()
+                .stream()
+                .map(product ->
+                        new ProductView(
+                                product.getDescription(),
+                                product.getPrice(),
+                                product.getDiscount())
+                ).toList();
+
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/update/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<ProductDto> update(@RequestBody ProductDto productDto, @PathVariable Long id) {
+
+        return new ResponseEntity<>(productDto, HttpStatus.OK);
+    }
+
 }
