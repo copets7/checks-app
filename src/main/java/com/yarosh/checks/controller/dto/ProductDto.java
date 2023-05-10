@@ -1,12 +1,18 @@
 package com.yarosh.checks.controller.dto;
 
-public class ProductDto {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    private String description;
-    private double price;
-    private double discount;
+public class ProductDto implements Dto{
 
-    public ProductDto(String description, double price, double discount) {
+    private final String description;
+    private final double price;
+    private final double discount;
+
+    @JsonCreator
+    public ProductDto(final @JsonProperty("description") String description,
+                      final @JsonProperty("price") double price,
+                      final @JsonProperty("discount") double discount) {
         this.description = description;
         this.price = price;
         this.discount = discount;
@@ -16,23 +22,20 @@ public class ProductDto {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public double getPrice() {
         return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 
     public double getDiscount() {
         return discount;
     }
 
-    public void setDiscount(double discount) {
-        this.discount = discount;
+    @Override
+    public String toString() {
+        return "ProductDto{" +
+                "description='" + description + '\'' +
+                ", price=" + price +
+                ", discount=" + discount +
+                '}';
     }
 }
