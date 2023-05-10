@@ -1,13 +1,12 @@
 package com.yarosh.checks.controller.view;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonPropertyOrder({"description","price","discount"})
-public class ProductView {
+public class ProductView implements View{
 
-    private String description;
-    private double price;
-    private double discount;
+    private final String description;
+    private final double price;
+    private final double discount;
 
     public ProductView(String description, double price, double discount) {
         this.description = description;
@@ -15,27 +14,27 @@ public class ProductView {
         this.discount = discount;
     }
 
+    @JsonProperty("description")
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
+    @JsonProperty("price")
     public double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
+    @JsonProperty("discount")
     public double getDiscount() {
         return discount;
     }
 
-    public void setDiscount(double discount) {
-        this.discount = discount;
+    @Override
+    public String toString() {
+        return "ProductView{" +
+                "description='" + description + '\'' +
+                ", price=" + price +
+                ", discount=" + discount +
+                '}';
     }
 }
