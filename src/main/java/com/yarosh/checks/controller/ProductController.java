@@ -1,6 +1,7 @@
 package com.yarosh.checks.controller;
 
 import com.yarosh.checks.controller.dto.ProductDto;
+import com.yarosh.checks.controller.util.Converter;
 import com.yarosh.checks.controller.view.ProductView;
 import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.ProductId;
@@ -11,63 +12,65 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping(path = "/product")
 public class ProductController {
 
     private final CrudService<Product, ProductId> productService;
+    private final Converter<ProductDto, ProductView, Product> productConverter;
 
-    public ProductController(CrudService<Product, ProductId> productService) {
+    public ProductController(CrudService<Product, ProductId> productService, Converter<ProductDto, ProductView, Product> productConverter) {
         this.productService = productService;
+        this.productConverter = productConverter;
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
-    public ResponseEntity<ProductDto> add(@RequestBody ProductDto productDto) {
-        Product product = new Product(
-                Optional.empty(),
-                productDto.getDescription(),
-                Optional.empty(),
-                productDto.getPrice(),
-                productDto.getDiscount());
+    public ResponseEntity<ProductView> add(final @RequestBody ProductDto productDto) {
+        final Product product = productConverter.dtoConvertToDomain(productDto);
+        final ProductView productView = productConverter.dtoConvertToView(productDto);
 
         productService.add(product);
 
-        return new ResponseEntity<>(productDto, HttpStatus.OK);
+        return new ResponseEntity<>(productView, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
-        Stream<ProductView> product = productService.get(new ProductId(id))
-                .stream()
-                .map(p -> new ProductView(
-                        p.getDescription(),
-                        p.getPrice(),
-                        p.getDiscount()));
+    public ResponseEntity<ProductView> getById(final @PathVariable("id") Long id) {
+        Optional<ProductView> productView = productService.get(new ProductId(id))
+                .map(productConverter::domainConvertToView);
 
-        return new ResponseEntity<>(product, HttpStatus.OK);
+        return productView.isPresent()
+                ? new ResponseEntity<>(productView.get(), HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(path = "/all", method = RequestMethod.GET)
-    public ResponseEntity<?> getAll() {
-        List<ProductView> products = productService
-                .getAll()
+    public ResponseEntity<List<ProductView>> getAll() {
+        List<ProductView> products = productService.getAll()
                 .stream()
-                .map(product ->
-                        new ProductView(
-                                product.getDescription(),
-                                product.getPrice(),
-                                product.getDiscount())
-                ).toList();
+                .map(productConverter::domainConvertToView)
+                .toList();
 
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/update/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<ProductDto> update(@RequestBody ProductDto productDto, @PathVariable Long id) {
+    @RequestMapping(path = "/update", method = RequestMethod.PUT)
+    public ResponseEntity<ProductView> update(final @RequestBody ProductDto productDto) {
+        final Product product = productConverter.dtoConvertToDomain(productDto);
+        final ProductView productView = productConverter.dtoConvertToView(productDto);
 
-        return new ResponseEntity<>(productDto, HttpStatus.OK);
+        productService.update(product);
+
+        return new ResponseEntity<>(productView, HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/delete/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<ProductView> delete(final @PathVariable Long id) {
+
+        productService.delete(new ProductId(id));
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
