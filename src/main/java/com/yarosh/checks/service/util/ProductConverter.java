@@ -23,10 +23,10 @@ public class ProductConverter implements BidirectionalConverter<Product, Product
     @Override
     public ProductEntity convertToEntity(Product product) {
         return new ProductEntity(
-                product.getId().map(ProductId::getId).orElse(null),
-                product.getDescription(),
-                product.getPrice(),
-                product.getDiscount()
+                product.id().map(ProductId::getId).orElse(null),
+                product.description(),
+                product.price(),
+                product.discount()
         );
     }
 }
