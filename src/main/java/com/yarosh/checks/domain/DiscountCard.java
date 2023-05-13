@@ -6,25 +6,9 @@ import com.yarosh.checks.domain.id.DiscountCardId;
 import java.util.Objects;
 import java.util.Optional;
 
-public class DiscountCard implements Domain {
+public record DiscountCard(Optional<DiscountCardId> id, double discount) implements Domain {
 
     private static final int NO_DISCOUNT = 0;
-
-    private final Optional<DiscountCardId> id;
-    private final double discount;
-
-    public DiscountCard(Optional<DiscountCardId> id, double discount) {
-        this.id = id;
-        this.discount = discount;
-    }
-
-    public Optional<DiscountCardId> getId() {
-        return id;
-    }
-
-    public double getDiscount() {
-        return discount;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -32,11 +16,6 @@ public class DiscountCard implements Domain {
         if (o == null || getClass() != o.getClass()) return false;
         DiscountCard that = (DiscountCard) o;
         return discount == that.discount && Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, discount);
     }
 
     @Override
