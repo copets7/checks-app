@@ -109,18 +109,18 @@ public class Check implements Domain {
 
     private double countTotalPrice() {
         return products.stream()
-                .map(product -> (product.getPrice() * (MAX_DISCOUNT - countDiscount(product))) * product.getValidatedQuantity())
+                .map(product -> (product.price() * (MAX_DISCOUNT - countDiscount(product))) * product.getValidatedQuantity())
                 .reduce(Double::sum)
                 .filter(this::isTotalPriceValid)
                 .orElseThrow();
     }
 
     private double countDiscount(Product product) {
-        if (product.getDiscount() > NO_DISCOUNT) {
-            return product.getDiscount();
+        if (product.discount() > NO_DISCOUNT) {
+            return product.discount();
         }
 
-        return (discountCard.isPresent()) ? discountCard.get().getDiscount() : NO_DISCOUNT;
+        return (discountCard.isPresent()) ? discountCard.get().discount() : NO_DISCOUNT;
     }
 
     private boolean isTotalPriceValid(Double price) {
