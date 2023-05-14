@@ -46,7 +46,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     @Override
     public ProductEntity insert(ProductEntity product) {
         LOGGER.debug("JDBC SQL product inserting starts, product: {}", product);
-        ProductEntity inserted = sqlExecutor.insert(SQL_INSERT, product, this::convertToParams, this::convertToEntity);
+        final ProductEntity inserted = sqlExecutor.insert(SQL_INSERT, product, this::convertToParams, this::convertToEntity);
         LOGGER.debug("JDBC SQL product inserting processed, ID: {}", inserted.getId());
         LOGGER.trace("Inserted product: {}", inserted);
 
@@ -56,7 +56,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     @Override
     public Optional<ProductEntity> select(Long id) {
         LOGGER.debug("JDBC SQL product searching by id starts, id: {}", id);
-        Optional<ProductEntity> selected = sqlExecutor.select(SQL_SELECT, id, this::convertToEntity);
+        final Optional<ProductEntity> selected = sqlExecutor.select(SQL_SELECT, id, this::convertToEntity);
         LOGGER.debug("JDBC SQL product searching by id processed, is present: {}", selected.isPresent());
         LOGGER.trace("Selected product: {}", selected);
 
@@ -72,7 +72,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     @Override
     public ProductEntity update(ProductEntity product) {
         LOGGER.debug("JDBC SQL updating product starts, product: {}", product);
-        ProductEntity updated = sqlExecutor.update(SQL_UPDATE, product, this::convertToParams);
+        final ProductEntity updated = sqlExecutor.update(SQL_UPDATE, product, this::convertToParams);
         LOGGER.debug("JDBC SQL updating product processed, product: {}", updated);
         LOGGER.trace("Updated product: {}", updated);
 
@@ -117,7 +117,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
 
     private List<Object> convertToParams(ProductEntity product) {
         LOGGER.trace("Converting product to params starts, product: {}", product);
-        List<Object> params = new ArrayList<>();
+        final List<Object> params = new ArrayList<>();
         params.add(product.getDescription());
         params.add(product.getPrice());
         params.add(product.getDiscount());
