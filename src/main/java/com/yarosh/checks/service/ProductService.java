@@ -51,7 +51,7 @@ public class ProductService implements CrudService<Product, ProductId> {
     }
 
     private Product upsert(Function<ProductEntity, ProductEntity> upsert, Product product) {
-        ProductEntity upsertedProduct = upsert.apply(productConverter.convertToEntity(product));
+        final ProductEntity upsertedProduct = upsert.apply(productConverter.convertToEntity(product));
         return productConverter.convertToDomain(upsertedProduct);
     }
 }
