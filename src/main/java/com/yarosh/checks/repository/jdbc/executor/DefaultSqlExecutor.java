@@ -45,7 +45,7 @@ public class DefaultSqlExecutor<E extends Entity, ID> implements SqlExecutor<E, 
     public E update(String sql, E entity, Function<E, List<Object>> converterToParams) {
         LOGGER.debug("Sql starts updating, entity");
 
-        List<Object> params = converterToParams.apply(entity);
+        final List<Object> params = converterToParams.apply(entity);
         return execute(sql, params, preparedStatement -> {
             performUpdateConsumer((ID) params.get(params.size() - 1)).accept(preparedStatement);
             return entity;
@@ -56,7 +56,7 @@ public class DefaultSqlExecutor<E extends Entity, ID> implements SqlExecutor<E, 
     public List<E> selectAll(String sql, Function<ResultSet, E> converterToEntity) {
         LOGGER.debug("Sql starts selecting all");
 
-        List<E> entities = new ArrayList<>();
+        final List<E> entities = new ArrayList<>();
         executeWithoutResponse(sql, preparedStatement -> {
             performSelectAllConsumer(entities, converterToEntity).accept(preparedStatement);
             return null;
@@ -114,7 +114,7 @@ public class DefaultSqlExecutor<E extends Entity, ID> implements SqlExecutor<E, 
             LOGGER.debug("SQL executing starts, params: {}", params);
 
             setParams(prepareStatement, params);
-            Optional<E> result = Optional.ofNullable(converterToEntity.apply(prepareStatement));
+            final Optional<E> result = Optional.ofNullable(converterToEntity.apply(prepareStatement));
             LOGGER.debug("SQL executing processed, result: {}", result);
 
             return result;
@@ -203,7 +203,7 @@ public class DefaultSqlExecutor<E extends Entity, ID> implements SqlExecutor<E, 
         try {
             for (int i = 0; i != params.size(); i++) {
                 int paramIndex = i + 1;
-                Object param = params.get(i);
+                final Object param = params.get(i);
                 preparedStatement.setObject(paramIndex, param);
 
                 LOGGER.trace("SQL param was set, index: {}, param: {}", paramIndex, param);
