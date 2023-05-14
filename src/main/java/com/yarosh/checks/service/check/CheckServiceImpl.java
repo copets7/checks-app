@@ -87,7 +87,7 @@ public class CheckServiceImpl implements CheckService {
     }
 
     private Check upsert(Function<CheckEntity, CheckEntity> upsert, Check check) {
-        CheckEntity upsertedCheck = upsert.apply(checkConverter.convertToEntity(check));
+        final CheckEntity upsertedCheck = upsert.apply(checkConverter.convertToEntity(check));
         return checkConverter.convertToDomain(upsertedCheck);
     }
 
