@@ -125,7 +125,7 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
 
     private List<Object> convertToParams(CheckEntity check) {
         LOGGER.trace("Converting check to params starts, check: {}", check);
-        List<Object> params = new ArrayList<>();
+        final List<Object> params = new ArrayList<>();
         params.add(check.getMarketName());
         params.add(check.getCashierName());
         params.add(check.getDate());
