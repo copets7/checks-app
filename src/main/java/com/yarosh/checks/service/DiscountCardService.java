@@ -53,7 +53,7 @@ public class DiscountCardService implements CrudService<DiscountCard, DiscountCa
     }
 
     private DiscountCard upsert(Function<DiscountCardEntity, DiscountCardEntity> upsert, DiscountCard discountCard) {
-        DiscountCardEntity upsertedDiscountCard = upsert.apply(discountCardConverter.convertToEntity(discountCard));
+        final DiscountCardEntity upsertedDiscountCard = upsert.apply(discountCardConverter.convertToEntity(discountCard));
         return discountCardConverter.convertToDomain(upsertedDiscountCard);
     }
 }
