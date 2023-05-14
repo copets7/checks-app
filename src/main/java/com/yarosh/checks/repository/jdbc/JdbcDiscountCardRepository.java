@@ -44,7 +44,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
     @Override
     public DiscountCardEntity insert(DiscountCardEntity card) {
         LOGGER.debug("JDBC SQL card inserting starts, card: {}", card);
-        DiscountCardEntity inserted = sqlExecutor.insert(SQL_INSERT, card, this::convertToParams, this::convertToEntity);
+        final DiscountCardEntity inserted = sqlExecutor.insert(SQL_INSERT, card, this::convertToParams, this::convertToEntity);
         LOGGER.debug("JDBC SQL card inserting processed, ID: {}", inserted.getId());
         LOGGER.trace("Inserted discount card: {}", inserted);
 
@@ -54,7 +54,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
     @Override
     public Optional<DiscountCardEntity> select(Long id) {
         LOGGER.debug("JDBC SQL discount card searching by id starts, id: {}", id);
-        Optional<DiscountCardEntity> selected = sqlExecutor.select(SQL_SELECT, id, this::convertToEntity);
+        final Optional<DiscountCardEntity> selected = sqlExecutor.select(SQL_SELECT, id, this::convertToEntity);
         LOGGER.debug("JDBC SQL discount card searching by id processed, is present: {}", selected.isPresent());
         LOGGER.trace("Selected discount card: {}", selected);
 
@@ -70,7 +70,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
     @Override
     public DiscountCardEntity update(DiscountCardEntity card) {
         LOGGER.debug("JDBC SQL updating discount card starts, discount card: {}", card);
-        DiscountCardEntity updated = sqlExecutor.update(SQL_UPDATE, card, this::convertToParams);
+        final DiscountCardEntity updated = sqlExecutor.update(SQL_UPDATE, card, this::convertToParams);
         LOGGER.debug("JDBC SQL updating discount card processed, product: {}", updated);
         LOGGER.trace("Updated discount card: {}", updated);
 
@@ -108,7 +108,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
 
     private List<Object> convertToParams(DiscountCardEntity card) {
         LOGGER.trace("Converting card to params starts, card: {}", card);
-        List<Object> params = new ArrayList<>();
+        final List<Object> params = new ArrayList<>();
         params.add(card.getDiscount());
 
         if (card.getId() != null) {
