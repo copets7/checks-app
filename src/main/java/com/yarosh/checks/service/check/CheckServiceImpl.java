@@ -64,7 +64,7 @@ public class CheckServiceImpl implements CheckService {
 
     @Override
     public Optional<Check> get(CheckId id) {
-        return checkRepository.select(id.getId())
+        return checkRepository.select(id.id())
                 .map(checkConverter::convertToDomain);
     }
 
@@ -83,7 +83,7 @@ public class CheckServiceImpl implements CheckService {
 
     @Override
     public void delete(CheckId id) {
-        checkRepository.delete(id.getId());
+        checkRepository.delete(id.id());
     }
 
     private Check upsert(Function<CheckEntity, CheckEntity> upsert, Check check) {
@@ -101,6 +101,6 @@ public class CheckServiceImpl implements CheckService {
     private Product performProduct(ProductId id, int quantity) {
         return productService.get(id)
                 .map(product -> product.performForCheck(quantity))
-                .orElseThrow(() -> new ProductNotFoundException(id.getId()));
+                .orElseThrow(() -> new ProductNotFoundException(id.id()));
     }
 }
