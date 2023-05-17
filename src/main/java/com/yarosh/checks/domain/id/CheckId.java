@@ -2,17 +2,11 @@ package com.yarosh.checks.domain.id;
 
 import com.yarosh.checks.domain.exception.TypedIdException;
 
-public class CheckId implements DomainId {
-
-    private final Long id;
+public record CheckId(Long id) implements DomainId {
 
     public CheckId(Long id) {
         this.id = id;
         validate();
-    }
-
-    public Long getId() {
-        return id;
     }
 
     @Override
