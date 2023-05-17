@@ -10,6 +10,12 @@ public record DiscountCard(Optional<DiscountCardId> id, double discount) impleme
 
     private static final int NO_DISCOUNT = 0;
 
+    public DiscountCard(Optional<DiscountCardId> id, double discount) {
+        this.id = id;
+        this.discount = discount;
+        validate();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
