@@ -2,7 +2,13 @@ package com.yarosh.checks.controller.view;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record ProductView(String description, double price, double discount) implements View {
+public record ProductView(Long id, String description, double price, double discount) implements View {
+
+    @Override
+    @JsonProperty("id")
+    public Long id() {
+        return id;
+    }
 
     @Override
     @JsonProperty("description")
@@ -25,7 +31,8 @@ public record ProductView(String description, double price, double discount) imp
     @Override
     public String toString() {
         return "ProductView{" +
-                "description='" + description + '\'' +
+                "id=" + id +
+                ", description='" + description + '\'' +
                 ", price=" + price +
                 ", discount=" + discount +
                 '}';
