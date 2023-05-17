@@ -30,7 +30,7 @@ public class DiscountCardService implements CrudService<DiscountCard, DiscountCa
 
     @Override
     public Optional<DiscountCard> get(DiscountCardId id) {
-        return discountCardRepository.select(id.getId())
+        return discountCardRepository.select(id.id())
                 .map(discountCardConverter::convertToDomain);
     }
 
@@ -49,7 +49,7 @@ public class DiscountCardService implements CrudService<DiscountCard, DiscountCa
 
     @Override
     public void delete(DiscountCardId id) {
-        discountCardRepository.delete(id.getId());
+        discountCardRepository.delete(id.id());
     }
 
     private DiscountCard upsert(Function<DiscountCardEntity, DiscountCardEntity> upsert, DiscountCard discountCard) {
