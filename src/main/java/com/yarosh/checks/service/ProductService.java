@@ -28,7 +28,7 @@ public class ProductService implements CrudService<Product, ProductId> {
 
     @Override
     public Optional<Product> get(ProductId id) {
-        return productRepository.select(id.getId())
+        return productRepository.select(id.id())
                 .map(productConverter::convertToDomain);
     }
 
@@ -47,7 +47,7 @@ public class ProductService implements CrudService<Product, ProductId> {
 
     @Override
     public void delete(ProductId id) {
-        productRepository.delete(id.getId());
+        productRepository.delete(id.id());
     }
 
     private Product upsert(Function<ProductEntity, ProductEntity> upsert, Product product) {
