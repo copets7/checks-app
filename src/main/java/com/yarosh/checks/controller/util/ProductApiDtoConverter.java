@@ -12,6 +12,7 @@ public class ProductApiDtoConverter implements ApiDtoConverter<ProductDto, Produ
     @Override
     public ProductView convertDomainToView(Product domain) {
         return new ProductView(
+                domain.id().orElseThrow().id(),
                 domain.description(),
                 domain.price(),
                 domain.discount()
@@ -21,7 +22,7 @@ public class ProductApiDtoConverter implements ApiDtoConverter<ProductDto, Produ
     @Override
     public Product convertDtoToDomain(ProductDto dto) {
         return new Product(
-                Optional.of(new ProductId(dto.id())),
+                Optional.ofNullable(dto.id()).map(ProductId::new),
                 dto.description(),
                 Optional.empty(),
                 dto.price(),
