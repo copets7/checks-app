@@ -67,7 +67,7 @@ public record Product(
 
     private void validate() {
         if(StringUtils.isBlank(description)) {
-            throw new InvalidProductException("EXCEPTION");
+            throw new InvalidProductException("Description is empty. Enter product description");
         }
     }
 }
