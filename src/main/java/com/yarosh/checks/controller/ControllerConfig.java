@@ -1,9 +1,13 @@
 package com.yarosh.checks.controller;
 
+import com.yarosh.checks.controller.dto.DiscountCardDto;
 import com.yarosh.checks.controller.dto.ProductDto;
 import com.yarosh.checks.controller.util.ApiDtoConverter;
+import com.yarosh.checks.controller.util.DiscountCardApiDtoConverter;
 import com.yarosh.checks.controller.util.ProductApiDtoConverter;
+import com.yarosh.checks.controller.view.DiscountCardView;
 import com.yarosh.checks.controller.view.ProductView;
+import com.yarosh.checks.domain.DiscountCard;
 import com.yarosh.checks.domain.Product;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +34,11 @@ public class ControllerConfig implements WebMvcConfigurer {
     @Bean
     public ApiDtoConverter<ProductDto, ProductView, Product> productApiDtoConverter() {
         return new ProductApiDtoConverter();
+    }
+
+    @Bean
+    public ApiDtoConverter<DiscountCardDto, DiscountCardView, DiscountCard> discountCardApiDtoConverter() {
+        return new DiscountCardApiDtoConverter();
     }
 
     @Bean
