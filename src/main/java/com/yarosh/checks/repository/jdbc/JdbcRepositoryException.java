@@ -1,6 +1,6 @@
 package com.yarosh.checks.repository.jdbc;
 
-import com.yarosh.checks.repository.RepositoryException;
+import com.yarosh.checks.repository.exception.RepositoryException;
 
 public class JdbcRepositoryException extends RepositoryException {
 
