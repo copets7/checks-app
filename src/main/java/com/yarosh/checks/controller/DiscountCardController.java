@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/v1.0/discount_card")
+@RequestMapping(path = "api/v1.0/discount-card")
 public class DiscountCardController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DiscountCardController.class);
@@ -33,7 +33,6 @@ public class DiscountCardController {
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     public ResponseEntity<DiscountCardView> add(final @RequestBody DiscountCardDto discountCardDto) {
         LOGGER.info("Calling add discount card started, parameter: {}", discountCardDto);
-        LOGGER.debug("Discount card parameter: {}", discountCardDto);
 
         final DiscountCard card = discountCardApiDtoConverter.convertDtoToDomain(discountCardDto);
         final DiscountCard created = discountCardService.add(card);
@@ -63,7 +62,7 @@ public class DiscountCardController {
                 .map(discountCardApiDtoConverter::convertDomainToView)
                 .toList();
 
-        LOGGER.debug("Discount cards views detailed printing: {}", discountCards);
+        LOGGER.trace("Discount cards views detailed printing: {}", discountCards);
 
         return new ResponseEntity<>(discountCards, HttpStatus.OK);
     }
