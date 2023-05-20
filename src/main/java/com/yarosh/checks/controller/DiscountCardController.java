@@ -23,7 +23,6 @@ public class DiscountCardController {
     private final CrudService<DiscountCard, DiscountCardId> discountCardService;
     private final ApiDtoConverter<DiscountCardDto, DiscountCardView, DiscountCard> discountCardApiDtoConverter;
 
-
     public DiscountCardController(CrudService<DiscountCard, DiscountCardId> discountCardService,
                                   ApiDtoConverter<DiscountCardDto, DiscountCardView, DiscountCard> discountCardApiDtoConverter) {
         this.discountCardService = discountCardService;
@@ -36,11 +35,12 @@ public class DiscountCardController {
 
         final DiscountCard card = discountCardApiDtoConverter.convertDtoToDomain(discountCardDto);
         final DiscountCard created = discountCardService.add(card);
+        final DiscountCardView view = discountCardApiDtoConverter.convertDomainToView(created);
 
-        LOGGER.info("Calling add discount card successfully ended for product, id: {}", created.id());
-        LOGGER.debug("Saved discount card view detailed printing: {}", created);
+        LOGGER.info("Calling add discount card successfully ended for product, id: {}", view.id());
+        LOGGER.debug("Saved discount card view detailed printing: {}", view);
 
-        return new ResponseEntity<>(discountCardApiDtoConverter.convertDomainToView(created), HttpStatus.CREATED);
+        return new ResponseEntity<>(view, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
