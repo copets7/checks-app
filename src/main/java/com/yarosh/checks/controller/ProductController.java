@@ -36,11 +36,12 @@ public class ProductController {
 
         final Product product = productApiDtoConverter.convertDtoToDomain(productDto);
         final Product created = productService.add(product);
+        final ProductView view = productApiDtoConverter.convertDomainToView(created);
 
-        LOGGER.info("Calling add product successfully ended for product, id: {}", created.id());
-        LOGGER.debug("Saved product view detailed printing: {}", created);
+        LOGGER.info("Calling add product successfully ended for product, id: {}", view.id());
+        LOGGER.debug("Saved product view detailed printing: {}", view);
 
-        return new ResponseEntity<>(productApiDtoConverter.convertDomainToView(created), HttpStatus.CREATED);
+        return new ResponseEntity<>(view, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -74,11 +75,12 @@ public class ProductController {
 
         final Product product = productApiDtoConverter.convertDtoToDomain(productDto);
         final Product updated = productService.update(product);
+        final ProductView view = productApiDtoConverter.convertDomainToView(updated);
 
-        LOGGER.info("Calling updated product successfully ended for product, id: {}", updated.id());
-        LOGGER.debug("Updated product view detailed printing: {}", updated);
+        LOGGER.info("Calling updated product successfully ended for product, id: {}", view.id());
+        LOGGER.debug("Updated product view detailed printing: {}", view);
 
-        return new ResponseEntity<>(productApiDtoConverter.convertDomainToView(updated), HttpStatus.OK);
+        return new ResponseEntity<>(view, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.DELETE)
