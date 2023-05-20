@@ -74,11 +74,12 @@ public class DiscountCardController {
 
         final DiscountCard discountCard = discountCardApiDtoConverter.convertDtoToDomain(discountCardDto);
         final DiscountCard updated = discountCardService.update(discountCard);
+        final DiscountCardView view = discountCardApiDtoConverter.convertDomainToView(updated);
 
-        LOGGER.info("Calling updated discount card successfully ended for product, id: {}", updated.id());
-        LOGGER.debug("Updated discount card view detailed printing: {}", updated);
+        LOGGER.info("Calling updated discount card successfully ended for product, id: {}", view.id());
+        LOGGER.debug("Updated discount card view detailed printing: {}", view);
 
-        return new ResponseEntity<>(discountCardApiDtoConverter.convertDomainToView(updated), HttpStatus.OK);
+        return new ResponseEntity<>(view, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.DELETE)
