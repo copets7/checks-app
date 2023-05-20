@@ -2,6 +2,7 @@ package com.yarosh.checks.domain;
 
 import com.yarosh.checks.domain.exception.InvalidCheckException;
 import com.yarosh.checks.domain.id.CheckId;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -39,6 +40,7 @@ public class Check implements Domain {
         this.time = time;
         this.products = products;
         this.discountCard = discountCard;
+        validate();
     }
 
     public Optional<CheckId> getId() {
@@ -129,5 +131,21 @@ public class Check implements Domain {
         }
 
         return true;
+    }
+
+    private void validate() {
+        if (StringUtils.isBlank(marketName)) {
+            throw new InvalidCheckException("Market name is empty, {0}", this);
+        } else if (StringUtils.isBlank(cashierName)) {
+            throw new InvalidCheckException("Cashier name is empty, {0}", this);
+        } else if (!LocalDate.now().equals(date)) {
+            throw new InvalidCheckException("Date is not correct, {0}", this);
+        } else if (!LocalTime.now().equals(time)) {
+            throw new InvalidCheckException("Time is not correct, {0}", this);
+        } else if (products.isEmpty()) {
+            throw new InvalidCheckException("Product list can't be empty, {0}", this);
+        }else if (totalPrice <= INVALID_TOTAL_PRICE) {
+            throw new InvalidCheckException("Total price can't be equals to or lees than 0, {0}", this);
+        }
     }
 }
