@@ -1,5 +1,6 @@
 package com.yarosh.checks.repository.jdbc.executor;
 
+import com.yarosh.checks.repository.exception.RecordNotFoundException;
 import com.yarosh.checks.repository.entity.Entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,7 +188,7 @@ public class DefaultSqlExecutor<E extends Entity, ID> implements SqlExecutor<E, 
 
                 if (modifiedRows == NO_ROWS_AFFECTED) {
                     LOGGER.error("There is no record with ID {}", id);
-                    throw new SqlExecutorException("There is no record with ID {0}", id);
+                    throw new RecordNotFoundException("There is no record with ID {0}", id);
                 }
 
                 LOGGER.trace("SQL prepared statement update processed, modified rows: {}", modifiedRows);
