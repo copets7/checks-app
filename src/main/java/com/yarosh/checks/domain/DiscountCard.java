@@ -34,7 +34,7 @@ public record DiscountCard(Optional<DiscountCardId> id, double discount) impleme
 
     private void validate() {
         if (discount <= NO_DISCOUNT) {
-            throw new InvalidDiscountCardException("Discount is less than 0.1, DiscountCard: {0}", this);
+            throw new InvalidDiscountCardException("Discount is less than 0.1, {0}", this);
         }
     }
 }
