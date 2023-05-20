@@ -68,6 +68,12 @@ public record Product(
     private void validate() {
         if (StringUtils.isBlank(description)) {
             throw new InvalidProductException("Description is empty, {0}", this);
+        } else if (quantityInCheck.get() <= INVALID_QUANTITY) {
+            throw new InvalidProductException("Quantity can't be equals to or lees than 0, {0}", this);
+        } else if (price <= INVALID_QUANTITY) {
+            throw new InvalidProductException("Price can't be equals to or lees than 0, {0}", this);
+        } else if (discount < INVALID_QUANTITY) {
+            throw new InvalidProductException("Discount can't be lees than 0, {0}", this);
         }
     }
 }
