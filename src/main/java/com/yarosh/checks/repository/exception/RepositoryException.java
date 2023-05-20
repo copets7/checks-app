@@ -1,4 +1,4 @@
-package com.yarosh.checks.repository;
+package com.yarosh.checks.repository.exception;
 
 import java.text.MessageFormat;
 
