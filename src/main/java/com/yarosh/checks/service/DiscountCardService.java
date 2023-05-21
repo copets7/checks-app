@@ -17,8 +17,8 @@ public class DiscountCardService implements CrudService<DiscountCard, DiscountCa
     private final BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter;
 
     @Inject
-    public DiscountCardService(CrudRepository<DiscountCardEntity, Long> discountCardRepository,
-                               BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter) {
+    public DiscountCardService(final CrudRepository<DiscountCardEntity, Long> discountCardRepository,
+                               final BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter) {
         this.discountCardRepository = discountCardRepository;
         this.discountCardConverter = discountCardConverter;
     }
