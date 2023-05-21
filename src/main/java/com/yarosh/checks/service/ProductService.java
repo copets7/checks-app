@@ -15,8 +15,8 @@ public class ProductService implements CrudService<Product, ProductId> {
     private final CrudRepository<ProductEntity, Long> productRepository;
     private final BidirectionalConverter<Product, ProductEntity> productConverter;
 
-    public ProductService(CrudRepository<ProductEntity, Long> productRepository,
-                          BidirectionalConverter<Product, ProductEntity> productConverter) {
+    public ProductService(final CrudRepository<ProductEntity, Long> productRepository,
+                          final BidirectionalConverter<Product, ProductEntity> productConverter) {
         this.productRepository = productRepository;
         this.productConverter = productConverter;
     }
