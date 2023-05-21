@@ -23,8 +23,8 @@ public class ProductController {
     private final CrudService<Product, ProductId> productService;
     private final ApiDtoConverter<ProductDto, ProductView, Product> productApiDtoConverter;
 
-    public ProductController(CrudService<Product, ProductId> productService,
-                             ApiDtoConverter<ProductDto, ProductView, Product> productApiDtoConverter) {
+    public ProductController(final CrudService<Product, ProductId> productService,
+                             final ApiDtoConverter<ProductDto, ProductView, Product> productApiDtoConverter) {
         this.productService = productService;
         this.productApiDtoConverter = productApiDtoConverter;
     }
