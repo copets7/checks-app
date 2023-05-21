@@ -26,7 +26,7 @@ public class DatabaseConnectionPool implements ConnectionPool {
 
     private boolean isClosed;
 
-    public DatabaseConnectionPool(String url, String username, String password, int poolSize) {
+    public DatabaseConnectionPool(final String url, final String username, final String password, final int poolSize) {
         this.url = url;
         this.username = username;
         this.password = password;
