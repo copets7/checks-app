@@ -15,8 +15,8 @@ public class CheckConverter implements BidirectionalConverter<Check, CheckEntity
     private final BidirectionalConverter<Product, ProductEntity> productConverter;
     private final BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter;
 
-    public CheckConverter(BidirectionalConverter<Product, ProductEntity> productConverter,
-                          BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter) {
+    public CheckConverter(final BidirectionalConverter<Product, ProductEntity> productConverter,
+                          final BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter) {
         this.productConverter = productConverter;
         this.discountCardConverter = discountCardConverter;
     }
