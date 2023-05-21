@@ -31,12 +31,12 @@ public class CheckServiceImpl implements CheckService {
     private final String marketName;
     private final String cashierName;
 
-    public CheckServiceImpl(CrudRepository<CheckEntity, Long> checkRepository,
-                            CrudService<Product, ProductId> productService,
-                            CrudService<DiscountCard, DiscountCardId> discountCardService,
-                            BidirectionalConverter<Check, CheckEntity> checkConverter,
-                            String marketName,
-                            String cashierName) {
+    public CheckServiceImpl(final CrudRepository<CheckEntity, Long> checkRepository,
+                            final CrudService<Product, ProductId> productService,
+                            final CrudService<DiscountCard, DiscountCardId> discountCardService,
+                            final BidirectionalConverter<Check, CheckEntity> checkConverter,
+                            final String marketName,
+                            final String cashierName) {
         this.checkRepository = checkRepository;
         this.productService = productService;
         this.discountCardService = discountCardService;
