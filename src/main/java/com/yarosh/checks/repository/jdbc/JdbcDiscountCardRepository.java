@@ -37,7 +37,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
     }
 
     @Inject
-    public JdbcDiscountCardRepository(SqlExecutor<DiscountCardEntity, Long> sqlExecutor) {
+    public JdbcDiscountCardRepository(final SqlExecutor<DiscountCardEntity, Long> sqlExecutor) {
         this.sqlExecutor = sqlExecutor;
     }
 
