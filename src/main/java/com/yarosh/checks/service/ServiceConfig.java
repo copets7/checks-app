@@ -18,16 +18,16 @@ public class ServiceConfig {
 
     @Bean
     public CrudService<Product, ProductId> productService(
-            CrudRepository<ProductEntity, Long> productRepository,
-            BidirectionalConverter<Product, ProductEntity> productConverter
+           final CrudRepository<ProductEntity, Long> productRepository,
+           final BidirectionalConverter<Product, ProductEntity> productConverter
     ) {
         return new ProductService(productRepository, productConverter);
     }
 
     @Bean
     public CrudService<DiscountCard, DiscountCardId> discountCardService(
-            CrudRepository<DiscountCardEntity, Long> discountCardRepository,
-            BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter
+           final CrudRepository<DiscountCardEntity, Long> discountCardRepository,
+           final BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter
     ) {
         return new DiscountCardService(discountCardRepository, discountCardConverter);
     }
