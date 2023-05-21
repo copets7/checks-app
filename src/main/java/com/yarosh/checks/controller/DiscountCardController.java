@@ -23,8 +23,8 @@ public class DiscountCardController {
     private final CrudService<DiscountCard, DiscountCardId> discountCardService;
     private final ApiDtoConverter<DiscountCardDto, DiscountCardView, DiscountCard> discountCardApiDtoConverter;
 
-    public DiscountCardController(CrudService<DiscountCard, DiscountCardId> discountCardService,
-                                  ApiDtoConverter<DiscountCardDto, DiscountCardView, DiscountCard> discountCardApiDtoConverter) {
+    public DiscountCardController(final CrudService<DiscountCard, DiscountCardId> discountCardService,
+                                  final ApiDtoConverter<DiscountCardDto, DiscountCardView, DiscountCard> discountCardApiDtoConverter) {
         this.discountCardService = discountCardService;
         this.discountCardApiDtoConverter = discountCardApiDtoConverter;
     }
