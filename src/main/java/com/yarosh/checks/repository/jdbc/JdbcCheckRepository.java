@@ -54,7 +54,7 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
     }
 
     @Inject
-    public JdbcCheckRepository(SqlExecutor<CheckEntity, Long> sqlExecutor) {
+    public JdbcCheckRepository(final SqlExecutor<CheckEntity, Long> sqlExecutor) {
         this.sqlExecutor = sqlExecutor;
     }
 
