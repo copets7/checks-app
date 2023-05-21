@@ -39,7 +39,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     }
 
     @Inject
-    public JdbcProductRepository(SqlExecutor<ProductEntity, Long> sqlExecutor) {
+    public JdbcProductRepository(final SqlExecutor<ProductEntity, Long> sqlExecutor) {
         this.sqlExecutor = sqlExecutor;
     }
 
