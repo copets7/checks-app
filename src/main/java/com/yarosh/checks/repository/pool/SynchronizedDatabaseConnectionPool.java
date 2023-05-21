@@ -10,7 +10,7 @@ public class SynchronizedDatabaseConnectionPool implements ConnectionPool {
 
     private final ConnectionPool pool;
 
-    public SynchronizedDatabaseConnectionPool(ConnectionPool pool) {
+    public SynchronizedDatabaseConnectionPool(final ConnectionPool pool) {
         this.pool = pool;
     }
 
