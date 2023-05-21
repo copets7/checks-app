@@ -9,10 +9,10 @@ public class ProductEntity implements Entity {
 
     public ProductEntity() { }
 
-    public ProductEntity(Long id,
-                         String description,
-                         double price,
-                         double discount) {
+    public ProductEntity(final Long id,
+                         final String description,
+                         final double price,
+                         final double discount) {
         this.id = id;
         this.description = description;
         this.price = price;
