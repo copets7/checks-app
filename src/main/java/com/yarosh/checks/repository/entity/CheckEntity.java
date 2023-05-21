@@ -18,14 +18,14 @@ public class CheckEntity implements Entity {
     public CheckEntity() {
     }
 
-    public CheckEntity(Long id,
-                       String marketName,
-                       String cashierName,
-                       LocalDate date,
-                       LocalTime time,
-                       List<ProductEntity> products,
-                       DiscountCardEntity discountCard,
-                       double totalPrice) {
+    public CheckEntity(final Long id,
+                       final String marketName,
+                       final String cashierName,
+                       final LocalDate date,
+                       final LocalTime time,
+                       final List<ProductEntity> products,
+                       final DiscountCardEntity discountCard,
+                       final double totalPrice) {
         this.id = id;
         this.marketName = marketName;
         this.cashierName = cashierName;
