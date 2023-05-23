@@ -28,7 +28,7 @@ public class DefaultSqlExecutor<E extends Entity, ID> implements SqlExecutor<E, 
     private final DataSource dataSource;
 
     @Inject
-    public DefaultSqlExecutor(DataSource dataSource) {
+    public DefaultSqlExecutor(final DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
