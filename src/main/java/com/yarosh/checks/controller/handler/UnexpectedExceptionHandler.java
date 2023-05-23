@@ -17,6 +17,6 @@ public class UnexpectedExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<String> handleRuntimeException(final RuntimeException e) {
         LOGGER.debug("RuntimeException was handled, message {}", e.getMessage());
         LOGGER.trace("RuntimeException was handled", e);
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
