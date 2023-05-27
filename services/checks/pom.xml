@@ -1,0 +1,75 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.yarosh.service</groupId>
+        <artifactId>services</artifactId>
+        <version>0.0.1</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.yarosh.service.check</groupId>
+    <artifactId>checks</artifactId>
+    <packaging>jar</packaging>
+
+    <name>checks</name>
+    <description>checks processing application</description>
+
+    <properties>
+        <commons.lang3.version>3.12.0</commons.lang3.version>
+        <org.apache.logging.log4j.version>2.17.2</org.apache.logging.log4j.version>
+        <javax.inject.version>1</javax.inject.version>
+        <org.springframework.boot.version>2.7.11</org.springframework.boot.version>
+        <io.springfox.version>3.0.0</io.springfox.version>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.yarosh.library.repository.api</groupId>
+            <artifactId>repository-api</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.yarosh.library.repository.jdbc</groupId>
+            <artifactId>jdbc</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons.lang3.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${org.springframework.boot.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>${io.springfox.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${io.springfox.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
