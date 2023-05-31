@@ -12,8 +12,8 @@ import java.util.Optional;
 
 public class Check implements Domain {
 
-    private static final int NO_DISCOUNT = 0;
-    private static final int MAX_DISCOUNT = 1;
+    private static final double NO_DISCOUNT = 0;
+    private static final double MAX_DISCOUNT = 100;
     private static final double INVALID_TOTAL_PRICE = 0.0;
 
     private final Optional<CheckId> id;
@@ -23,8 +23,7 @@ public class Check implements Domain {
     private final LocalTime time;
     private final List<Product> products;
     private final Optional<DiscountCard> discountCard;
-
-    private final double totalPrice = countTotalPrice();
+    private final double totalPrice;
 
     public Check(Optional<CheckId> id,
                  String marketName,
@@ -40,6 +39,7 @@ public class Check implements Domain {
         this.time = time;
         this.products = products;
         this.discountCard = discountCard;
+        this.totalPrice = countTotalPrice();
         validate();
     }
 
@@ -122,7 +122,7 @@ public class Check implements Domain {
             return product.discount();
         }
 
-        return (discountCard.isPresent()) ? discountCard.get().discount() : NO_DISCOUNT;
+        return discountCard.map(DiscountCard::discount).orElse(NO_DISCOUNT);
     }
 
     private boolean isTotalPriceValid(Double price) {
@@ -138,14 +138,14 @@ public class Check implements Domain {
             throw new InvalidCheckException("Market name is empty, {0}", this);
         } else if (StringUtils.isBlank(cashierName)) {
             throw new InvalidCheckException("Cashier name is empty, {0}", this);
-        } else if (!LocalDate.now().equals(date)) {
+        } else if (LocalDate.now().isBefore(date)) {
             throw new InvalidCheckException("Date is not correct, {0}", this);
-        } else if (!LocalTime.now().equals(time)) {
+        } else if (LocalTime.now().isBefore(time)) {
             throw new InvalidCheckException("Time is not correct, {0}", this);
         } else if (products.isEmpty()) {
             throw new InvalidCheckException("Product list can't be empty, {0}", this);
-        }else if (totalPrice <= INVALID_TOTAL_PRICE) {
-            throw new InvalidCheckException("Total price can't be equals to or lees than 0, {0}", this);
+        } else if (totalPrice <= INVALID_TOTAL_PRICE) {
+            throw new InvalidCheckException("Total price can't be equals or lees than 0, {0}", this);
         }
     }
 }
