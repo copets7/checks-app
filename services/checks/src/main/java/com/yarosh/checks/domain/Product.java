@@ -15,6 +15,8 @@ public record Product(
         double discount) implements Domain {
 
     private static final int INVALID_QUANTITY = 0;
+    private static final double INVALID_PRICE = 0;
+    private static final double INVALID_DISCOUNT = 0;
 
     public Product(Optional<ProductId> id,
                    String description,
@@ -68,9 +70,9 @@ public record Product(
     private void validate() {
         if (StringUtils.isBlank(description)) {
             throw new InvalidProductException("Description is empty, {0}", this);
-        } else if (price <= INVALID_QUANTITY) {
+        } else if (price <= INVALID_PRICE) {
             throw new InvalidProductException("Price can't be equals to or lees than 0, {0}", this);
-        } else if (discount < INVALID_QUANTITY) {
+        } else if (discount < INVALID_DISCOUNT) {
             throw new InvalidProductException("Discount can't be lees than 0, {0}", this);
         }
     }
