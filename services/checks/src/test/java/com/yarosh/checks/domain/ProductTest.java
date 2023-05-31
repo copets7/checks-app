@@ -6,8 +6,7 @@ import org.junit.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ProductTest {
 
@@ -15,6 +14,20 @@ public class ProductTest {
     public void createProduct() {
         //given
         new Product(Optional.of(new ProductId(1L)), "apples", Optional.empty(), 2.58, 10);
+        //expected nothing
+    }
+
+    @Test(expected = InvalidProductException.class)
+    public void createProductWithInvalidPriceAndThrowInvalidProductException() {
+        //given
+        new Product(Optional.of(new ProductId(1L)), "apples", Optional.empty(), 0, 10);
+        //expected nothing
+    }
+
+    @Test(expected = InvalidProductException.class)
+    public void createProductWithInvalidDiscountAndThrowInvalidProductException() {
+        //given
+        new Product(Optional.of(new ProductId(1L)), "apples", Optional.empty(), 3.56, -1);
         //expected nothing
     }
 
