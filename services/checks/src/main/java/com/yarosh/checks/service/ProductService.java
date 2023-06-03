@@ -6,6 +6,7 @@ import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.ProductEntity;
 import com.yarosh.checks.service.util.BidirectionalConverter;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -15,6 +16,7 @@ public class ProductService implements CrudService<Product, ProductId> {
     private final CrudRepository<ProductEntity, Long> productRepository;
     private final BidirectionalConverter<Product, ProductEntity> productConverter;
 
+    @Inject
     public ProductService(final CrudRepository<ProductEntity, Long> productRepository,
                           final BidirectionalConverter<Product, ProductEntity> productConverter) {
         this.productRepository = productRepository;
