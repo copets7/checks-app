@@ -1,7 +1,12 @@
 package com.yarosh.library.repository.jdbc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.CheckEntity;
+import com.yarosh.library.repository.api.entity.DiscountCardEntity;
+import com.yarosh.library.repository.api.entity.ProductEntity;
 import com.yarosh.library.repository.jdbc.executor.DefaultSqlExecutor;
 import com.yarosh.library.repository.jdbc.executor.SqlExecutor;
 import org.slf4j.Logger;
@@ -44,19 +49,23 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
     private static final String CHECK_DATE_FIELD = "date";
     private static final String CHECK_TIME_FIELD = "time";
     private static final String CHECK_PRODUCTS_FIELD = "products";
-    private static final String CHECK_DISCOUNT_CARD_ID_FIELD = "discount_card_id";
     private static final String CHECK_TOTAL_PRICE_FIELD = "total_price";
+    private static final String DISCOUNT_CARD_ID_FIELD = "d.id";
+    private static final String DISCOUNT_CARD_DISCOUNT_FIELD="d.discount";
 
     private final SqlExecutor<CheckEntity, Long> sqlExecutor;
+    private final ObjectMapper objectMapper;
 
     @Inject
-    public JdbcCheckRepository(DataSource dataSource) {
+    public JdbcCheckRepository(DataSource dataSource, ObjectMapper objectMapper) {
         this.sqlExecutor = new DefaultSqlExecutor<>(dataSource);
+        this.objectMapper = objectMapper;
     }
 
     @Inject
-    public JdbcCheckRepository(final SqlExecutor<CheckEntity, Long> sqlExecutor) {
+    public JdbcCheckRepository(final SqlExecutor<CheckEntity, Long> sqlExecutor, ObjectMapper objectMapper) {
         this.sqlExecutor = sqlExecutor;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -85,24 +94,22 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
     }
 
     private CheckEntity convertToEntity(ResultSet resultSet) {
-//        try {
-//            return new CheckEntity(
-//                    resultSet.getLong(CHECK_ID_FIELD),
-//                    resultSet.getString(CHECK_MARKET_NAME_FIELD),
-//                    resultSet.getString(CHECK_CASHIER_NAME_FIELD),
-//                    resultSet.getDate(CHECK_DATE_FIELD).toLocalDate(),
-//                    resultSet.getTime(CHECK_TIME_FIELD).toLocalTime(),
-//                    resultSet.getString(CHECK_PRODUCTS_FIELD),
-//                    resultSet.getLong(CHECK_DISCOUNT_CARD_ID_FIELD),
-//                    resultSet.getDouble(CHECK_TOTAL_PRICE_FIELD)
-//            );
-//
-//        } catch (SQLException e) {
-//            LOGGER.error("Converting result set to check failed, message: {}", e.getMessage());
-//            LOGGER.debug("Converting result set to check failed", e);
-//            throw new JdbcRepositoryException("Converting result set to check failed, e: {0}", e);
-//        }
-        return null;
+        try {
+            return new CheckEntity(
+                    resultSet.getLong(CHECK_ID_FIELD),
+                    resultSet.getString(CHECK_MARKET_NAME_FIELD),
+                    resultSet.getString(CHECK_CASHIER_NAME_FIELD),
+                    resultSet.getDate(CHECK_DATE_FIELD).toLocalDate(),
+                    resultSet.getTime(CHECK_TIME_FIELD).toLocalTime(),
+                    convertToProductEntities(resultSet.getString(CHECK_PRODUCTS_FIELD)),
+                    new DiscountCardEntity(resultSet.getLong(DISCOUNT_CARD_ID_FIELD), resultSet.getDouble(DISCOUNT_CARD_DISCOUNT_FIELD)),
+                    resultSet.getDouble(CHECK_TOTAL_PRICE_FIELD)
+            );
+        } catch (SQLException e) {
+            LOGGER.error("Converting result set to check failed, message: {}", e.getMessage());
+            LOGGER.debug("Converting result set to check failed", e);
+            throw new JdbcRepositoryException("Converting result set to check failed, e: {0}", e);
+        }
     }
 
     private CheckEntity convertToEntity(ResultSet resultSet, CheckEntity check) {
@@ -131,7 +138,7 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
         params.add(check.getCashierName());
         params.add(check.getDate());
         params.add(check.getTime());
-        params.add(check.getProducts());
+        params.add(convertProductEntitiesToJson(check.getProducts()));
         params.add(check.getDiscountCard().getId());
         params.add(check.getTotalPrice());
 
@@ -141,5 +148,26 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
 
         LOGGER.trace("Converted check to params returning, {}", params);
         return params;
+    }
+
+    private List<ProductEntity> convertToProductEntities(String json) {
+        try {
+            return objectMapper.readValue(json, new TypeReference<>() {
+            });
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Converting json to product entities failed, message: {}", e.getMessage());
+            LOGGER.debug("Converting json to product entities failed", e);
+            throw new JdbcRepositoryException("Converting json to product entities failed, e: {0}", e);
+        }
+    }
+
+    private String convertProductEntitiesToJson(List<ProductEntity> products) {
+        try{
+            return objectMapper.writeValueAsString(products);
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Converting product entities to json failed, message: {}", e.getMessage());
+            LOGGER.debug("Converting product entities to json failed", e);
+            throw new JdbcRepositoryException("Converting product entities to json failed, e: {0}", e);
+        }
     }
 }
