@@ -43,7 +43,7 @@ public class CheckConverter implements BidirectionalConverter<Check, CheckEntity
                 check.getDate(),
                 check.getTime(),
                 check.getProducts().stream().map(productConverter::convertToEntity).toList(),
-                check.getDiscountCard().map(discountCardConverter::convertToEntity).get(),
+                check.getDiscountCard().map(discountCardConverter::convertToEntity).orElseThrow(),
                 check.getTotalPrice()
         );
     }
