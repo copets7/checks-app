@@ -12,6 +12,7 @@ import com.yarosh.checks.service.CrudService;
 import com.yarosh.checks.service.ProductNotFoundException;
 import com.yarosh.checks.service.util.BidirectionalConverter;
 
+import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -31,6 +32,7 @@ public class CheckServiceImpl implements CheckService {
     private final String marketName;
     private final String cashierName;
 
+    @Inject
     public CheckServiceImpl(final CrudRepository<CheckEntity, Long> checkRepository,
                             final CrudService<Product, ProductId> productService,
                             final CrudService<DiscountCard, DiscountCardId> discountCardService,
