@@ -50,8 +50,8 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
     private static final String CHECK_TIME_FIELD = "time";
     private static final String CHECK_PRODUCTS_FIELD = "products";
     private static final String CHECK_TOTAL_PRICE_FIELD = "total_price";
-    private static final String DISCOUNT_CARD_ID_FIELD = "d.id";
-    private static final String DISCOUNT_CARD_DISCOUNT_FIELD="d.discount";
+    private static final String DISCOUNT_CARDS_ID_FIELD = "id";
+    private static final String DISCOUNT_CARDS_DISCOUNT_FIELD = "discount_card_id";
 
     private final SqlExecutor<CheckEntity, Long> sqlExecutor;
     private final ObjectMapper objectMapper;
@@ -102,7 +102,7 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
                     resultSet.getDate(CHECK_DATE_FIELD).toLocalDate(),
                     resultSet.getTime(CHECK_TIME_FIELD).toLocalTime(),
                     convertToProductEntities(resultSet.getString(CHECK_PRODUCTS_FIELD)),
-                    new DiscountCardEntity(resultSet.getLong(DISCOUNT_CARD_ID_FIELD), resultSet.getDouble(DISCOUNT_CARD_DISCOUNT_FIELD)),
+                    new DiscountCardEntity(resultSet.getLong(DISCOUNT_CARDS_ID_FIELD), resultSet.getDouble(DISCOUNT_CARDS_DISCOUNT_FIELD)),
                     resultSet.getDouble(CHECK_TOTAL_PRICE_FIELD)
             );
         } catch (SQLException e) {
