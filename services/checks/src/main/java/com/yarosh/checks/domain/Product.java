@@ -71,9 +71,9 @@ public record Product(
         if (StringUtils.isBlank(description)) {
             throw new InvalidProductException("Description is empty, {0}", this);
         } else if (price <= INVALID_PRICE) {
-            throw new InvalidProductException("Price can't be equals to or lees than 0, {0}", this);
+            throw new InvalidProductException("Price can not be equals to or lees than 0, {0}", this);
         } else if (discount < INVALID_DISCOUNT) {
-            throw new InvalidProductException("Discount can't be lees than 0, {0}", this);
+            throw new InvalidProductException("Discount can not be lees than 0, {0}", this);
         }
     }
 }
