@@ -17,20 +17,6 @@ public class ProductTest {
         //expected nothing
     }
 
-    @Test(expected = InvalidProductException.class)
-    public void createProductWithInvalidPriceAndThrowInvalidProductException() {
-        //given
-        new Product(Optional.of(new ProductId(1L)), "apples", Optional.empty(), 0, 10);
-        //expected nothing
-    }
-
-    @Test(expected = InvalidProductException.class)
-    public void createProductWithInvalidDiscountAndThrowInvalidProductException() {
-        //given
-        new Product(Optional.of(new ProductId(1L)), "apples", Optional.empty(), 3.56, -1);
-        //expected nothing
-    }
-
     @Test
     public void createProductAndThrowInvalidProductException() {
         InvalidProductException e = assertThrows(InvalidProductException.class, () -> {
@@ -42,4 +28,25 @@ public class ProductTest {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
+    @Test
+    public void createProductWithInvalidPriceAndThrowInvalidProductException() {
+        InvalidProductException e = assertThrows(InvalidProductException.class, () -> {
+            new Product(Optional.of(new ProductId(1L)), "Milk", Optional.empty(), 0, 10);
+        });
+
+        final String expectedMessage = "Price can not be equals to or lees than 0";
+        final String actualMessage = e.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void createProductWithInvalidDiscountAndThrowInvalidProductException() {
+        InvalidProductException e = assertThrows(InvalidProductException.class, () -> {
+            new Product(Optional.of(new ProductId(1L)), "Milk", Optional.empty(), 2.58, -1);
+        });
+
+        final String expectedMessage = "Discount can not be lees than 0";
+        final String actualMessage = e.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
 }
