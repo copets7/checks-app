@@ -114,7 +114,7 @@ public class Check implements Domain {
                 .map(product -> (product.price() * (MAX_DISCOUNT - countDiscount(product))) * product.getValidatedQuantity())
                 .reduce(Double::sum)
                 .filter(this::isTotalPriceValid)
-                .orElseThrow();
+                .orElseThrow(() -> new InvalidCheckException("Total price in check is less than 0.1 or null"));
     }
 
     private double countDiscount(Product product) {
@@ -145,7 +145,7 @@ public class Check implements Domain {
         } else if (products.isEmpty()) {
             throw new InvalidCheckException("Product list can not be empty, {0}", this);
         } else if (totalPrice <= INVALID_TOTAL_PRICE) {
-            throw new InvalidCheckException("Total price can't be equals or lees than 0, {0}", this);
+            throw new InvalidCheckException("Total price can not be equals or lees than 0, {0}", this);
         }
     }
 }
