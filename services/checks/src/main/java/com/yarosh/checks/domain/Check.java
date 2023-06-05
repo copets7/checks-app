@@ -143,7 +143,7 @@ public class Check implements Domain {
         } else if (LocalTime.now().isBefore(time)) {
             throw new InvalidCheckException("Time is not correct, {0}", this);
         } else if (products.isEmpty()) {
-            throw new InvalidCheckException("Product list can't be empty, {0}", this);
+            throw new InvalidCheckException("Product list can not be empty, {0}", this);
         } else if (totalPrice <= INVALID_TOTAL_PRICE) {
             throw new InvalidCheckException("Total price can't be equals or lees than 0, {0}", this);
         }
