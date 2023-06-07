@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -15,13 +15,14 @@ public class Check implements Domain {
     private static final double NO_DISCOUNT = 0;
     private static final double MAX_DISCOUNT = 100;
     private static final double INVALID_TOTAL_PRICE = 0.0;
+    private static final int INVALID_QUANTITY = 0;
 
     private final Optional<CheckId> id;
     private final String marketName;
     private final String cashierName;
     private final LocalDate date;
     private final LocalTime time;
-    private final List<Product> products;
+    private final Map<Product, Integer> products;
     private final Optional<DiscountCard> discountCard;
     private final double totalPrice;
 
@@ -30,7 +31,7 @@ public class Check implements Domain {
                  String cashierName,
                  LocalDate date,
                  LocalTime time,
-                 List<Product> products,
+                 Map<Product, Integer> products,
                  Optional<DiscountCard> discountCard) {
         this.id = id;
         this.marketName = marketName;
@@ -63,7 +64,7 @@ public class Check implements Domain {
         return time;
     }
 
-    public List<Product> getProducts() {
+    public Map<Product, Integer> getProducts() {
         return products;
     }
 
@@ -110,27 +111,24 @@ public class Check implements Domain {
     }
 
     private double countTotalPrice() {
-        return products.stream()
-                .map(product -> (product.price() * (MAX_DISCOUNT - countDiscount(product))) * product.getValidatedQuantity())
-                .reduce(Double::sum)
-                .filter(this::isTotalPriceValid)
-                .orElseThrow(() -> new InvalidCheckException("Total price in check is less than 0.1 or null"));
+        return products.keySet().stream()
+                .map(product -> (product.price() * (MAX_DISCOUNT - countDiscount(product))) * getValidatedQuantity(products.get(product)))
+                .mapToDouble(Double::doubleValue)
+                .sum();
     }
 
     private double countDiscount(Product product) {
         if (product.discount() > NO_DISCOUNT) {
             return product.discount();
         }
-
         return discountCard.map(DiscountCard::discount).orElse(NO_DISCOUNT);
     }
 
-    private boolean isTotalPriceValid(Double price) {
-        if (price <= INVALID_TOTAL_PRICE) {
-            throw new InvalidCheckException(price);
+    private Integer getValidatedQuantity(Integer quantity) {
+        if (quantity <= INVALID_QUANTITY) {
+            throw new InvalidCheckException("Quantity of product is equals or less than {0}, quantity: {1}", INVALID_QUANTITY, quantity);
         }
-
-        return true;
+        return quantity;
     }
 
     private void validate() {
@@ -145,7 +143,7 @@ public class Check implements Domain {
         } else if (products.isEmpty()) {
             throw new InvalidCheckException("Product list can not be empty, {0}", this);
         } else if (totalPrice <= INVALID_TOTAL_PRICE) {
-            throw new InvalidCheckException("Total price can not be equals or lees than 0, {0}", this);
+            throw InvalidCheckException.invalidPrice(INVALID_TOTAL_PRICE, totalPrice);
         }
     }
 }
