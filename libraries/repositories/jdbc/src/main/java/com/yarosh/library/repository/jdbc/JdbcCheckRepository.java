@@ -162,7 +162,7 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
         }
     }
 
-    private String convertProductEntitiesToJson(List<ProductEntity> products) {
+    private String convertProductEntitiesToJson(Map<ProductEntity, Integer> products) {
         try {
             return objectMapper.writeValueAsString(products);
         } catch (JsonProcessingException e) {
