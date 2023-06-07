@@ -8,7 +8,9 @@ import com.yarosh.library.repository.api.entity.CheckEntity;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
 import com.yarosh.library.repository.api.entity.ProductEntity;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CheckConverter implements BidirectionalConverter<Check, CheckEntity> {
 
@@ -29,7 +31,7 @@ public class CheckConverter implements BidirectionalConverter<Check, CheckEntity
                 entity.getCashierName(),
                 entity.getDate(),
                 entity.getTime(),
-                entity.getProducts().stream().map(productConverter::convertToDomain).toList(),
+                convertToProducts(entity.getProducts()),
                 Optional.ofNullable(discountCardConverter.convertToDomain(entity.getDiscountCard()))
         );
     }
@@ -42,9 +44,21 @@ public class CheckConverter implements BidirectionalConverter<Check, CheckEntity
                 check.getCashierName(),
                 check.getDate(),
                 check.getTime(),
-                check.getProducts().stream().map(productConverter::convertToEntity).toList(),
+                convertToProductEntities(check.getProducts()),
                 check.getDiscountCard().map(discountCardConverter::convertToEntity).orElseThrow(),
                 check.getTotalPrice()
         );
+    }
+
+    private Map<Product, Integer> convertToProducts(Map<ProductEntity, Integer> products) {
+        return products.entrySet()
+                .stream()
+                .collect(Collectors.toMap(entry -> productConverter.convertToDomain(entry.getKey()), Map.Entry::getValue));
+    }
+
+    private Map<ProductEntity, Integer> convertToProductEntities(Map<Product, Integer> products) {
+        return products.entrySet()
+                .stream()
+                .collect(Collectors.toMap(entry -> productConverter.convertToEntity(entry.getKey()), Map.Entry::getValue));
     }
 }
