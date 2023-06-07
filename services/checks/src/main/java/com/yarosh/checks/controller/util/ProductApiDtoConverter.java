@@ -24,7 +24,6 @@ public class ProductApiDtoConverter implements ApiDtoConverter<ProductDto, Produ
         return new Product(
                 Optional.ofNullable(dto.id()).map(ProductId::new),
                 dto.description(),
-                Optional.empty(),
                 dto.price(),
                 dto.discount()
         );
