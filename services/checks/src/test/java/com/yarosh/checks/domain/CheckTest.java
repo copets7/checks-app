@@ -24,8 +24,8 @@ public class CheckTest {
 
     private final List<Product> emptyProductList = new ArrayList<>();
 
-    private final LocalDate localDate = LocalDate.now().plusDays(1L);
-    private final LocalTime localTime = LocalTime.now().plusHours(1L);
+    private final LocalDate invalidLocalDate = LocalDate.now().plusDays(1L);
+    private final LocalTime invalidLocalTime = LocalTime.now().plusHours(1L);
 
     @Test
     public void createCheck() {
@@ -87,7 +87,7 @@ public class CheckTest {
                     Optional.of(new CheckId(1L)),
                     "Market",
                     "Cashier",
-                    localDate,
+                    invalidLocalDate,
                     LocalTime.now(),
                     products,
                     Optional.of(new DiscountCard(Optional.of(new DiscountCardId(1L)), 10))
@@ -107,7 +107,7 @@ public class CheckTest {
                     "Market",
                     "Cashier",
                     LocalDate.now(),
-                    localTime,
+                    invalidLocalTime,
                     products,
                     Optional.of(new DiscountCard(Optional.of(new DiscountCardId(1L)), 10))
             );
@@ -126,7 +126,7 @@ public class CheckTest {
                     "Market",
                     "Cashier",
                     LocalDate.now(),
-                    localTime,
+                    LocalTime.now(),
                     emptyProductList,
                     Optional.of(new DiscountCard(Optional.of(new DiscountCardId(1L)), 10))
             );
