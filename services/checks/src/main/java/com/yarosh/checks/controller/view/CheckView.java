@@ -2,7 +2,6 @@ package com.yarosh.checks.controller.view;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yarosh.checks.domain.DiscountCard;
-import com.yarosh.checks.domain.Product;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,7 +12,7 @@ public record CheckView(Long id,
                         String cashierName,
                         LocalDate date,
                         LocalTime time,
-                        List<Product> products,
+                        List<ProductView> products,
                         DiscountCard discountCard) implements View {
 
     @Override
@@ -48,7 +47,7 @@ public record CheckView(Long id,
 
     @Override
     @JsonProperty("products")
-    public List<Product> products() {
+    public List<ProductView> products() {
         return products;
     }
 
