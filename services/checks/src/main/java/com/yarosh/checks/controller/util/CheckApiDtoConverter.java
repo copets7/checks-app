@@ -10,9 +10,6 @@ import com.yarosh.checks.domain.Check;
 import com.yarosh.checks.domain.DiscountCard;
 import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.CheckId;
-import com.yarosh.checks.service.util.BidirectionalConverter;
-import com.yarosh.library.repository.api.entity.DiscountCardEntity;
-import com.yarosh.library.repository.api.entity.ProductEntity;
 
 import java.util.Map;
 import java.util.Optional;
@@ -20,13 +17,13 @@ import java.util.stream.Collectors;
 
 public class CheckApiDtoConverter implements ApiDtoConverter<CheckDto, CheckView, Check> {
 
-    private final BidirectionalConverter<Product, ProductEntity, ProductView, ProductDto> productConverter;
-    private final BidirectionalConverter<DiscountCard, DiscountCardEntity, DiscountCardView, DiscountCardDto> discountCardConverter;
+    private final ApiDtoConverter<ProductDto, ProductView, Product> productApiDtoConverter;
+    private final ApiDtoConverter<DiscountCardDto, DiscountCardView, DiscountCard> discountCardApiDtoConverter;
 
-    public CheckApiDtoConverter(final BidirectionalConverter<Product, ProductEntity, ProductView, ProductDto> productConverter,
-                                final BidirectionalConverter<DiscountCard, DiscountCardEntity, DiscountCardView, DiscountCardDto> discountCardConverter) {
-        this.productConverter = productConverter;
-        this.discountCardConverter = discountCardConverter;
+    public CheckApiDtoConverter(ApiDtoConverter<ProductDto, ProductView, Product> productApiDtoConverter,
+                                ApiDtoConverter<DiscountCardDto, DiscountCardView, DiscountCard> discountCardApiDtoConverter) {
+        this.productApiDtoConverter = productApiDtoConverter;
+        this.discountCardApiDtoConverter = discountCardApiDtoConverter;
     }
 
     @Override
@@ -38,7 +35,7 @@ public class CheckApiDtoConverter implements ApiDtoConverter<CheckDto, CheckView
                 domain.getDate(),
                 domain.getTime(),
                 convertToProductsView(domain.getProducts()),
-                domain.getDiscountCard().map(discountCardConverter::convertToView).orElseThrow());
+                domain.getDiscountCard().map(discountCardApiDtoConverter::convertDomainToView).orElseThrow());
     }
 
     @Override
@@ -50,18 +47,18 @@ public class CheckApiDtoConverter implements ApiDtoConverter<CheckDto, CheckView
                 dto.date(),
                 dto.time(),
                 convertDtoToProduct(dto.products()),
-                dto.discountCard().map(discountCardConverter::convertDtoToDomain));
+                dto.discountCard().map(discountCardApiDtoConverter::convertDtoToDomain));
     }
 
     private Map<ProductView, Integer> convertToProductsView(Map<Product, Integer> products) {
         return products.entrySet()
                 .stream()
-                .collect(Collectors.toMap(entry -> productConverter.convertToView(entry.getKey()), Map.Entry::getValue));
+                .collect(Collectors.toMap(entry -> productApiDtoConverter.convertDomainToView(entry.getKey()), Map.Entry::getValue));
     }
 
     private Map<Product, Integer> convertDtoToProduct(Map<ProductDto, Integer> products) {
         return products.entrySet()
                 .stream()
-                .collect(Collectors.toMap(entry -> productConverter.convertDtoToDomain(entry.getKey()), Map.Entry::getValue));
+                .collect(Collectors.toMap(entry -> productApiDtoConverter.convertDtoToDomain(entry.getKey()), Map.Entry::getValue));
     }
 }
