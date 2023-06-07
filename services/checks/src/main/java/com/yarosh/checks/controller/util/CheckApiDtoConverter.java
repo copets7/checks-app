@@ -1,6 +1,8 @@
 package com.yarosh.checks.controller.util;
 
 import com.yarosh.checks.controller.dto.CheckDto;
+import com.yarosh.checks.controller.dto.DiscountCardDto;
+import com.yarosh.checks.controller.dto.ProductDto;
 import com.yarosh.checks.controller.view.CheckView;
 import com.yarosh.checks.controller.view.DiscountCardView;
 import com.yarosh.checks.controller.view.ProductView;
@@ -18,11 +20,11 @@ import java.util.stream.Collectors;
 
 public class CheckApiDtoConverter implements ApiDtoConverter<CheckDto, CheckView, Check> {
 
-    private final BidirectionalConverter<Product, ProductEntity, ProductView> productConverter;
-    private final BidirectionalConverter<DiscountCard, DiscountCardEntity, DiscountCardView> discountCardConverter;
+    private final BidirectionalConverter<Product, ProductEntity, ProductView, ProductDto> productConverter;
+    private final BidirectionalConverter<DiscountCard, DiscountCardEntity, DiscountCardView, DiscountCardDto> discountCardConverter;
 
-    public CheckApiDtoConverter(final BidirectionalConverter<Product, ProductEntity, ProductView> productConverter,
-                                final BidirectionalConverter<DiscountCard, DiscountCardEntity, DiscountCardView> discountCardConverter) {
+    public CheckApiDtoConverter(final BidirectionalConverter<Product, ProductEntity, ProductView, ProductDto> productConverter,
+                                final BidirectionalConverter<DiscountCard, DiscountCardEntity, DiscountCardView, DiscountCardDto> discountCardConverter) {
         this.productConverter = productConverter;
         this.discountCardConverter = discountCardConverter;
     }
@@ -47,13 +49,19 @@ public class CheckApiDtoConverter implements ApiDtoConverter<CheckDto, CheckView
                 dto.cashierName(),
                 dto.date(),
                 dto.time(),
-                dto.products(),
-                dto.discountCard());
+                convertDtoToProduct(dto.products()),
+                dto.discountCard().map(discountCardConverter::convertDtoToDomain));
     }
 
     private Map<ProductView, Integer> convertToProductsView(Map<Product, Integer> products) {
         return products.entrySet()
                 .stream()
                 .collect(Collectors.toMap(entry -> productConverter.convertToView(entry.getKey()), Map.Entry::getValue));
+    }
+
+    private Map<Product, Integer> convertDtoToProduct(Map<ProductDto, Integer> products) {
+        return products.entrySet()
+                .stream()
+                .collect(Collectors.toMap(entry -> productConverter.convertDtoToDomain(entry.getKey()), Map.Entry::getValue));
     }
 }
