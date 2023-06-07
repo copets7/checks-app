@@ -3,6 +3,7 @@ package com.yarosh.library.repository.api.entity;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 public class CheckEntity implements Entity {
 
@@ -11,7 +12,7 @@ public class CheckEntity implements Entity {
     private String cashierName;
     private LocalDate date;
     private LocalTime time;
-    private List<ProductEntity> products;
+    private Map<ProductEntity, Integer> products;
     private DiscountCardEntity discountCard;
     private double totalPrice;
 
@@ -23,7 +24,7 @@ public class CheckEntity implements Entity {
                        final String cashierName,
                        final LocalDate date,
                        final LocalTime time,
-                       final List<ProductEntity> products,
+                       final Map<ProductEntity, Integer> products,
                        final DiscountCardEntity discountCard,
                        final double totalPrice) {
         this.id = id;
@@ -56,7 +57,7 @@ public class CheckEntity implements Entity {
         return time;
     }
 
-    public List<ProductEntity> getProducts() {
+    public Map<ProductEntity, Integer> getProducts() {
         return products;
     }
 
