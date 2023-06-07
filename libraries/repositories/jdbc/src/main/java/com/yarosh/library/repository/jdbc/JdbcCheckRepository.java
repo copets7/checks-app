@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.yarosh.library.repository.jdbc.executor.SqlExecutor.GENERATED_KEY_COLUMN_NUMBER;
@@ -150,7 +151,7 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
         return params;
     }
 
-    private List<ProductEntity> convertToProductEntities(String json) {
+    private Map<ProductEntity, Integer> convertToProductEntities(String json) {
         try {
             return objectMapper.readValue(json, new TypeReference<>() {
             });
@@ -162,7 +163,7 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
     }
 
     private String convertProductEntitiesToJson(List<ProductEntity> products) {
-        try{
+        try {
             return objectMapper.writeValueAsString(products);
         } catch (JsonProcessingException e) {
             LOGGER.error("Converting product entities to json failed, message: {}", e.getMessage());
