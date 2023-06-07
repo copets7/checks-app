@@ -37,7 +37,7 @@ public class ControllerConfig implements WebMvcConfigurer {
 
     @Bean
     public ApiDtoConverter<CheckDto, CheckView, Check> checkApiDtoConverter() {
-        return new CheckApiDtoConverter();
+        return new CheckApiDtoConverter(productApiDtoConverter(), discountCardApiDtoConverter());
     }
 
     @Bean
