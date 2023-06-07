@@ -5,14 +5,14 @@ import com.yarosh.checks.domain.DiscountCard;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
+import java.util.Map;
 
 public record CheckView(Long id,
                         String marketName,
                         String cashierName,
                         LocalDate date,
                         LocalTime time,
-                        List<ProductView> products,
+                        Map<ProductView, Integer> products,
                         DiscountCard discountCard) implements View {
 
     @Override
@@ -47,7 +47,7 @@ public record CheckView(Long id,
 
     @Override
     @JsonProperty("products")
-    public List<ProductView> products() {
+    public Map<ProductView, Integer> products() {
         return products;
     }
 
