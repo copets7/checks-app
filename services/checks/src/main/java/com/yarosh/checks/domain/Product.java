@@ -10,38 +10,21 @@ import java.util.Optional;
 public record Product(
         Optional<ProductId> id,
         String description,
-        Optional<Integer> quantityInCheck,
         double price,
         double discount) implements Domain {
 
-    private static final int INVALID_QUANTITY = 0;
     private static final double INVALID_PRICE = 0;
     private static final double INVALID_DISCOUNT = 0;
 
     public Product(Optional<ProductId> id,
                    String description,
-                   Optional<Integer> quantityInCheck,
                    double price,
                    double discount) {
         this.id = id;
         this.description = description;
-        this.quantityInCheck = quantityInCheck;
         this.price = price;
         this.discount = discount;
         validate();
-    }
-
-    public int getValidatedQuantity() {
-        return quantityInCheck().filter(quantity -> quantity > INVALID_QUANTITY)
-                .orElseThrow(() -> InvalidProductException.quantityCase(id.orElseThrow().id(), quantityInCheck().orElseThrow()));
-    }
-
-    public Product performForCheck(int quantityInCheck) {
-        if (quantityInCheck <= INVALID_QUANTITY) {
-            throw InvalidProductException.quantityCase(id.orElseThrow().id(), quantityInCheck().orElseThrow());
-        }
-
-        return new Product(id, description, Optional.of(quantityInCheck), price, discount);
     }
 
     @Override
@@ -52,8 +35,7 @@ public record Product(
         return price == product.price &&
                 Double.compare(product.discount, discount) == 0 &&
                 Objects.equals(id, product.id) &&
-                Objects.equals(description, product.description) &&
-                Objects.equals(quantityInCheck, product.quantityInCheck);
+                Objects.equals(description, product.description);
     }
 
     @Override
@@ -61,7 +43,6 @@ public record Product(
         return "Product{" +
                 "id=" + id +
                 ", description='" + description + '\'' +
-                ", quantityInCheck=" + quantityInCheck +
                 ", price=" + price +
                 ", discount=" + discount +
                 '}';
