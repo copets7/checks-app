@@ -2,9 +2,9 @@ package com.yarosh.checks.service;
 
 import com.yarosh.checks.domain.DiscountCard;
 import com.yarosh.checks.domain.id.DiscountCardId;
+import com.yarosh.checks.service.util.BidirectionalConverter;
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
-import com.yarosh.checks.service.util.BidirectionalConverter;
 
 import javax.inject.Inject;
 import java.util.List;
