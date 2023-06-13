@@ -13,14 +13,14 @@ public class ProductTest {
     @Test
     public void createProduct() {
         //given
-        new Product(Optional.of(new ProductId(1L)), "apples", Optional.empty(), 2.58, 10);
+        new Product(Optional.of(new ProductId(1L)), "apples", 2.58, 10);
         //expected nothing
     }
 
     @Test
     public void createProductAndThrowInvalidProductException() {
         InvalidProductException e = assertThrows(InvalidProductException.class, () -> {
-            new Product(Optional.of(new ProductId(1L)), "", Optional.empty(), 2.58, 10);
+            new Product(Optional.of(new ProductId(1L)), "", 2.58, 10);
         });
 
         final String expectedMessage = "Description is empty";
@@ -31,7 +31,7 @@ public class ProductTest {
     @Test
     public void createProductWithInvalidPriceAndThrowInvalidProductException() {
         InvalidProductException e = assertThrows(InvalidProductException.class, () -> {
-            new Product(Optional.of(new ProductId(1L)), "Milk", Optional.empty(), 0, 10);
+            new Product(Optional.of(new ProductId(1L)), "Milk", 0, 10);
         });
 
         final String expectedMessage = "Price can not be equals to or lees than 0";
@@ -42,7 +42,7 @@ public class ProductTest {
     @Test
     public void createProductWithInvalidDiscountAndThrowInvalidProductException() {
         InvalidProductException e = assertThrows(InvalidProductException.class, () -> {
-            new Product(Optional.of(new ProductId(1L)), "Milk", Optional.empty(), 2.58, -1);
+            new Product(Optional.of(new ProductId(1L)), "Milk", 2.58, -1);
         });
 
         final String expectedMessage = "Discount can not be lees than 0";
