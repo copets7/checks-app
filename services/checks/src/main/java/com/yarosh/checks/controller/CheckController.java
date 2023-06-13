@@ -32,7 +32,6 @@ public class CheckController {
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     public ResponseEntity<CheckView> add(final @RequestBody CheckDto checkDto) {
         LOGGER.info("Calling add check started, parameter: {}", checkDto);
-        LOGGER.debug("Check parameter: {}", checkDto);
 
         final Check check = checkApiDtoConverter.convertDtoToDomain(checkDto);
         final Check created = checkService.add(check);
@@ -71,7 +70,6 @@ public class CheckController {
     @RequestMapping(path = "/update", method = RequestMethod.PUT)
     public ResponseEntity<CheckView> update(final @RequestBody CheckDto checkDto) {
         LOGGER.info("Calling update check started for product with id: {}", checkDto.id());
-        LOGGER.debug("Check parameter: {}", checkDto);
 
         final Check check = checkApiDtoConverter.convertDtoToDomain(checkDto);
         final Check updated = checkService.update(check);
