@@ -6,11 +6,11 @@ import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.CheckId;
 import com.yarosh.checks.domain.id.DiscountCardId;
 import com.yarosh.checks.domain.id.ProductId;
-import com.yarosh.library.repository.api.CrudRepository;
-import com.yarosh.library.repository.api.entity.CheckEntity;
 import com.yarosh.checks.service.CrudService;
 import com.yarosh.checks.service.ProductNotFoundException;
 import com.yarosh.checks.service.util.BidirectionalConverter;
+import com.yarosh.library.repository.api.CrudRepository;
+import com.yarosh.library.repository.api.entity.CheckEntity;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class CheckServiceImpl implements CheckService {
 
@@ -93,16 +94,13 @@ public class CheckServiceImpl implements CheckService {
         return checkConverter.convertToDomain(upsertedCheck);
     }
 
-    private List<Product> performProducts(Map<ProductId, Integer> productsQuantity) {
+    private Map<Product, Integer> performProducts(Map<ProductId, Integer> productsQuantity) {
         return productsQuantity.entrySet()
                 .stream()
-                .map(entry -> performProduct(entry.getKey(), entry.getValue()))
-                .toList();
+                .collect(Collectors.toMap(entry -> performProduct(entry.getKey()), Map.Entry::getValue));
     }
 
-    private Product performProduct(ProductId id, int quantity) {
-        return productService.get(id)
-                .map(product -> product.performForCheck(quantity))
-                .orElseThrow(() -> new ProductNotFoundException(id.id()));
+    private Product performProduct(ProductId id) {
+        return productService.get(id).orElseThrow(() -> new ProductNotFoundException(id.id()));
     }
 }
