@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Map;
-import java.util.Optional;
 
 public record CheckDto(Long id,
                        String marketName,
@@ -14,7 +13,7 @@ public record CheckDto(Long id,
                        LocalDate date,
                        LocalTime time,
                        Map<ProductDto, Integer> products,
-                       Optional<DiscountCardDto> discountCard) implements Dto {
+                       DiscountCardDto discountCard) implements Dto {
 
     @JsonCreator
     public CheckDto(final @JsonProperty("id") Long id,
@@ -23,7 +22,7 @@ public record CheckDto(Long id,
                     final @JsonProperty("date") LocalDate date,
                     final @JsonProperty("time") LocalTime time,
                     final @JsonProperty("products") Map<ProductDto, Integer> products,
-                    final @JsonProperty("discount_card_id") Optional<DiscountCardDto> discountCard) {
+                    final @JsonProperty("discount_card_id") DiscountCardDto discountCard) {
         this.id = id;
         this.marketName = marketName;
         this.cashierName = cashierName;
