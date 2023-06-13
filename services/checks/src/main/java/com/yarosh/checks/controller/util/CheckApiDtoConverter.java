@@ -27,15 +27,16 @@ public class CheckApiDtoConverter implements ApiDtoConverter<CheckDto, CheckView
     }
 
     @Override
-    public CheckView convertDomainToView(Check domain) {
+    public CheckView convertDomainToView(Check check) {
         return new CheckView(
-                domain.getId().orElseThrow().id(),
-                domain.getMarketName(),
-                domain.getCashierName(),
-                domain.getDate(),
-                domain.getTime(),
-                convertToProductsView(domain.getProducts()),
-                domain.getDiscountCard().map(discountCardApiDtoConverter::convertDomainToView).orElseThrow());
+                check.getId().orElseThrow().id(),
+                check.getMarketName(),
+                check.getCashierName(),
+                check.getDate(),
+                check.getTime(),
+                convertToProductsView(check.getProducts()),
+                check.getDiscountCard().map(discountCardApiDtoConverter::convertDomainToView).orElseThrow()
+        );
     }
 
     @Override
@@ -47,7 +48,8 @@ public class CheckApiDtoConverter implements ApiDtoConverter<CheckDto, CheckView
                 dto.date(),
                 dto.time(),
                 convertDtoToProduct(dto.products()),
-                dto.discountCard().map(discountCardApiDtoConverter::convertDtoToDomain));
+                Optional.ofNullable(discountCardApiDtoConverter.convertDtoToDomain(dto.discountCard()))
+        );
     }
 
     private Map<ProductView, Integer> convertToProductsView(Map<Product, Integer> products) {
