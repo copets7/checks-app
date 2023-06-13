@@ -8,8 +8,7 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertThrows;
@@ -17,12 +16,12 @@ import static org.junit.Assert.assertTrue;
 
 public class CheckTest {
 
-    private final List<Product> products = List.of(
-            new Product(Optional.of(new ProductId(1L)), "apples", Optional.of(2), 2.58, 10),
-            new Product(Optional.of(new ProductId(2L)), "milk", Optional.of(1), 3.58, 15)
+    private final Map<Product, Integer> products = Map.of(
+            new Product(Optional.of(new ProductId(1L)), "apples", 2.58, 10), 2,
+            new Product(Optional.of(new ProductId(2L)), "milk", 3.58, 15), 3
     );
 
-    private final List<Product> emptyProductList = new ArrayList<>();
+    private final Map<Product, Integer> emptyProductList = Map.of();
 
     private final LocalDate invalidLocalDate = LocalDate.now().plusDays(1L);
     private final LocalTime invalidLocalTime = LocalTime.now().plusHours(1L);
