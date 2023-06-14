@@ -6,7 +6,6 @@ import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.CheckId;
 import com.yarosh.checks.domain.id.DiscountCardId;
 import com.yarosh.checks.domain.id.ProductId;
-import com.yarosh.checks.service.check.CheckServiceImpl;
 import com.yarosh.checks.service.util.BidirectionalConverter;
 import com.yarosh.checks.service.util.CheckConverter;
 import com.yarosh.checks.service.util.DiscountCardConverter;
@@ -38,7 +37,7 @@ public class ServiceConfig {
             @Value("${app.cashier.name}")
             final String cashierName
     ) {
-        return new CheckServiceImpl(checkRepository, productService, discountCardService, checkConverter, marketName, cashierName);
+        return new CheckService(checkRepository, productService, discountCardService, checkConverter, marketName, cashierName);
     }
 
     @Bean
