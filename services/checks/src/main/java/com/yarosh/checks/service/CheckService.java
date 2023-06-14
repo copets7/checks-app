@@ -1,4 +1,4 @@
-package com.yarosh.checks.service.check;
+package com.yarosh.checks.service;
 
 import com.yarosh.checks.domain.Check;
 import com.yarosh.checks.domain.DiscountCard;
@@ -6,22 +6,18 @@ import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.CheckId;
 import com.yarosh.checks.domain.id.DiscountCardId;
 import com.yarosh.checks.domain.id.ProductId;
-import com.yarosh.checks.service.CrudService;
-import com.yarosh.checks.service.ProductNotFoundException;
 import com.yarosh.checks.service.util.BidirectionalConverter;
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.CheckEntity;
 
 import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class CheckServiceImpl implements CheckService {
+public class CheckService implements CrudService<Check, CheckId> {
 
     private final CrudRepository<CheckEntity, Long> checkRepository;
 
@@ -30,34 +26,18 @@ public class CheckServiceImpl implements CheckService {
 
     private final BidirectionalConverter<Check, CheckEntity> checkConverter;
 
-    private final String marketName;
-    private final String cashierName;
 
     @Inject
-    public CheckServiceImpl(final CrudRepository<CheckEntity, Long> checkRepository,
-                            final CrudService<Product, ProductId> productService,
-                            final CrudService<DiscountCard, DiscountCardId> discountCardService,
-                            final BidirectionalConverter<Check, CheckEntity> checkConverter,
-                            final String marketName,
-                            final String cashierName) {
+    public CheckService(final CrudRepository<CheckEntity, Long> checkRepository,
+                        final CrudService<Product, ProductId> productService,
+                        final CrudService<DiscountCard, DiscountCardId> discountCardService,
+                        final BidirectionalConverter<Check, CheckEntity> checkConverter,
+                        final String marketName,
+                        final String cashierName) {
         this.checkRepository = checkRepository;
         this.productService = productService;
         this.discountCardService = discountCardService;
         this.checkConverter = checkConverter;
-        this.marketName = marketName;
-        this.cashierName = cashierName;
-    }
-
-    @Override
-    public Check performCheck(DiscountCardId discountCardId, Map<ProductId, Integer> productsQuantity) {
-        return add(new Check(Optional.empty(),
-                marketName,
-                cashierName,
-                LocalDate.now(),
-                LocalTime.now(),
-                performProducts(productsQuantity),
-                discountCardService.get(discountCardId))
-        );
     }
 
     @Override
