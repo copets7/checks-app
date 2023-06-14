@@ -7,6 +7,7 @@ import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.CheckEntity;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
 import com.yarosh.library.repository.api.entity.ProductEntity;
+import com.yarosh.library.repository.jdbc.column.ProductsColumn;
 import com.yarosh.library.repository.jdbc.executor.DefaultSqlExecutor;
 import com.yarosh.library.repository.jdbc.executor.SqlExecutor;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.yarosh.library.repository.jdbc.executor.SqlExecutor.GENERATED_KEY_COLUMN_NUMBER;
 
@@ -153,8 +155,9 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
 
     private Map<ProductEntity, Integer> convertToProductEntities(String json) {
         try {
-            return objectMapper.readValue(json, new TypeReference<>() {
-            });
+            return objectMapper.readValue(json, new TypeReference<List<ProductsColumn>>() {})
+                    .stream()
+                    .collect(Collectors.toMap(ProductsColumn::convertToProductEntity, ProductsColumn::quantity));
         } catch (JsonProcessingException e) {
             LOGGER.error("Converting json to product entities failed, message: {}", e.getMessage());
             LOGGER.debug("Converting json to product entities failed", e);
