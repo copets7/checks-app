@@ -1,18 +1,32 @@
 package com.yarosh.checks.controller;
 
 import com.yarosh.checks.controller.dto.CheckDto;
+import com.yarosh.checks.controller.dto.DiscountCardDto;
+import com.yarosh.checks.controller.dto.ProductDto;
 import com.yarosh.checks.controller.util.ApiDtoConverter;
 import com.yarosh.checks.controller.view.CheckView;
+import com.yarosh.checks.controller.view.DiscountCardView;
+import com.yarosh.checks.controller.view.ProductView;
 import com.yarosh.checks.domain.Check;
+import com.yarosh.checks.domain.DiscountCard;
+import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.CheckId;
+import com.yarosh.checks.domain.id.DiscountCardId;
+import com.yarosh.checks.domain.id.ProductId;
 import com.yarosh.checks.service.CrudService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "api/v1.0/check")
@@ -21,21 +35,38 @@ public class CheckController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckController.class);
 
     private final CrudService<Check, CheckId> checkService;
-    private final ApiDtoConverter<CheckDto, CheckView, Check> checkApiDtoConverter;
+    private final CrudService<DiscountCard, DiscountCardId> discountCardService;
+    private final CrudService<Product, ProductId> productService;
+
+    private final ApiDtoConverter<DiscountCardDto, DiscountCardView, DiscountCard> discountCardConverter;
+    private final ApiDtoConverter<ProductDto, ProductView, Product> productConverter;
+
+    private final String marketName;
+    private final String cashierName;
 
     public CheckController(final CrudService<Check, CheckId> checkService,
-                           final ApiDtoConverter<CheckDto, CheckView, Check> checkApiDtoConverter) {
+                           final CrudService<DiscountCard, DiscountCardId> discountCardService,
+                           final CrudService<Product, ProductId> productService,
+                           final ApiDtoConverter<DiscountCardDto, DiscountCardView, DiscountCard> discountCardConverter,
+                           final ApiDtoConverter<ProductDto, ProductView, Product> productConverter,
+                           final @Value("${app.cashier.name}") String marketName,
+                           final @Value("${app.market.name}") String cashierName) {
         this.checkService = checkService;
-        this.checkApiDtoConverter = checkApiDtoConverter;
+        this.discountCardService = discountCardService;
+        this.productService = productService;
+        this.discountCardConverter = discountCardConverter;
+        this.productConverter = productConverter;
+        this.marketName = marketName;
+        this.cashierName = cashierName;
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     public ResponseEntity<CheckView> add(final @RequestBody CheckDto checkDto) {
         LOGGER.info("Calling add check started, parameter: {}", checkDto);
 
-        final Check check = checkApiDtoConverter.convertDtoToDomain(checkDto);
+        final Check check = convertToCheck(checkDto);
         final Check created = checkService.add(check);
-        final CheckView view = checkApiDtoConverter.convertDomainToView(created);
+        final CheckView view = convertToCheckView(created);
 
         LOGGER.info("Calling add check successfully ended for product, id: {}", view.id());
         LOGGER.debug("Saved check view detailed printing: {}", view);
@@ -48,7 +79,7 @@ public class CheckController {
         LOGGER.info("Calling getById check started for id: {}", id);
 
         return checkService.get(new CheckId(id))
-                .map(checkApiDtoConverter::convertDomainToView)
+                .map(this::convertToCheckView)
                 .map(view -> new ResponseEntity<>(view, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -59,7 +90,7 @@ public class CheckController {
 
         List<CheckView> checks = checkService.getAll()
                 .stream()
-                .map(checkApiDtoConverter::convertDomainToView)
+                .map(this::convertToCheckView)
                 .toList();
 
         LOGGER.trace("Checks views detailed printing: {}", checks);
@@ -71,9 +102,9 @@ public class CheckController {
     public ResponseEntity<CheckView> update(final @RequestBody CheckDto checkDto) {
         LOGGER.info("Calling update check started for product with id: {}", checkDto.id());
 
-        final Check check = checkApiDtoConverter.convertDtoToDomain(checkDto);
+        final Check check = convertToCheck(checkDto);
         final Check updated = checkService.update(check);
-        final CheckView view = checkApiDtoConverter.convertDomainToView(updated);
+        final CheckView view = convertToCheckView(updated);
 
         LOGGER.info("Calling updated check successfully ended for product, id: {}", view.id());
         LOGGER.debug("Updated check view detailed printing: {}", view);
@@ -87,5 +118,48 @@ public class CheckController {
         checkService.delete(new CheckId(id));
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    private CheckView convertToCheckView(Check check) {
+        return new CheckView(
+                check.getId().orElseThrow().id(),
+                check.getMarketName(),
+                check.getCashierName(),
+                check.getDate(),
+                check.getTime(),
+                convertToProductsView(check.getProducts()),
+                check.getDiscountCard().map(discountCardConverter::convertDomainToView).orElseThrow()
+        );
+    }
+
+    private Check convertToCheck(CheckDto checkDto) {
+        final Map<ProductId, Integer> productIds = convertToProductIds(checkDto.products());
+        return new Check(
+                Optional.ofNullable(checkDto.id()).map(CheckId::new),
+                marketName,
+                cashierName,
+                (checkDto.date() != null) ? checkDto.date() : LocalDate.now(),
+                (checkDto.time() != null) ? checkDto.time() : LocalTime.now(),
+                convertToProducts(productIds),
+                discountCardService.get(new DiscountCardId(checkDto.discountCardId()))
+        );
+    }
+
+    private Map<ProductView, Integer> convertToProductsView(Map<Product, Integer> products) {
+        return products.entrySet()
+                .stream()
+                .collect(Collectors.toMap(entry -> productConverter.convertDomainToView(entry.getKey()), Map.Entry::getValue));
+    }
+
+    private Map<ProductId, Integer> convertToProductIds(final Map<Long, Integer> products) {
+        return products.entrySet()
+                .stream()
+                .collect(Collectors.toMap(entry -> new ProductId(entry.getKey()), Map.Entry::getValue));
+    }
+
+    private Map<Product, Integer> convertToProducts(Map<ProductId, Integer> products) {
+        return products.entrySet()
+                .stream()
+                .collect(Collectors.toMap(entry -> productService.get(entry.getKey()).orElseThrow(), Map.Entry::getValue));
     }
 }
