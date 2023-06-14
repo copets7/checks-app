@@ -1,16 +1,12 @@
 package com.yarosh.checks.controller;
 
-import com.yarosh.checks.controller.dto.CheckDto;
 import com.yarosh.checks.controller.dto.DiscountCardDto;
 import com.yarosh.checks.controller.dto.ProductDto;
 import com.yarosh.checks.controller.util.ApiDtoConverter;
-import com.yarosh.checks.controller.util.CheckApiDtoConverter;
 import com.yarosh.checks.controller.util.DiscountCardApiDtoConverter;
 import com.yarosh.checks.controller.util.ProductApiDtoConverter;
-import com.yarosh.checks.controller.view.CheckView;
 import com.yarosh.checks.controller.view.DiscountCardView;
 import com.yarosh.checks.controller.view.ProductView;
-import com.yarosh.checks.domain.Check;
 import com.yarosh.checks.domain.DiscountCard;
 import com.yarosh.checks.domain.Product;
 import org.springframework.context.annotation.Bean;
@@ -34,11 +30,6 @@ import java.util.Collections;
 @EnableSwagger2
 @EnableWebMvc
 public class ControllerConfig implements WebMvcConfigurer {
-
-    @Bean
-    public ApiDtoConverter<CheckDto, CheckView, Check> checkApiDtoConverter() {
-        return new CheckApiDtoConverter(productApiDtoConverter(), discountCardApiDtoConverter());
-    }
 
     @Bean
     public ApiDtoConverter<ProductDto, ProductView, Product> productApiDtoConverter() {
