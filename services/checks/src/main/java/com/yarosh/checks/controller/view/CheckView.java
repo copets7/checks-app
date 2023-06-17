@@ -4,15 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Map;
+import java.util.List;
 
 public record CheckView(Long id,
                         String marketName,
                         String cashierName,
                         LocalDate date,
                         LocalTime time,
-                        Map<ProductView, Integer> products,
-                        DiscountCardView discountCard) implements View {
+                        List<ProductView> products,
+                        DiscountCardView discountCard,
+                        Double totalPrice) implements View {
 
     @Override
     @JsonProperty("id")
@@ -46,7 +47,7 @@ public record CheckView(Long id,
 
     @Override
     @JsonProperty("products")
-    public Map<ProductView, Integer> products() {
+    public List<ProductView> products() {
         return products;
     }
 
@@ -54,6 +55,12 @@ public record CheckView(Long id,
     @JsonProperty("discount_card_id")
     public DiscountCardView discountCard() {
         return discountCard;
+    }
+
+    @Override
+    @JsonProperty("total_price")
+    public Double totalPrice() {
+        return totalPrice;
     }
 
     @Override
@@ -66,6 +73,7 @@ public record CheckView(Long id,
                 ", time=" + time +
                 ", products=" + products +
                 ", discountCard=" + discountCard +
+                ", totalPrice=" + totalPrice +
                 '}';
     }
 }
