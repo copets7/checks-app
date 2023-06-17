@@ -14,6 +14,7 @@ public class Check implements Domain {
 
     private static final double NO_DISCOUNT = 0;
     private static final double MAX_DISCOUNT = 100;
+    private static final int DISCOUNT_DIVIDER = 100;
     private static final double INVALID_TOTAL_PRICE = 0.0;
     private static final int INVALID_QUANTITY = 0;
 
@@ -112,9 +113,15 @@ public class Check implements Domain {
 
     private double countTotalPrice() {
         return products.keySet().stream()
-                .map(product -> (product.price() * (MAX_DISCOUNT - countDiscount(product))) * getValidatedQuantity(products.get(product)))
+                .map(this::countPrice)
                 .mapToDouble(Double::doubleValue)
                 .sum();
+    }
+
+    private double countPrice(Product product) {
+        return product.price() * (MAX_DISCOUNT - countDiscount(product))
+                / DISCOUNT_DIVIDER
+                * getValidatedQuantity(products.get(product));
     }
 
     private double countDiscount(Product product) {
@@ -138,7 +145,7 @@ public class Check implements Domain {
             throw new InvalidCheckException("Cashier name is empty, {0}", this);
         } else if (LocalDate.now().isBefore(date)) {
             throw new InvalidCheckException("Date is not correct, {0}", this);
-        } else if (LocalTime.now().isBefore(time)) {
+        } else if (LocalTime.now().isBefore(time) && id.isEmpty()) {
             throw new InvalidCheckException("Time is not correct, {0}", this);
         } else if (products.isEmpty()) {
             throw new InvalidCheckException("Product list can not be empty, {0}", this);
