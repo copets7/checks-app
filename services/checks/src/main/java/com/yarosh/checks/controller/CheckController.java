@@ -2,8 +2,9 @@ package com.yarosh.checks.controller;
 
 import com.yarosh.checks.controller.dto.CheckDto;
 import com.yarosh.checks.controller.dto.DiscountCardDto;
-import com.yarosh.checks.controller.dto.ProductDto;
+import com.yarosh.checks.controller.dto.ProductPairDto;
 import com.yarosh.checks.controller.util.ApiDtoConverter;
+import com.yarosh.checks.controller.util.ProductApiDtoConverter;
 import com.yarosh.checks.controller.view.CheckView;
 import com.yarosh.checks.controller.view.DiscountCardView;
 import com.yarosh.checks.controller.view.ProductView;
@@ -39,7 +40,7 @@ public class CheckController {
     private final CrudService<Product, ProductId> productService;
 
     private final ApiDtoConverter<DiscountCardDto, DiscountCardView, DiscountCard> discountCardConverter;
-    private final ApiDtoConverter<ProductDto, ProductView, Product> productConverter;
+    private final ProductApiDtoConverter productConverter;
 
     private final String marketName;
     private final String cashierName;
@@ -48,7 +49,7 @@ public class CheckController {
                            final CrudService<DiscountCard, DiscountCardId> discountCardService,
                            final CrudService<Product, ProductId> productService,
                            final ApiDtoConverter<DiscountCardDto, DiscountCardView, DiscountCard> discountCardConverter,
-                           final ApiDtoConverter<ProductDto, ProductView, Product> productConverter,
+                           final ProductApiDtoConverter productConverter,
                            final @Value("${app.cashier.name}") String marketName,
                            final @Value("${app.market.name}") String cashierName) {
         this.checkService = checkService;
@@ -127,8 +128,9 @@ public class CheckController {
                 check.getCashierName(),
                 check.getDate(),
                 check.getTime(),
-                convertToProductsView(check.getProducts()),
-                check.getDiscountCard().map(discountCardConverter::convertDomainToView).orElseThrow()
+                convertToProductViews(check.getProducts()),
+                check.getDiscountCard().map(discountCardConverter::convertDomainToView).orElseThrow(),
+                check.getTotalPrice()
         );
     }
 
@@ -145,16 +147,16 @@ public class CheckController {
         );
     }
 
-    private Map<ProductView, Integer> convertToProductsView(Map<Product, Integer> products) {
+    private List<ProductView> convertToProductViews(Map<Product, Integer> products) {
         return products.entrySet()
                 .stream()
-                .collect(Collectors.toMap(entry -> productConverter.convertDomainToView(entry.getKey()), Map.Entry::getValue));
+                .map(entry -> productConverter.convertProductToView(entry.getKey(), entry.getValue()))
+                .toList();
     }
 
-    private Map<ProductId, Integer> convertToProductIds(final Map<Long, Integer> products) {
-        return products.entrySet()
-                .stream()
-                .collect(Collectors.toMap(entry -> new ProductId(entry.getKey()), Map.Entry::getValue));
+    private Map<ProductId, Integer> convertToProductIds(final List<ProductPairDto> products) {
+        return products.stream()
+                .collect(Collectors.toMap(product -> new ProductId(product.id()), ProductPairDto::quantityInCheck));
     }
 
     private Map<Product, Integer> convertToProducts(Map<ProductId, Integer> products) {
