@@ -2,7 +2,7 @@ package com.yarosh.checks.controller.view;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record ProductView(Long id, String description, double price, double discount) implements View {
+public record ProductView(Long id, String description, Double price, Double discount, Integer quantityInCheck) implements View {
 
     @Override
     @JsonProperty("id")
@@ -18,14 +18,20 @@ public record ProductView(Long id, String description, double price, double disc
 
     @Override
     @JsonProperty("price")
-    public double price() {
+    public Double price() {
         return price;
     }
 
     @Override
     @JsonProperty("discount")
-    public double discount() {
+    public Double discount() {
         return discount;
+    }
+
+    @Override
+    @JsonProperty("quantity_in_check")
+    public Integer quantityInCheck() {
+        return quantityInCheck;
     }
 
     @Override
@@ -35,6 +41,7 @@ public record ProductView(Long id, String description, double price, double disc
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", discount=" + discount +
+                ", quantityInCheck=" + quantityInCheck +
                 '}';
     }
 }
