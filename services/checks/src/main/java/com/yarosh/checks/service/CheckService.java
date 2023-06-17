@@ -1,42 +1,26 @@
 package com.yarosh.checks.service;
 
 import com.yarosh.checks.domain.Check;
-import com.yarosh.checks.domain.DiscountCard;
-import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.CheckId;
-import com.yarosh.checks.domain.id.DiscountCardId;
-import com.yarosh.checks.domain.id.ProductId;
 import com.yarosh.checks.service.util.BidirectionalConverter;
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.CheckEntity;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class CheckService implements CrudService<Check, CheckId> {
 
     private final CrudRepository<CheckEntity, Long> checkRepository;
 
-    private final CrudService<Product, ProductId> productService;
-    private final CrudService<DiscountCard, DiscountCardId> discountCardService;
-
     private final BidirectionalConverter<Check, CheckEntity> checkConverter;
-
 
     @Inject
     public CheckService(final CrudRepository<CheckEntity, Long> checkRepository,
-                        final CrudService<Product, ProductId> productService,
-                        final CrudService<DiscountCard, DiscountCardId> discountCardService,
-                        final BidirectionalConverter<Check, CheckEntity> checkConverter,
-                        final String marketName,
-                        final String cashierName) {
+                        final BidirectionalConverter<Check, CheckEntity> checkConverter) {
         this.checkRepository = checkRepository;
-        this.productService = productService;
-        this.discountCardService = discountCardService;
         this.checkConverter = checkConverter;
     }
 
@@ -72,15 +56,5 @@ public class CheckService implements CrudService<Check, CheckId> {
     private Check upsert(Function<CheckEntity, CheckEntity> upsert, Check check) {
         final CheckEntity upsertedCheck = upsert.apply(checkConverter.convertToEntity(check));
         return checkConverter.convertToDomain(upsertedCheck);
-    }
-
-    private Map<Product, Integer> performProducts(Map<ProductId, Integer> productsQuantity) {
-        return productsQuantity.entrySet()
-                .stream()
-                .collect(Collectors.toMap(entry -> performProduct(entry.getKey()), Map.Entry::getValue));
-    }
-
-    private Product performProduct(ProductId id) {
-        return productService.get(id).orElseThrow(() -> new ProductNotFoundException(id.id()));
     }
 }
