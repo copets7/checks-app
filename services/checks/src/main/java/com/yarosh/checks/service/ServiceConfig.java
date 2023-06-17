@@ -15,7 +15,6 @@ import com.yarosh.library.repository.api.entity.CheckEntity;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
 import com.yarosh.library.repository.api.entity.ProductEntity;
 import com.yarosh.library.repository.jdbc.JdbcConfig;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -29,15 +28,9 @@ public class ServiceConfig {
     @Bean
     public CrudService<Check, CheckId> checkService(
             final CrudRepository<CheckEntity, Long> checkRepository,
-            final CrudService<Product, ProductId> productService,
-            final CrudService<DiscountCard, DiscountCardId> discountCardService,
-            final BidirectionalConverter<Check, CheckEntity> checkConverter,
-            @Value("${app.market.name}")
-            final String marketName,
-            @Value("${app.cashier.name}")
-            final String cashierName
+            final BidirectionalConverter<Check, CheckEntity> checkConverter
     ) {
-        return new CheckService(checkRepository, productService, discountCardService, checkConverter, marketName, cashierName);
+        return new CheckService(checkRepository, checkConverter);
     }
 
     @Bean
