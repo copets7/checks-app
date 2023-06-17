@@ -53,8 +53,8 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
     private static final String CHECK_TIME_FIELD = "time";
     private static final String CHECK_PRODUCTS_FIELD = "products";
     private static final String CHECK_TOTAL_PRICE_FIELD = "total_price";
-    private static final String DISCOUNT_CARDS_ID_FIELD = "id";
-    private static final String DISCOUNT_CARDS_DISCOUNT_FIELD = "discount_card_id";
+    private static final String DISCOUNT_CARDS_ID_FIELD = "d.id";
+    private static final String DISCOUNT_CARDS_DISCOUNT_FIELD = "d.discount";
 
     private final SqlExecutor<CheckEntity, Long> sqlExecutor;
     private final ObjectMapper objectMapper;
@@ -167,11 +167,26 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
 
     private String convertProductEntitiesToJson(Map<ProductEntity, Integer> products) {
         try {
-            return objectMapper.writeValueAsString(products);
+            final List<ProductsColumn> productsColumns = products.entrySet()
+                    .stream()
+                    .map(this::convertToProductColumn)
+                    .toList();
+            return objectMapper.writeValueAsString(productsColumns);
         } catch (JsonProcessingException e) {
             LOGGER.error("Converting product entities to json failed, message: {}", e.getMessage());
             LOGGER.debug("Converting product entities to json failed", e);
             throw new JdbcRepositoryException("Converting product entities to json failed, e: {0}", e);
         }
+    }
+
+    private ProductsColumn convertToProductColumn(Map.Entry<ProductEntity, Integer> entry) {
+        final ProductEntity product = entry.getKey();
+        return new ProductsColumn(
+                product.getId(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getDiscount(),
+                entry.getValue()
+        );
     }
 }
