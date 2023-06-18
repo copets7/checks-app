@@ -34,7 +34,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
 
     private final SqlExecutor<ProductEntity, Long> sqlExecutor;
 
-    public JdbcProductRepository(DataSource dataSource) {
+    public JdbcProductRepository(final DataSource dataSource) {
         this.sqlExecutor = new DefaultSqlExecutor<>(dataSource);
     }
 

@@ -60,13 +60,13 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
     private final ObjectMapper objectMapper;
 
     @Inject
-    public JdbcCheckRepository(DataSource dataSource, ObjectMapper objectMapper) {
+    public JdbcCheckRepository(final DataSource dataSource, final ObjectMapper objectMapper) {
         this.sqlExecutor = new DefaultSqlExecutor<>(dataSource);
         this.objectMapper = objectMapper;
     }
 
     @Inject
-    public JdbcCheckRepository(final SqlExecutor<CheckEntity, Long> sqlExecutor, ObjectMapper objectMapper) {
+    public JdbcCheckRepository(final SqlExecutor<CheckEntity, Long> sqlExecutor,final ObjectMapper objectMapper) {
         this.sqlExecutor = sqlExecutor;
         this.objectMapper = objectMapper;
     }

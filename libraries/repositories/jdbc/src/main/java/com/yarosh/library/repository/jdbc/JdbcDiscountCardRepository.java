@@ -32,7 +32,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
 
     private final SqlExecutor<DiscountCardEntity, Long> sqlExecutor;
 
-    public JdbcDiscountCardRepository(DataSource dataSource) {
+    public JdbcDiscountCardRepository(final DataSource dataSource) {
         this.sqlExecutor = new DefaultSqlExecutor<>(dataSource);
     }
 
