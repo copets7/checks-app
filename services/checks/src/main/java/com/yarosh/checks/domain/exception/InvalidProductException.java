@@ -9,6 +9,6 @@ public class InvalidProductException extends RuntimeException {
     }
 
     public static InvalidProductException quantityCase(long id, Integer quantity) {
-        return new InvalidProductException("Quantity of product is less than 1 or null, id: {0}, quantity: {1}", id, quantity);
+        return new InvalidProductException("Quantity of product is less than 1 or null, value: {0}, quantity: {1}", id, quantity);
     }
 }
