@@ -29,8 +29,13 @@ public class DiscountCardService implements CrudService<DiscountCard, DiscountCa
     }
 
     @Override
+    public DiscountCard getOrThrow(DiscountCardId id) {
+        return get(id).orElseThrow(ObjectNotFoundException.supplier(id.value(), "Discount card"));
+    }
+
+    @Override
     public Optional<DiscountCard> get(DiscountCardId id) {
-        return discountCardRepository.select(id.id())
+        return discountCardRepository.select(id.value())
                 .map(discountCardConverter::convertToDomain);
     }
 
@@ -49,7 +54,7 @@ public class DiscountCardService implements CrudService<DiscountCard, DiscountCa
 
     @Override
     public void delete(DiscountCardId id) {
-        discountCardRepository.delete(id.id());
+        discountCardRepository.delete(id.value());
     }
 
     private DiscountCard upsert(Function<DiscountCardEntity, DiscountCardEntity> upsert, DiscountCard discountCard) {

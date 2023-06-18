@@ -29,8 +29,13 @@ public class ProductService implements CrudService<Product, ProductId> {
     }
 
     @Override
+    public Product getOrThrow(ProductId id) {
+        return get(id).orElseThrow(ObjectNotFoundException.supplier(id.value(), "Product"));
+    }
+
+    @Override
     public Optional<Product> get(ProductId id) {
-        return productRepository.select(id.id())
+        return productRepository.select(id.value())
                 .map(productConverter::convertToDomain);
     }
 
@@ -49,7 +54,7 @@ public class ProductService implements CrudService<Product, ProductId> {
 
     @Override
     public void delete(ProductId id) {
-        productRepository.delete(id.id());
+        productRepository.delete(id.value());
     }
 
     private Product upsert(Function<ProductEntity, ProductEntity> upsert, Product product) {

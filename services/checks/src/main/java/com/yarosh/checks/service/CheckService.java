@@ -30,8 +30,13 @@ public class CheckService implements CrudService<Check, CheckId> {
     }
 
     @Override
+    public Check getOrThrow(CheckId id) {
+        return get(id).orElseThrow(ObjectNotFoundException.supplier(id.value(), "Check"));
+    }
+
+    @Override
     public Optional<Check> get(CheckId id) {
-        return checkRepository.select(id.id())
+        return checkRepository.select(id.value())
                 .map(checkConverter::convertToDomain);
     }
 
@@ -50,7 +55,7 @@ public class CheckService implements CrudService<Check, CheckId> {
 
     @Override
     public void delete(CheckId id) {
-        checkRepository.delete(id.id());
+        checkRepository.delete(id.value());
     }
 
     private Check upsert(Function<CheckEntity, CheckEntity> upsert, Check check) {
