@@ -21,3 +21,17 @@ CREATE TABLE IF NOT EXISTS checks(
     total_price DOUBLE NOT NULL,
     FOREIGN KEY(discount_card_id) REFERENCES discount_cards (id)
 );
+
+CREATE TABLE IF NOT EXISTS roles(
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(256) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS users(
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(256) NOT NULL,
+    firstname VARCHAR(256) NOT NULL,
+    lastname VARCHAR(256) NOT NULL,
+    password VARCHAR(512) NOT NULL,
+    roles JSON NOT NULL
+);

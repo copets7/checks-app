@@ -1,6 +1,6 @@
 package com.yarosh.checks.controller.handler;
 
-import com.yarosh.checks.service.ProductNotFoundException;
+import com.yarosh.checks.service.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -14,10 +14,10 @@ public class ServiceExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceExceptionHandler.class);
 
-    @ExceptionHandler(ProductNotFoundException.class)
-    protected ResponseEntity<String> handleProductNotFoundException(final ProductNotFoundException e) {
-        LOGGER.debug("ProductNotFoundException was handled, message {}", e.getMessage());
-        LOGGER.trace("ProductNotFoundException was handled", e);
+    @ExceptionHandler(ObjectNotFoundException.class)
+    protected ResponseEntity<String> handleProductNotFoundException(final ObjectNotFoundException e) {
+        LOGGER.debug("ObjectNotFoundException was handled, message {}", e.getMessage());
+        LOGGER.trace("ObjectNotFoundException was handled", e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.PRECONDITION_FAILED);
     }
 }
