@@ -38,8 +38,10 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
             d.id, d.discount
             FROM checks AS c LEFT JOIN discount_cards AS d ON c.discount_card_id = d.id WHERE c.id = ?
             """;
-    private static final String SQL_SELECT_ALL =
-            "SELECT id, market_name, cashier_name, date, time, products, discount_card_id, total_price FROM checks";
+    private static final String SQL_SELECT_ALL = """ 
+            SELECT c.id, c.market_name, c.cashier_name, c.date, c.time, c.products, c.discount_card_id, c.total_price,d.id, d.discount
+            FROM checks AS c JOIN discount_cards AS d ON c.discount_card_id = d.id
+            """;
     private static final String SQL_UPDATE = """
             UPDATE checks SET market_name = ?, cashier_name = ?, date = ?, time = ?,  products = ?, discount_card_id = ?,
             total_price = ? WHERE id = ?
@@ -66,7 +68,7 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
     }
 
     @Inject
-    public JdbcCheckRepository(final SqlExecutor<CheckEntity, Long> sqlExecutor,final ObjectMapper objectMapper) {
+    public JdbcCheckRepository(final SqlExecutor<CheckEntity, Long> sqlExecutor, final ObjectMapper objectMapper) {
         this.sqlExecutor = sqlExecutor;
         this.objectMapper = objectMapper;
     }
@@ -155,7 +157,8 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
 
     private Map<ProductEntity, Integer> convertToProductEntities(String json) {
         try {
-            return objectMapper.readValue(json, new TypeReference<List<ProductsColumn>>() {})
+            return objectMapper.readValue(json, new TypeReference<List<ProductsColumn>>() {
+                    })
                     .stream()
                     .collect(Collectors.toMap(ProductsColumn::convertToProductEntity, ProductsColumn::quantity));
         } catch (JsonProcessingException e) {
