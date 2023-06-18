@@ -2,7 +2,7 @@ package com.yarosh.checks.controller.view;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record DiscountCardView(Long id, double discount) implements View {
+public record DiscountCardView(Long id, Double discount) implements View {
 
     @Override
     @JsonProperty("id")
@@ -12,7 +12,7 @@ public record DiscountCardView(Long id, double discount) implements View {
 
     @Override
     @JsonProperty("discount")
-    public double discount() {
+    public Double discount() {
         return discount;
     }
 
