@@ -10,6 +10,11 @@ public interface CrudService<D extends Domain, ID extends DomainId> {
 
     D add(D domain);
 
+    /**
+     * Returns object if it's not null, otherwise throws exception
+     **/
+    D getOrThrow(ID id);
+
     Optional<D> get(ID id);
 
     List<D> getAll();
