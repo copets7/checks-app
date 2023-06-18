@@ -16,6 +16,7 @@
 
     <modules>
         <module>repositories</module>
+        <module>user-service</module>
     </modules>
 
     <dependencies>
