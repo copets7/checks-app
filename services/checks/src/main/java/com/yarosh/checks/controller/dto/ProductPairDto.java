@@ -3,7 +3,8 @@ package com.yarosh.checks.controller.dto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record ProductPairDto(@JsonProperty("id") Long id, @JsonProperty("quantity_in_check") Integer quantityInCheck) {
+public record ProductPairDto(@JsonProperty("id") Long id,
+                             @JsonProperty("quantity_in_check") Integer quantityInCheck) {
 
     @JsonCreator
     public ProductPairDto { }
