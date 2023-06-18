@@ -19,7 +19,7 @@ public record DiscountCardView(Long id, Double discount) implements View {
     @Override
     public String toString() {
         return "DiscountCardView{" +
-                "id=" + id +
+                "value=" + id +
                 ", discount='" + discount + '\'' +
                 '}';
     }

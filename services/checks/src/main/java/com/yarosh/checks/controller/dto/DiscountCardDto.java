@@ -13,7 +13,7 @@ public record DiscountCardDto(@JsonProperty("id") Long id,
     @Override
     public String toString() {
         return "DiscountCardDto{" +
-                "id=" + id +
+                "value=" + id +
                 ", discount='" + discount + '\'' +
                 '}';
     }

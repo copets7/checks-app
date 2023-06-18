@@ -2,22 +2,22 @@ package com.yarosh.checks.domain.id;
 
 import com.yarosh.checks.domain.exception.TypedIdException;
 
-public record DiscountCardId(Long id) implements DomainId {
+public record DiscountCardId(Long value) implements DomainId {
 
-    public DiscountCardId(Long id) {
-        this.id = id;
+    public DiscountCardId(Long value) {
+        this.value = value;
         validate();
     }
 
     @Override
     public String toString() {
         return "DiscountCardId{" +
-                "id=" + id +
+                "value=" + value +
                 '}';
     }
 
     private void validate() {
-        if (id == null) {
+        if (value == null) {
             throw new TypedIdException(this);
         }
     }

@@ -41,7 +41,7 @@ public record Product(
     @Override
     public String toString() {
         return "Product{" +
-                "id=" + id +
+                "value=" + id +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", discount=" + discount +

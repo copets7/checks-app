@@ -38,7 +38,7 @@ public class ProductController {
         final Product created = productService.add(product);
         final ProductView view = productApiDtoConverter.convertDomainToView(created);
 
-        LOGGER.info("Calling add product successfully ended for product, id: {}", view.id());
+        LOGGER.info("Calling add product successfully ended for product, value: {}", view.id());
         LOGGER.debug("Saved product view detailed printing: {}", view);
 
         return new ResponseEntity<>(view, HttpStatus.CREATED);
@@ -46,7 +46,7 @@ public class ProductController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<ProductView> getById(final @PathVariable("id") Long id) {
-        LOGGER.info("Calling getById product started for id: {}", id);
+        LOGGER.info("Calling getById product started for value: {}", id);
 
         return productService.get(new ProductId(id))
                 .map(productApiDtoConverter::convertDomainToView)
@@ -70,14 +70,14 @@ public class ProductController {
 
     @RequestMapping(path = "/update", method = RequestMethod.PUT)
     public ResponseEntity<ProductView> update(final @RequestBody ProductDto productDto) {
-        LOGGER.info("Calling update product started for product with id: {}", productDto.id());
+        LOGGER.info("Calling update product started for product with value: {}", productDto.id());
         LOGGER.debug("Product parameter: {}", productDto);
 
         final Product product = productApiDtoConverter.convertDtoToDomain(productDto);
         final Product updated = productService.update(product);
         final ProductView view = productApiDtoConverter.convertDomainToView(updated);
 
-        LOGGER.info("Calling updated product successfully ended for product, id: {}", view.id());
+        LOGGER.info("Calling updated product successfully ended for product, value: {}", view.id());
         LOGGER.debug("Updated product view detailed printing: {}", view);
 
         return new ResponseEntity<>(view, HttpStatus.OK);
@@ -85,7 +85,7 @@ public class ProductController {
 
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.DELETE)
     public ResponseEntity<ProductView> delete(final @PathVariable Long id) {
-        LOGGER.info("Calling delete product started for product, id: {}", id);
+        LOGGER.info("Calling delete product started for product, value: {}", id);
         productService.delete(new ProductId(id));
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

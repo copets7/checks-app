@@ -39,7 +39,7 @@ public class CheckConverter implements BidirectionalConverter<Check, CheckEntity
     @Override
     public CheckEntity convertToEntity(Check check) {
         return new CheckEntity(
-                check.getId().map(CheckId::id).orElse(null),
+                check.getId().map(CheckId::value).orElse(null),
                 check.getMarketName(),
                 check.getCashierName(),
                 check.getDate(),

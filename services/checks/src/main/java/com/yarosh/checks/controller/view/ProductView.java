@@ -37,7 +37,7 @@ public record ProductView(Long id, String description, Double price, Double disc
     @Override
     public String toString() {
         return "ProductView{" +
-                "id=" + id +
+                "value=" + id +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", discount=" + discount +

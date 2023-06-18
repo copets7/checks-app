@@ -66,7 +66,7 @@ public record CheckView(Long id,
     @Override
     public String toString() {
         return "CheckView{" +
-                "id=" + id +
+                "value=" + id +
                 ", marketName='" + marketName + '\'' +
                 ", cashierName='" + cashierName + '\'' +
                 ", date=" + date +

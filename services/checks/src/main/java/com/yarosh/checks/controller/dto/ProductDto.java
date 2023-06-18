@@ -15,7 +15,7 @@ public record ProductDto(@JsonProperty("id") Long id,
     @Override
     public String toString() {
         return "ProductDto{" +
-                "id=" + id +
+                "value=" + id +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", discount=" + discount +

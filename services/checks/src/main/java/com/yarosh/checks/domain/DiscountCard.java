@@ -27,7 +27,7 @@ public record DiscountCard(Optional<DiscountCardId> id, double discount) impleme
     @Override
     public String toString() {
         return "DiscountCard{" +
-                "id=" + id +
+                "value=" + id +
                 ", amountOfDiscount=" + discount +
                 '}';
     }

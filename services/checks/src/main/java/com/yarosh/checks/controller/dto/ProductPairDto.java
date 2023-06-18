@@ -22,7 +22,7 @@ public record ProductPairDto(@JsonProperty("id") Long id,
     @Override
     public String toString() {
         return "ProductPairDto{" +
-                "id=" + id +
+                "value=" + id +
                 ", quantityInCheck=" + quantityInCheck +
                 '}';
     }

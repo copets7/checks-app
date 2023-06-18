@@ -12,7 +12,7 @@ public class DiscountCardApiDtoConverter implements ApiDtoConverter<DiscountCard
     @Override
     public DiscountCardView convertDomainToView(DiscountCard domain) {
         return new DiscountCardView(
-                domain.id().orElseThrow().id(),
+                domain.id().orElseThrow().value(),
                 domain.discount()
         );
     }

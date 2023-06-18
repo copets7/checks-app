@@ -100,7 +100,7 @@ public class Check implements Domain {
     @Override
     public String toString() {
         return "Check{" +
-                "id=" + id +
+                "value=" + id +
                 ", marketName='" + marketName + '\'' +
                 ", cashierName='" + cashierName + '\'' +
                 ", date=" + date +

@@ -19,7 +19,7 @@ public record CheckDto(@JsonProperty("id") Long id,
     @Override
     public String toString() {
         return "CheckDto{" +
-                "id=" + id +
+                "value=" + id +
                 ", date=" + date +
                 ", time=" + time +
                 ", products=" + products +

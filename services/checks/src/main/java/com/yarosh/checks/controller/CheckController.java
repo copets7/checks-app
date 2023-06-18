@@ -69,7 +69,7 @@ public class CheckController {
         final Check created = checkService.add(check);
         final CheckView view = convertToCheckView(created);
 
-        LOGGER.info("Calling add check successfully ended for product, id: {}", view.id());
+        LOGGER.info("Calling add check successfully ended for product, value: {}", view.id());
         LOGGER.debug("Saved check view detailed printing: {}", view);
 
         return new ResponseEntity<>(view, HttpStatus.CREATED);
@@ -77,7 +77,7 @@ public class CheckController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<CheckView> getById(final @PathVariable("id") Long id) {
-        LOGGER.info("Calling getById check started for id: {}", id);
+        LOGGER.info("Calling getById check started for value: {}", id);
 
         return checkService.get(new CheckId(id))
                 .map(this::convertToCheckView)
@@ -101,13 +101,13 @@ public class CheckController {
 
     @RequestMapping(path = "/update", method = RequestMethod.PUT)
     public ResponseEntity<CheckView> update(final @RequestBody CheckDto checkDto) {
-        LOGGER.info("Calling update check started for product with id: {}", checkDto.id());
+        LOGGER.info("Calling update check started for product with value: {}", checkDto.id());
 
         final Check check = convertToCheck(checkDto);
         final Check updated = checkService.update(check);
         final CheckView view = convertToCheckView(updated);
 
-        LOGGER.info("Calling updated check successfully ended for product, id: {}", view.id());
+        LOGGER.info("Calling updated check successfully ended for product, value: {}", view.id());
         LOGGER.debug("Updated check view detailed printing: {}", view);
 
         return new ResponseEntity<>(view, HttpStatus.OK);
@@ -115,7 +115,7 @@ public class CheckController {
 
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.DELETE)
     public ResponseEntity<CheckView> delete(final @PathVariable Long id) {
-        LOGGER.info("Calling delete check started for product, id: {}", id);
+        LOGGER.info("Calling delete check started for product, value: {}", id);
         checkService.delete(new CheckId(id));
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -123,7 +123,7 @@ public class CheckController {
 
     private CheckView convertToCheckView(Check check) {
         return new CheckView(
-                check.getId().orElseThrow().id(),
+                check.getId().orElseThrow().value(),
                 check.getMarketName(),
                 check.getCashierName(),
                 check.getDate(),
@@ -162,6 +162,6 @@ public class CheckController {
     private Map<Product, Integer> convertToProducts(Map<ProductId, Integer> products) {
         return products.entrySet()
                 .stream()
-                .collect(Collectors.toMap(entry -> productService.get(entry.getKey()).orElseThrow(), Map.Entry::getValue));
+                .collect(Collectors.toMap(entry -> productService.getOrThrow(entry.getKey()), Map.Entry::getValue));
     }
 }

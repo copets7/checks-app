@@ -15,6 +15,6 @@ public class DiscountCardConverter implements BidirectionalConverter<DiscountCar
 
     @Override
     public DiscountCardEntity convertToEntity(DiscountCard card) {
-        return new DiscountCardEntity(card.id().map(DiscountCardId::id).orElse(null), card.discount());
+        return new DiscountCardEntity(card.id().map(DiscountCardId::value).orElse(null), card.discount());
     }
 }

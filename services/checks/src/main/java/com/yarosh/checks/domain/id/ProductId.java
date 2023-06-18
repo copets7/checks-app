@@ -2,22 +2,22 @@ package com.yarosh.checks.domain.id;
 
 import com.yarosh.checks.domain.exception.TypedIdException;
 
-public record ProductId(Long id) implements DomainId {
+public record ProductId(Long value) implements DomainId {
 
-    public ProductId(Long id) {
-        this.id = id;
+    public ProductId(Long value) {
+        this.value = value;
         validate();
     }
 
     @Override
     public String toString() {
         return "ProductId{" +
-                "id=" + id +
+                "value=" + value +
                 '}';
     }
 
     private void validate() {
-        if (id == null) {
+        if (value == null) {
             throw new TypedIdException(this);
         }
     }

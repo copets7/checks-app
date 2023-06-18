@@ -37,7 +37,7 @@ public class DiscountCardController {
         final DiscountCard created = discountCardService.add(card);
         final DiscountCardView view = discountCardApiDtoConverter.convertDomainToView(created);
 
-        LOGGER.info("Calling add discount card successfully ended for product, id: {}", view.id());
+        LOGGER.info("Calling add discount card successfully ended for product, value: {}", view.id());
         LOGGER.debug("Saved discount card view detailed printing: {}", view);
 
         return new ResponseEntity<>(view, HttpStatus.CREATED);
@@ -45,7 +45,7 @@ public class DiscountCardController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<DiscountCardView> getById(final @PathVariable("id") Long id) {
-        LOGGER.info("Calling getById discount card started for id: {}", id);
+        LOGGER.info("Calling getById discount card started for value: {}", id);
 
         return discountCardService.get(new DiscountCardId(id))
                 .map(discountCardApiDtoConverter::convertDomainToView)
@@ -69,14 +69,14 @@ public class DiscountCardController {
 
     @RequestMapping(path = "/update", method = RequestMethod.PUT)
     public ResponseEntity<DiscountCardView> update(final @RequestBody DiscountCardDto discountCardDto) {
-        LOGGER.info("Calling update discount card started for product with id: {}", discountCardDto.id());
+        LOGGER.info("Calling update discount card started for product with value: {}", discountCardDto.id());
         LOGGER.debug("Discount card parameter: {}", discountCardDto);
 
         final DiscountCard discountCard = discountCardApiDtoConverter.convertDtoToDomain(discountCardDto);
         final DiscountCard updated = discountCardService.update(discountCard);
         final DiscountCardView view = discountCardApiDtoConverter.convertDomainToView(updated);
 
-        LOGGER.info("Calling updated discount card successfully ended for product, id: {}", view.id());
+        LOGGER.info("Calling updated discount card successfully ended for product, value: {}", view.id());
         LOGGER.debug("Updated discount card view detailed printing: {}", view);
 
         return new ResponseEntity<>(view, HttpStatus.OK);
@@ -84,7 +84,7 @@ public class DiscountCardController {
 
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.DELETE)
     public ResponseEntity<DiscountCardView> delete(final @PathVariable Long id) {
-        LOGGER.info("Calling delete discount card started for product, id: {}", id);
+        LOGGER.info("Calling delete discount card started for product, value: {}", id);
         discountCardService.delete(new DiscountCardId(id));
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

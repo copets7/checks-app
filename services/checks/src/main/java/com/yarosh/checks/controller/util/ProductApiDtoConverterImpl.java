@@ -27,7 +27,7 @@ public class ProductApiDtoConverterImpl implements ProductApiDtoConverter {
     @Override
     public ProductView convertProductToView(Product product, Integer quantityInCheck) {
         return new ProductView(
-                product.id().orElseThrow().id(),
+                product.id().orElseThrow().value(),
                 product.description(),
                 product.price(),
                 product.discount(),
