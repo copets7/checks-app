@@ -3,13 +3,11 @@ package com.yarosh.checks.controller.dto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record DiscountCardDto(Long id, double discount) implements Dto{
+public record DiscountCardDto(@JsonProperty("id") Long id,
+                              @JsonProperty("discount") Double discount) implements Dto {
 
     @JsonCreator
-    public DiscountCardDto(final @JsonProperty("id") Long id,
-                           final @JsonProperty("discount") double discount) {
-        this.id = id;
-        this.discount = discount;
+    public DiscountCardDto {
     }
 
     @Override
