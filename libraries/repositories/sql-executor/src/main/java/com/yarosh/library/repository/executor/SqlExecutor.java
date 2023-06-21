@@ -1,4 +1,4 @@
-package com.yarosh.library.repository.jdbc.executor;
+package com.yarosh.library.repository.executor;
 
 import com.yarosh.library.repository.api.entity.Entity;
 

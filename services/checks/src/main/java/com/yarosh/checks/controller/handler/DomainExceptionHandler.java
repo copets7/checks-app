@@ -1,6 +1,10 @@
 package com.yarosh.checks.controller.handler;
 
-import com.yarosh.checks.domain.exception.*;
+import com.yarosh.checks.domain.exception.InvalidCashierException;
+import com.yarosh.checks.domain.exception.InvalidCheckException;
+import com.yarosh.checks.domain.exception.InvalidDiscountCardException;
+import com.yarosh.checks.domain.exception.InvalidProductException;
+import com.yarosh.checks.domain.exception.TypedIdException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

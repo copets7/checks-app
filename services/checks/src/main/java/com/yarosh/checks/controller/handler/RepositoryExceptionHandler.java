@@ -1,7 +1,7 @@
 package com.yarosh.checks.controller.handler;
 
-import com.yarosh.library.repository.api.exception.RepositoryException;
 import com.yarosh.library.repository.api.exception.RecordNotFoundException;
+import com.yarosh.library.repository.api.exception.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

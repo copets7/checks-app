@@ -7,9 +7,9 @@ import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.CheckEntity;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
 import com.yarosh.library.repository.api.entity.ProductEntity;
+import com.yarosh.library.repository.executor.DefaultSqlExecutor;
+import com.yarosh.library.repository.executor.SqlExecutor;
 import com.yarosh.library.repository.jdbc.column.ProductsColumn;
-import com.yarosh.library.repository.jdbc.executor.DefaultSqlExecutor;
-import com.yarosh.library.repository.jdbc.executor.SqlExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.yarosh.library.repository.jdbc.executor.SqlExecutor.GENERATED_KEY_COLUMN_NUMBER;
+import static com.yarosh.library.repository.executor.SqlExecutor.GENERATED_KEY_COLUMN_NUMBER;
 
 public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
 
