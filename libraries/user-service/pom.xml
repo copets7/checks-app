@@ -21,6 +21,16 @@
             <artifactId>pool</artifactId>
             <version>0.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.yarosh.library.repository.executor</groupId>
+            <artifactId>sql-executor</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.yarosh.library.repository.api</groupId>
+            <artifactId>repository-api</artifactId>
+            <version>0.0.1</version>
+        </dependency>
 
         <dependency>
             <groupId>mysql</groupId>
