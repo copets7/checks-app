@@ -3,7 +3,8 @@ package com.yarosh.checks.domain.id;
 import com.yarosh.checks.domain.exception.TypedIdException;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 public class DiscountCardIdTest {
 
