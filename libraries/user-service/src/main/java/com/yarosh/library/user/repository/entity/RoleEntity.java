@@ -1,6 +1,8 @@
 package com.yarosh.library.user.repository.entity;
 
-public class RoleEntity {
+import com.yarosh.library.repository.api.entity.Entity;
+
+public class RoleEntity implements Entity {
 
     private long id;
     private String name;
