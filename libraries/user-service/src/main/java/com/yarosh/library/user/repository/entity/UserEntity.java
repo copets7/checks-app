@@ -1,26 +1,28 @@
 package com.yarosh.library.user.repository.entity;
 
+import com.yarosh.library.repository.api.entity.Entity;
+
 import java.util.List;
 
-public class UserEntity {
+public class UserEntity implements Entity {
 
     private long id;
     private String username;
     private String firstname;
     private String lastname;
     private String password;
-    private List<RoleEntity> role;
+    private List<RoleEntity> roles;
 
     public UserEntity() {
     }
 
-    public UserEntity(long id, String username, String firstname, String lastname, String password, List<RoleEntity> role) {
+    public UserEntity(long id, String username, String firstname, String lastname, String password, List<RoleEntity> roles) {
         this.id = id;
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
         this.password = password;
-        this.role = role;
+        this.roles = roles;
     }
 
     public long getId() {
@@ -43,19 +45,19 @@ public class UserEntity {
         return password;
     }
 
-    public List<RoleEntity> getRole() {
-        return role;
+    public List<RoleEntity> getRoles() {
+        return roles;
     }
 
     @Override
     public String toString() {
         return "UserEntity{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", firstname='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", password=****************" + '\'' +
-                ", role=" + role +
-                '}';
+               "id=" + id +
+               ", username='" + username + '\'' +
+               ", firstname='" + firstname + '\'' +
+               ", lastname='" + lastname + '\'' +
+               ", password=****************" + '\'' +
+               ", roles=" + roles +
+               '}';
     }
 }
