@@ -16,6 +16,7 @@
         <module>repository-api</module>
         <module>jdbc</module>
         <module>pool</module>
+        <module>sql-executor</module>
     </modules>
 
 </project>
