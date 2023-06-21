@@ -2,8 +2,8 @@ package com.yarosh.library.repository.jdbc;
 
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.ProductEntity;
-import com.yarosh.library.repository.jdbc.executor.DefaultSqlExecutor;
-import com.yarosh.library.repository.jdbc.executor.SqlExecutor;
+import com.yarosh.library.repository.executor.DefaultSqlExecutor;
+import com.yarosh.library.repository.executor.SqlExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.yarosh.library.repository.jdbc.executor.SqlExecutor.GENERATED_KEY_COLUMN_NUMBER;
+import static com.yarosh.library.repository.executor.SqlExecutor.GENERATED_KEY_COLUMN_NUMBER;
 
 public class JdbcProductRepository implements CrudRepository<ProductEntity, Long> {
 
@@ -34,6 +34,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
 
     private final SqlExecutor<ProductEntity, Long> sqlExecutor;
 
+    @Inject
     public JdbcProductRepository(final DataSource dataSource) {
         this.sqlExecutor = new DefaultSqlExecutor<>(dataSource);
     }
