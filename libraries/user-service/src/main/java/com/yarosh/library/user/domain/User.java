@@ -1,50 +1,13 @@
 package com.yarosh.library.user.domain;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 
-public class User {
+public record User(Long id, String username, String firstname, String lastname, String password, List<Role> roles) {
 
-    private long id;
-    private String username;
-    private String firstname;
-    private String lastname;
-    private String password;
-    private List<Role> roles;
-
-    public User() {
-    }
-
-    public User(long id, String username, String firstname, String lastname, String password, List<Role> roles) {
-        this.id = id;
-        this.username = username;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.password = password;
-        this.roles = roles;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
+    public User {
+        validate();
     }
 
     @Override
@@ -57,5 +20,20 @@ public class User {
                ", password=****************" + '\'' +
                ", roles=" + roles +
                '}';
+    }
+
+    private void validate() {
+        if (id == null) {
+            throw new InvalidUserException("Id is null, {0}", this);
+        }
+        if (StringUtils.isBlank(username)) {
+            throw new InvalidUserException("Username is empty, {0}", this);
+        }
+        if (StringUtils.isBlank(password)) {
+            throw new InvalidUserException("Password is empty, {0}", this);
+        }
+        if (roles.isEmpty()) {
+            throw new InvalidUserException("Authorities is empty, {0}", this);
+        }
     }
 }
