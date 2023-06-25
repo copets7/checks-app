@@ -13,6 +13,7 @@
 
     <properties>
         <mysql.connector.version>8.0.32</mysql.connector.version>
+        <commons.lang3.version>3.12.0</commons.lang3.version>
     </properties>
 
     <dependencies>
@@ -30,6 +31,12 @@
             <groupId>com.yarosh.library.repository.api</groupId>
             <artifactId>repository-api</artifactId>
             <version>0.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons.lang3.version}</version>
         </dependency>
 
         <dependency>
