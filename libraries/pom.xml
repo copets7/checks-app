@@ -17,6 +17,7 @@
     <modules>
         <module>repositories</module>
         <module>user-service</module>
+        <module>authentication</module>
     </modules>
 
     <dependencies>
