@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public class JwtTokenService {
 
@@ -56,11 +57,10 @@ public class JwtTokenService {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }
 
-    public String resolveToken(String bearerToken) {
-        if (bearerToken != null && bearerToken.startsWith(TOKEN_PREFIX)) {
-            return bearerToken.substring(TOKEN_PREFIX.length());
-        }
-        return null;
+    public Optional<String> extractToken(String bearerToken) {
+        return Optional.ofNullable(bearerToken)
+                .filter(token -> token != null && token.startsWith(TOKEN_PREFIX))
+                .map(token -> token.substring(TOKEN_PREFIX.length()));
     }
 
     public boolean validateToken(String token) {
