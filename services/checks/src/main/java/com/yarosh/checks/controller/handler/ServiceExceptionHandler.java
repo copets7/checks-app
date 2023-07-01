@@ -15,7 +15,7 @@ public class ServiceExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceExceptionHandler.class);
 
     @ExceptionHandler(ObjectNotFoundException.class)
-    protected ResponseEntity<String> handleProductNotFoundException(final ObjectNotFoundException e) {
+    protected ResponseEntity<String> handleObjectNotFoundException(final ObjectNotFoundException e) {
         LOGGER.debug("ObjectNotFoundException was handled, message {}", e.getMessage());
         LOGGER.trace("ObjectNotFoundException was handled", e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.PRECONDITION_FAILED);
