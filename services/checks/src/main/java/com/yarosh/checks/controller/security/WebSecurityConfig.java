@@ -1,31 +1,34 @@
 package com.yarosh.checks.controller.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import com.yarosh.library.authentication.jwt.JwtConfigurerAdapter;
+import com.yarosh.library.authentication.jwt.JwtSecurityConfig;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 @EnableWebSecurity
+@Import(JwtSecurityConfig.class)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final BasicAuthenticationEntryPoint basicAuthenticationEntryPoint = new AppBasicAuthenticationEntryPoint();
+    private final JwtConfigurerAdapter jwtConfigurerAdapter;
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder authManager) throws Exception {
-        authManager.inMemoryAuthentication()
-                .withUser("Cashier")
-                .password("{noop}pass")
-                .authorities("ROLE_USER");
+    public WebSecurityConfig(JwtConfigurerAdapter jwtConfigurerAdapter) {
+        this.jwtConfigurerAdapter = jwtConfigurerAdapter;
     }
 
     @Override
-    public void configure(HttpSecurity security) throws Exception {
-        security.csrf()
-                .disable()
-                .authorizeRequests().anyRequest().authenticated()
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.httpBasic().disable()
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .httpBasic().authenticationEntryPoint(basicAuthenticationEntryPoint);
+                .authorizeRequests()
+                .antMatchers("/api/v1.0/login").permitAll()
+                .antMatchers("/api/v1.0/checks").hasAnyRole("ADMIN", "CASHIER")
+                .anyRequest().authenticated()
+                .and()
+                .apply(jwtConfigurerAdapter);
     }
 }
