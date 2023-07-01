@@ -1,6 +1,9 @@
 package com.yarosh.library.authentication.jwt.service;
 
+import com.yarosh.library.authentication.jwt.domain.JwtResponse;
 import com.yarosh.library.user.domain.Role;
+import com.yarosh.library.user.domain.User;
+import com.yarosh.library.user.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -12,7 +15,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.text.MessageFormat;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -28,11 +33,20 @@ public class JwtTokenService {
     private final long validityInMilliSeconds;
 
     private final UserDetailsService userDetailsService;
+    private final UserService<User> userService;
 
-    public JwtTokenService(String secret, long validityInMilliSeconds, UserDetailsService userDetailsService) {
+    public JwtTokenService(String secret, long validityInMilliSeconds, UserDetailsService userDetailsService, UserService<User> userService) {
         this.secret = Base64.getEncoder().encodeToString(secret.getBytes());
         this.validityInMilliSeconds = validityInMilliSeconds;
         this.userDetailsService = userDetailsService;
+        this.userService = userService;
+    }
+
+    public JwtResponse processJwtFlow(String username) {
+       return userService.findByUsername(username)
+               .map(user -> createToken(user.username(), user.roles()))
+               .map(token -> new JwtResponse(username, token))
+               .orElseThrow(() -> new UsernameNotFoundException(MessageFormat.format("User with username {0} not found", username)));
     }
 
     public String createToken(String username, List<Role> roles) {
