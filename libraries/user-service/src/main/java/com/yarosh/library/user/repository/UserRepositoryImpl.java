@@ -24,6 +24,7 @@ public class UserRepositoryImpl implements UserRepository<UserEntity> {
     private static final String SQL_SELECT_BY_USERNAME = """
             SELECT u.id, u.username, u.firstname, u.lastname, u.password, r.id, r.name FROM users as u
             JOIN roles as r on JSON_CONTAINS(roles, CAST(r.id as JSON))
+            WHERE u.username = ?
             """;
 
     private static final String USER_ID_FIELD = "u.id";
