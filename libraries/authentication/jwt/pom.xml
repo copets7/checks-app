@@ -11,7 +11,10 @@
     <artifactId>jwt</artifactId>
     <packaging>jar</packaging>
 
-    <properties><commons.lang3.version>3.12.0</commons.lang3.version></properties>
+    <properties>
+        <commons.lang3.version>3.12.0</commons.lang3.version>
+        <org.springframework.boot.version>2.7.11</org.springframework.boot.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -40,9 +43,9 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>8.0.1</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${org.springframework.boot.version}</version>
         </dependency>
     </dependencies>
 </project>
