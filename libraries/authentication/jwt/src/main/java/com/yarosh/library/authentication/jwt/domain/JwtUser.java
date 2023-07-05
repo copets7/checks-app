@@ -13,7 +13,19 @@ public record JwtUser(Long id,
                       String password,
                       Collection<? extends GrantedAuthority> authorities) implements UserDetails {
 
-    public JwtUser {
+    public JwtUser(Long id,
+                   String username,
+                   String firstname,
+                   String lastname,
+                   String password,
+                   Collection<? extends GrantedAuthority> authorities) {
+        this.id = id;
+        this.username = username;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.password = password;
+        this.authorities = authorities;
+
         validate();
     }
 
@@ -38,22 +50,22 @@ public record JwtUser(Long id,
 
     @Override
     public boolean isAccountNonExpired() {
-        throw new UnsupportedOperationException("JwtUser class doesn't support such method");
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        throw new UnsupportedOperationException("JwtUser class doesn't support such method");
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        throw new UnsupportedOperationException("JwtUser class doesn't support such method");
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        throw new UnsupportedOperationException("JwtUser class doesn't support such method");
+        return true;
     }
 
     private void validate() {
