@@ -62,23 +62,24 @@ public class UserRepositoryImpl implements UserRepository<UserEntity> {
 
                 LOGGER.trace("SQL result set converting starts, metadata: {}", resultSet.getMetaData());
 
-                final List<RoleEntity> roles = new ArrayList<>();
+                UserEntity user = null;
                 while (resultSet.next()) {
-                    roles.add(new RoleEntity(resultSet.getLong(ROLE_ID_FIELD), resultSet.getString(ROLE_NAME_FIELD)));
 
-                    if (!resultSet.next()) {
-                        return new UserEntity(
+                    if (user == null) {
+                        user = new UserEntity(
                                 resultSet.getLong(USER_ID_FIELD),
                                 resultSet.getString(USERNAME_FIELD),
                                 resultSet.getString(FIRSTNAME_FIELD),
                                 resultSet.getString(LASTNAME_FIELD),
                                 resultSet.getString(PASSWORD_FIELD),
-                                roles
+                                new ArrayList<>()
                         );
                     }
+
+                    user.getRoles().add(new RoleEntity(resultSet.getLong(ROLE_ID_FIELD), resultSet.getString(ROLE_NAME_FIELD)));
                 }
 
-                throw new UserRepositoryException("Unexpected exception during processing result set");
+                return user;
             } catch (SQLException e) {
                 LOGGER.error("Performing result set for SQL select failed, message: {}", e.getMessage());
                 LOGGER.debug("Performing result set for SQL select failed", e);
