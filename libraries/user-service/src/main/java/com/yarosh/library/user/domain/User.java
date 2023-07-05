@@ -6,20 +6,27 @@ import java.util.List;
 
 public record User(Long id, String username, String firstname, String lastname, String password, List<Role> roles) {
 
-    public User {
+    public User(Long id, String username, String firstname, String lastname, String password, List<Role> roles) {
+        this.id = id;
+        this.username = username;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.password = password;
+        this.roles = roles;
+
         validate();
     }
 
     @Override
     public String toString() {
         return "User{" +
-               "id=" + id +
-               ", username='" + username + '\'' +
-               ", firstname='" + firstname + '\'' +
-               ", lastname='" + lastname + '\'' +
-               ", password=****************" + '\'' +
-               ", roles=" + roles +
-               '}';
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", password=****************" + '\'' +
+                ", roles=" + roles +
+                '}';
     }
 
     private void validate() {
