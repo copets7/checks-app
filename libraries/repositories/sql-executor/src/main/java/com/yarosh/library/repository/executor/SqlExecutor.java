@@ -1,6 +1,6 @@
 package com.yarosh.library.repository.executor;
 
-import com.yarosh.library.repository.api.entity.Entity;
+import com.yarosh.library.repository.api.entity.BaseEntity;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public interface SqlExecutor<E extends Entity, ID> {
+public interface SqlExecutor<E extends BaseEntity, ID> {
 
     int GENERATED_KEY_COLUMN_NUMBER = 1;
 

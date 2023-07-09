@@ -1,10 +1,10 @@
 package com.yarosh.library.user.repository.entity;
 
-import com.yarosh.library.repository.api.entity.Entity;
+import com.yarosh.library.repository.api.entity.BaseEntity;
 
 import java.util.List;
 
-public class UserEntity implements Entity {
+public class UserEntity implements BaseEntity {
 
     private long id;
     private String username;

@@ -1,6 +1,6 @@
 package com.yarosh.library.repository.executor;
 
-import com.yarosh.library.repository.api.entity.Entity;
+import com.yarosh.library.repository.api.entity.BaseEntity;
 import com.yarosh.library.repository.api.exception.RecordNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class DefaultSqlExecutor<E extends Entity, ID> implements SqlExecutor<E, ID> {
+public class DefaultSqlExecutor<E extends BaseEntity, ID> implements SqlExecutor<E, ID> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSqlExecutor.class);
 
