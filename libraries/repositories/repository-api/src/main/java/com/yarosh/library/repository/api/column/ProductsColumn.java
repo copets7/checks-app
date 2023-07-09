@@ -1,4 +1,4 @@
-package com.yarosh.library.repository.jdbc.column;
+package com.yarosh.library.repository.api.column;
 
 import com.yarosh.library.repository.api.entity.ProductEntity;
 
