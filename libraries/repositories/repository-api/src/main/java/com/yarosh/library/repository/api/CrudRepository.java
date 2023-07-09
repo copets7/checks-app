@@ -1,11 +1,11 @@
 package com.yarosh.library.repository.api;
 
-import com.yarosh.library.repository.api.entity.Entity;
+import com.yarosh.library.repository.api.entity.BaseEntity;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface CrudRepository<E extends Entity, ID> {
+public interface CrudRepository<E extends BaseEntity, ID> {
 
     E insert(E entity);
 
