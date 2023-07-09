@@ -1,9 +1,9 @@
 package com.yarosh.checks.service.util;
 
 import com.yarosh.checks.domain.Domain;
-import com.yarosh.library.repository.api.entity.Entity;
+import com.yarosh.library.repository.api.entity.BaseEntity;
 
-public interface BidirectionalConverter<D extends Domain, E extends Entity> {
+public interface BidirectionalConverter<D extends Domain, E extends BaseEntity> {
 
     D convertToDomain(E entity);
 
