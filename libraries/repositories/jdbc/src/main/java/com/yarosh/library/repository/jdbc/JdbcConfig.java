@@ -2,6 +2,7 @@ package com.yarosh.library.repository.jdbc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yarosh.library.repository.api.CrudRepository;
+import com.yarosh.library.repository.api.ProductsColumnConverter;
 import com.yarosh.library.repository.api.RepositoryApiConfig;
 import com.yarosh.library.repository.api.entity.CheckEntity;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
@@ -18,8 +19,8 @@ import org.springframework.context.annotation.Import;
 public class JdbcConfig {
 
     @Bean
-    public CrudRepository<CheckEntity, Long> checkRepository(SqlExecutor<CheckEntity, Long> sqlExecutor, ObjectMapper objectMapper) {
-        return new JdbcCheckRepository(sqlExecutor, objectMapper);
+    public CrudRepository<CheckEntity, Long> checkRepository(SqlExecutor<CheckEntity, Long> sqlExecutor, ProductsColumnConverter productsColumnConverter) {
+        return new JdbcCheckRepository(sqlExecutor, productsColumnConverter);
     }
 
     @Bean
@@ -30,5 +31,15 @@ public class JdbcConfig {
     @Bean
     public CrudRepository<ProductEntity, Long> productRepository(SqlExecutor<ProductEntity, Long> sqlExecutor) {
         return new JdbcProductRepository(sqlExecutor);
+    }
+
+    @Bean
+    public ProductsColumnConverter productsColumnConverter(ObjectMapper objectMapper) {
+        return new ProductsColumnConverter(objectMapper);
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }
