@@ -1,15 +1,11 @@
 package com.yarosh.library.repository.jdbc;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yarosh.library.repository.api.CrudRepository;
+import com.yarosh.library.repository.api.ProductsColumnConverter;
 import com.yarosh.library.repository.api.entity.CheckEntity;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
-import com.yarosh.library.repository.api.entity.ProductEntity;
 import com.yarosh.library.repository.executor.DefaultSqlExecutor;
 import com.yarosh.library.repository.executor.SqlExecutor;
-import com.yarosh.library.repository.jdbc.column.ProductsColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.yarosh.library.repository.executor.SqlExecutor.GENERATED_KEY_COLUMN_NUMBER;
 
@@ -59,18 +53,18 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
     private static final String DISCOUNT_CARDS_DISCOUNT_FIELD = "d.discount";
 
     private final SqlExecutor<CheckEntity, Long> sqlExecutor;
-    private final ObjectMapper objectMapper;
+    private final ProductsColumnConverter productsColumnConverter;
 
     @Inject
-    public JdbcCheckRepository(final DataSource dataSource, final ObjectMapper objectMapper) {
+    public JdbcCheckRepository(final DataSource dataSource, final ProductsColumnConverter productsColumnConverter) {
         this.sqlExecutor = new DefaultSqlExecutor<>(dataSource);
-        this.objectMapper = objectMapper;
+        this.productsColumnConverter = productsColumnConverter;
     }
 
     @Inject
-    public JdbcCheckRepository(final SqlExecutor<CheckEntity, Long> sqlExecutor, final ObjectMapper objectMapper) {
+    public JdbcCheckRepository(final SqlExecutor<CheckEntity, Long> sqlExecutor, final ProductsColumnConverter productsColumnConverter) {
         this.sqlExecutor = sqlExecutor;
-        this.objectMapper = objectMapper;
+        this.productsColumnConverter = productsColumnConverter;
     }
 
     @Override
@@ -106,7 +100,7 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
                     resultSet.getString(CHECK_CASHIER_NAME_FIELD),
                     resultSet.getDate(CHECK_DATE_FIELD).toLocalDate(),
                     resultSet.getTime(CHECK_TIME_FIELD).toLocalTime(),
-                    convertToProductEntities(resultSet.getString(CHECK_PRODUCTS_FIELD)),
+                    productsColumnConverter.convertToEntityAttribute(resultSet.getString(CHECK_PRODUCTS_FIELD)),
                     new DiscountCardEntity(resultSet.getLong(DISCOUNT_CARDS_ID_FIELD), resultSet.getDouble(DISCOUNT_CARDS_DISCOUNT_FIELD)),
                     resultSet.getDouble(CHECK_TOTAL_PRICE_FIELD)
             );
@@ -143,7 +137,7 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
         params.add(check.getCashierName());
         params.add(check.getDate());
         params.add(check.getTime());
-        params.add(convertProductEntitiesToJson(check.getProducts()));
+        params.add(productsColumnConverter.convertToDatabaseColumn(check.getProducts()));
         params.add(check.getDiscountCard().getId());
         params.add(check.getTotalPrice());
 
@@ -153,43 +147,5 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
 
         LOGGER.trace("Converted check to params returning, {}", params);
         return params;
-    }
-
-    private Map<ProductEntity, Integer> convertToProductEntities(String json) {
-        try {
-            return objectMapper.readValue(json, new TypeReference<List<ProductsColumn>>() {
-                    })
-                    .stream()
-                    .collect(Collectors.toMap(ProductsColumn::convertToProductEntity, ProductsColumn::quantity));
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Converting json to product entities failed, message: {}", e.getMessage());
-            LOGGER.debug("Converting json to product entities failed", e);
-            throw new JdbcRepositoryException("Converting json to product entities failed, e: {0}", e);
-        }
-    }
-
-    private String convertProductEntitiesToJson(Map<ProductEntity, Integer> products) {
-        try {
-            final List<ProductsColumn> productsColumns = products.entrySet()
-                    .stream()
-                    .map(this::convertToProductColumn)
-                    .toList();
-            return objectMapper.writeValueAsString(productsColumns);
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Converting product entities to json failed, message: {}", e.getMessage());
-            LOGGER.debug("Converting product entities to json failed", e);
-            throw new JdbcRepositoryException("Converting product entities to json failed, e: {0}", e);
-        }
-    }
-
-    private ProductsColumn convertToProductColumn(Map.Entry<ProductEntity, Integer> entry) {
-        final ProductEntity product = entry.getKey();
-        return new ProductsColumn(
-                product.getId(),
-                product.getDescription(),
-                product.getPrice(),
-                product.getDiscount(),
-                entry.getValue()
-        );
     }
 }
