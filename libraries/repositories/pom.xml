@@ -17,6 +17,7 @@
         <module>jdbc</module>
         <module>pool</module>
         <module>sql-executor</module>
+        <module>spring</module>
     </modules>
 
 </project>
