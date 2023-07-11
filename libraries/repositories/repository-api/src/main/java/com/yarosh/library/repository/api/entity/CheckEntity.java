@@ -38,6 +38,7 @@ public class CheckEntity implements BaseEntity {
     private LocalTime time;
 
     @Convert(converter = ProductsColumnConverter.class)
+    @Column(name = "products")
     private Map<ProductEntity, Integer> products;
 
     @ManyToOne(fetch = FetchType.LAZY)
