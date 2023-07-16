@@ -2,9 +2,10 @@ package com.yarosh.checks.service;
 
 import com.yarosh.checks.domain.Check;
 import com.yarosh.checks.domain.id.CheckId;
-import com.yarosh.checks.service.util.BidirectionalConverter;
+import com.yarosh.checks.service.util.converter.BidirectionalConverter;
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.CheckEntity;
+import org.springframework.cache.annotation.Cacheable;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -35,12 +36,14 @@ public class CheckService implements CrudService<Check, CheckId> {
     }
 
     @Override
+    @Cacheable("check-cache")
     public Optional<Check> get(CheckId id) {
         return checkRepository.select(id.value())
                 .map(checkConverter::convertToDomain);
     }
 
     @Override
+    @Cacheable("checks-cache")
     public List<Check> getAll() {
         return checkRepository.selectAll()
                 .stream()
