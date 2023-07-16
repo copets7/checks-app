@@ -2,7 +2,10 @@ package com.yarosh.checks.controller.security;
 
 import com.yarosh.library.authentication.jwt.JwtConfigurerAdapter;
 import com.yarosh.library.authentication.jwt.JwtSecurityConfig;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -25,10 +28,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/v1.0/login").permitAll()
-                .antMatchers("/api/v1.0/checks").hasAnyRole("ADMIN", "CASHIER")
+                .antMatchers("/api/v1.0/auth/basic").permitAll()
+                .antMatchers("/api/v1.0/check/**").hasAnyRole("ADMIN", "CASHIER")
                 .anyRequest().authenticated()
                 .and()
+                .formLogin()
+                .and()
                 .apply(jwtConfigurerAdapter);
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }
