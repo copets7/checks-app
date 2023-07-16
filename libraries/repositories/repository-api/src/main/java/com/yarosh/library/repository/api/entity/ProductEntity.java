@@ -15,10 +15,13 @@ public class ProductEntity implements BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
     @Column(name = "description")
     private String description;
+
     @Column(name = "price")
     private double price;
+
     @Column(name = "discount")
     private double discount;
 
