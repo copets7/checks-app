@@ -14,14 +14,15 @@ import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.CheckEntity;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
 import com.yarosh.library.repository.api.entity.ProductEntity;
-import com.yarosh.library.repository.jdbc.JdbcConfig;
+import com.yarosh.library.repository.spring.data.SpringDataRepositoryConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@Import(JdbcConfig.class)
+//@Import(JdbcConfig.class)
+@Import(SpringDataRepositoryConfig.class)
 @PropertySource("classpath:application.properties")
 public class ServiceConfig {
 
