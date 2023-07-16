@@ -7,31 +7,31 @@ INSERT INTO roles (name)
 VALUES ('CASHIER');
 
 INSERT INTO products (description, price, discount)
-values ('Milk', 1.9, 0);
+VALUES ('Milk', 1.9, 0);
 
 INSERT INTO products (description, price, discount)
-values ('Bread', 1.4, 0);
+VALUES ('Bread', 1.4, 0);
 
 INSERT INTO products (description, price, discount)
-values ('Pasta', 2.9, 0.1);
+VALUES ('Pasta', 2.9, 0.1);
 
 INSERT INTO products (description, price, discount)
-values ('Potato', 3.9, 0.5);
+VALUES ('Potato', 3.9, 0.5);
 
 INSERT INTO products (description, price, discount)
-values ('Cheese', 5.8, 0);
+VALUES ('Cheese', 5.8, 0);
 
 INSERT INTO discount_cards (discount)
-values (10);
+VALUES (10);
 
 INSERT INTO discount_cards (discount)
-values (15);
+VALUES (15);
 
 INSERT INTO discount_cards (discount)
-values (20);
+VALUES (20);
 
 INSERT INTO discount_cards (discount)
-values (25);
+VALUES (25);
 
 INSERT INTO discount_cards (discount)
-values (30);
+VALUES (30);
