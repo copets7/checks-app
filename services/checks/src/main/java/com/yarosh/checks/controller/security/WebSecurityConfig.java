@@ -3,7 +3,6 @@ package com.yarosh.checks.controller.security;
 import com.yarosh.library.authentication.jwt.JwtConfigurerAdapter;
 import com.yarosh.library.authentication.jwt.JwtSecurityConfig;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
