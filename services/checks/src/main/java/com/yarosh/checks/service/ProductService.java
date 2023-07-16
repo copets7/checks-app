@@ -2,7 +2,7 @@ package com.yarosh.checks.service;
 
 import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.ProductId;
-import com.yarosh.checks.service.util.BidirectionalConverter;
+import com.yarosh.checks.service.util.converter.BidirectionalConverter;
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.ProductEntity;
 
