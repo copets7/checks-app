@@ -6,15 +6,16 @@ import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.CheckId;
 import com.yarosh.checks.domain.id.DiscountCardId;
 import com.yarosh.checks.domain.id.ProductId;
-import com.yarosh.checks.service.util.BidirectionalConverter;
-import com.yarosh.checks.service.util.CheckConverter;
-import com.yarosh.checks.service.util.DiscountCardConverter;
-import com.yarosh.checks.service.util.ProductConverter;
+import com.yarosh.checks.service.util.converter.BidirectionalConverter;
+import com.yarosh.checks.service.util.converter.CheckConverter;
+import com.yarosh.checks.service.util.converter.DiscountCardConverter;
+import com.yarosh.checks.service.util.converter.ProductConverter;
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.CheckEntity;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
 import com.yarosh.library.repository.api.entity.ProductEntity;
 import com.yarosh.library.repository.spring.data.SpringDataRepositoryConfig;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -24,6 +25,7 @@ import org.springframework.context.annotation.PropertySource;
 //@Import(JdbcConfig.class)
 @Import(SpringDataRepositoryConfig.class)
 @PropertySource("classpath:application.properties")
+@EnableCaching
 public class ServiceConfig {
 
     @Bean
