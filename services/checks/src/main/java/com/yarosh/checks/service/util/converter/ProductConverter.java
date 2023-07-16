@@ -1,4 +1,4 @@
-package com.yarosh.checks.service.util;
+package com.yarosh.checks.service.util.converter;
 
 import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.ProductId;

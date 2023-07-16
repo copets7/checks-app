@@ -1,4 +1,4 @@
-package com.yarosh.checks.service.util;
+package com.yarosh.checks.service.util.converter;
 
 import com.yarosh.checks.domain.Domain;
 import com.yarosh.library.repository.api.entity.BaseEntity;

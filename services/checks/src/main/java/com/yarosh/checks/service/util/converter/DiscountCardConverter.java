@@ -1,4 +1,4 @@
-package com.yarosh.checks.service.util;
+package com.yarosh.checks.service.util.converter;
 
 import com.yarosh.checks.domain.DiscountCard;
 import com.yarosh.checks.domain.id.DiscountCardId;
