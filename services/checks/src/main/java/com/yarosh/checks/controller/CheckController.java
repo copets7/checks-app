@@ -103,20 +103,6 @@ public class CheckController {
         return new ResponseEntity<>(checks, HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/update", method = RequestMethod.PUT)
-    public ResponseEntity<CheckView> update(final @RequestBody CheckDto checkDto) {
-        LOGGER.info("Calling update check started for product with value: {}", checkDto.id());
-
-        final Check check = convertToCheck(checkDto);
-        final Check updated = checkService.update(check);
-        final CheckView view = convertToCheckView(updated);
-
-        LOGGER.info("Calling updated check successfully ended for product, value: {}", view.id());
-        LOGGER.debug("Updated check view detailed printing: {}", view);
-
-        return new ResponseEntity<>(view, HttpStatus.OK);
-    }
-
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.DELETE)
     public ResponseEntity<CheckView> delete(final @PathVariable Long id) {
         LOGGER.info("Calling delete check started for product, value: {}", id);
