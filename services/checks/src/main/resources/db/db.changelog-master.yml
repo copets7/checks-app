@@ -12,5 +12,5 @@ databaseChangeLog:
       author: Andrey Yarosh
       changes:
         - sqlFile:
-            path: changelog/scripts/insert-schema.sql
+            path: changelog/scripts/insert.sql
             relativeToChangelogFile: true
