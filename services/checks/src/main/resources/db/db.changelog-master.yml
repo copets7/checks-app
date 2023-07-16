@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: initial-schema
+      author: Andrey Yarosh
+      changes:
+        - sqlFile:
+            path: changelog/scripts/schema.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: insert-schema
+      author: Andrey Yarosh
+      changes:
+        - sqlFile:
+            path: changelog/scripts/insert-schema.sql
+            relativeToChangelogFile: true
