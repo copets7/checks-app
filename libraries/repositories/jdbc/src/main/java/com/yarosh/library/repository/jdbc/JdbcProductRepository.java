@@ -2,6 +2,8 @@ package com.yarosh.library.repository.jdbc;
 
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.ProductEntity;
+import com.yarosh.library.repository.api.pagination.DatabasePage;
+import com.yarosh.library.repository.api.pagination.DatabasePageRequest;
 import com.yarosh.library.repository.executor.DefaultSqlExecutor;
 import com.yarosh.library.repository.executor.SqlExecutor;
 import org.slf4j.Logger;
@@ -68,6 +70,11 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     public List<ProductEntity> selectAll() {
         LOGGER.debug("JDBC SQL selecting all products starts");
         return sqlExecutor.selectAll(SQL_SELECT_ALL, this::convertToEntity);
+    }
+
+    @Override
+    public DatabasePage<ProductEntity> findAllWithPagination(DatabasePageRequest request) {
+        return null;
     }
 
     @Override

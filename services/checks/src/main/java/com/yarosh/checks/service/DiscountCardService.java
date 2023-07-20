@@ -2,6 +2,8 @@ package com.yarosh.checks.service;
 
 import com.yarosh.checks.domain.DiscountCard;
 import com.yarosh.checks.domain.id.DiscountCardId;
+import com.yarosh.checks.domain.pagination.ContentPage;
+import com.yarosh.checks.domain.pagination.ContentPageRequest;
 import com.yarosh.checks.service.util.converter.BidirectionalConverter;
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
@@ -45,6 +47,11 @@ public class DiscountCardService implements CrudService<DiscountCard, DiscountCa
                 .stream()
                 .map(discountCardConverter::convertToDomain)
                 .toList();
+    }
+
+    @Override
+    public ContentPage<DiscountCard> findAllWithPagination(ContentPageRequest request) {
+        return null;
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.yarosh.library.repository.spring.data.decorator;
 
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.BaseEntity;
+import com.yarosh.library.repository.api.pagination.DatabasePage;
+import com.yarosh.library.repository.api.pagination.DatabasePageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -28,6 +30,11 @@ public class SpringDataRepositoryDecorator<E extends BaseEntity, ID> implements 
     @Override
     public List<E> selectAll() {
         return jpaRepository.findAll();
+    }
+
+    @Override
+    public DatabasePage<E> findAllWithPagination(DatabasePageRequest request) {
+        return (DatabasePage<E>) jpaRepository.findAll();
     }
 
     @Override

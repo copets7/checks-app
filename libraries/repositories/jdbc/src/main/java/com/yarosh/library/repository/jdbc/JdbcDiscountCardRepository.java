@@ -2,6 +2,8 @@ package com.yarosh.library.repository.jdbc;
 
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
+import com.yarosh.library.repository.api.pagination.DatabasePage;
+import com.yarosh.library.repository.api.pagination.DatabasePageRequest;
 import com.yarosh.library.repository.executor.DefaultSqlExecutor;
 import com.yarosh.library.repository.executor.SqlExecutor;
 import org.slf4j.Logger;
@@ -66,6 +68,11 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
     public List<DiscountCardEntity> selectAll() {
         LOGGER.debug("JDBC SQL selecting all discount cards starts");
         return sqlExecutor.selectAll(SQL_SELECT_ALL, this::convertToEntity);
+    }
+
+    @Override
+    public DatabasePage<DiscountCardEntity> findAllWithPagination(DatabasePageRequest request) {
+        return null;
     }
 
     @Override

@@ -4,6 +4,8 @@ import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.ProductsColumnConverter;
 import com.yarosh.library.repository.api.entity.CheckEntity;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
+import com.yarosh.library.repository.api.pagination.DatabasePage;
+import com.yarosh.library.repository.api.pagination.DatabasePageRequest;
 import com.yarosh.library.repository.executor.DefaultSqlExecutor;
 import com.yarosh.library.repository.executor.SqlExecutor;
 import org.slf4j.Logger;
@@ -80,6 +82,11 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
     @Override
     public List<CheckEntity> selectAll() {
         return sqlExecutor.selectAll(SQL_SELECT_ALL, this::convertToEntity);
+    }
+
+    @Override
+    public DatabasePage<CheckEntity> findAllWithPagination(DatabasePageRequest request) {
+        return null;
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.yarosh.checks.service;
 
 import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.ProductId;
+import com.yarosh.checks.domain.pagination.ContentPage;
+import com.yarosh.checks.domain.pagination.ContentPageRequest;
 import com.yarosh.checks.service.util.converter.BidirectionalConverter;
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.ProductEntity;
@@ -45,6 +47,11 @@ public class ProductService implements CrudService<Product, ProductId> {
                 .stream()
                 .map(productConverter::convertToDomain)
                 .toList();
+    }
+
+    @Override
+    public ContentPage<Product> findAllWithPagination(ContentPageRequest request) {
+        return null;
     }
 
     @Override
