@@ -3,6 +3,7 @@ package com.yarosh.checks.controller;
 import com.yarosh.checks.controller.dto.DiscountCardDto;
 import com.yarosh.checks.controller.util.ApiDtoConverter;
 import com.yarosh.checks.controller.util.DiscountCardApiDtoConverter;
+import com.yarosh.checks.controller.util.PaginationDtoConverter;
 import com.yarosh.checks.controller.util.ProductApiDtoConverter;
 import com.yarosh.checks.controller.util.ProductApiDtoConverterImpl;
 import com.yarosh.checks.controller.view.DiscountCardView;
@@ -28,6 +29,11 @@ import java.util.Collections;
 @EnableSwagger2
 @EnableWebMvc
 public class ControllerConfig implements WebMvcConfigurer {
+
+    @Bean
+    public PaginationDtoConverter paginationDtoConverter() {
+        return new PaginationDtoConverter();
+    }
 
     @Bean
     public ProductApiDtoConverter productApiDtoConverter() {
