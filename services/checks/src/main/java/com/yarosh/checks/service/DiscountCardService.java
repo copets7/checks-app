@@ -50,7 +50,7 @@ public class DiscountCardService implements CrudService<DiscountCard, DiscountCa
     }
 
     @Override
-    public ContentPage<DiscountCard> findAllWithPagination(ContentPageRequest request) {
+    public ContentPage<DiscountCard> getAll(ContentPageRequest request) {
         return null;
     }
 
