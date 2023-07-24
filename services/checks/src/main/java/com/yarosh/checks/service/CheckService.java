@@ -54,7 +54,7 @@ public class CheckService implements CrudService<Check, CheckId> {
     }
 
     @Override
-    public ContentPage<Check> findAllWithPagination(ContentPageRequest request) {
+    public ContentPage<Check> getAll(ContentPageRequest request) {
         return null;
     }
 
