@@ -2,8 +2,12 @@ package com.yarosh.library.repository.spring.data.decorator;
 
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.BaseEntity;
-import com.yarosh.library.repository.api.pagination.DatabasePage;
-import com.yarosh.library.repository.api.pagination.DatabasePageRequest;
+import com.yarosh.library.repository.api.pagination.RepositoryPage;
+import com.yarosh.library.repository.api.pagination.RepositoryPageRequest;
+import com.yarosh.library.repository.api.pagination.RepositorySortBy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -33,8 +37,12 @@ public class SpringDataRepositoryDecorator<E extends BaseEntity, ID> implements 
     }
 
     @Override
-    public DatabasePage<E> findAllWithPagination(DatabasePageRequest request) {
-        return (DatabasePage<E>) jpaRepository.findAll();
+    public RepositoryPage<E> selectAll(RepositoryPageRequest request) {
+        final Page<E> page = jpaRepository.findAll(
+                PageRequest.of(request.pageNumber(), request.size(), convertToSpringSort(request.sortBy()))
+        );
+
+        return convertToDatabasePage(page);
     }
 
     @Override
@@ -45,5 +53,14 @@ public class SpringDataRepositoryDecorator<E extends BaseEntity, ID> implements 
     @Override
     public void delete(ID id) {
         jpaRepository.deleteById(id);
+    }
+
+    private Sort convertToSpringSort(RepositorySortBy sortBy) {
+        final Sort sort = Sort.by(sortBy.column());
+        return sortBy.isDesc() ? sort.descending() : sort;
+    }
+
+    private RepositoryPage<E> convertToDatabasePage(Page<E> page) {
+        return new RepositoryPage<>(page.getContent(), page.getSize());
     }
 }
