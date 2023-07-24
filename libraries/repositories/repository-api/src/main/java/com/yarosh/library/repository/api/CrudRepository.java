@@ -1,8 +1,8 @@
 package com.yarosh.library.repository.api;
 
 import com.yarosh.library.repository.api.entity.BaseEntity;
-import com.yarosh.library.repository.api.pagination.DatabasePage;
-import com.yarosh.library.repository.api.pagination.DatabasePageRequest;
+import com.yarosh.library.repository.api.pagination.RepositoryPage;
+import com.yarosh.library.repository.api.pagination.RepositoryPageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,5 +19,5 @@ public interface CrudRepository<E extends BaseEntity, ID> {
 
     void delete(ID id);
 
-    DatabasePage<E> findAllWithPagination(final DatabasePageRequest request);
+    RepositoryPage<E> selectAll(RepositoryPageRequest request);
 }
