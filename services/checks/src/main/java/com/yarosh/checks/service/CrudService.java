@@ -25,5 +25,5 @@ public interface CrudService<D extends Domain, ID extends DomainId> {
 
     void delete(ID id);
 
-    ContentPage<D> findAllWithPagination(final ContentPageRequest request);
+    ContentPage<D> getAll(ContentPageRequest request);
 }
