@@ -1,10 +1,15 @@
 package com.yarosh.checks.controller;
 
 import com.yarosh.checks.controller.dto.ProductDto;
+import com.yarosh.checks.controller.dto.pagination.ContentPageRequestDto;
 import com.yarosh.checks.controller.util.ApiDtoConverter;
+import com.yarosh.checks.controller.util.PaginationDtoConverter;
+import com.yarosh.checks.controller.view.ContentPageView;
 import com.yarosh.checks.controller.view.ProductView;
 import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.ProductId;
+import com.yarosh.checks.domain.pagination.ContentPage;
+import com.yarosh.checks.domain.pagination.ContentPageRequest;
 import com.yarosh.checks.service.CrudService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(path = "api/v1.0/product")
 public class ProductController {
@@ -26,11 +29,13 @@ public class ProductController {
 
     private final CrudService<Product, ProductId> productService;
     private final ApiDtoConverter<ProductDto, ProductView, Product> productApiDtoConverter;
+    private final PaginationDtoConverter paginationDtoConverter;
 
     public ProductController(final CrudService<Product, ProductId> productService,
-                             final ApiDtoConverter<ProductDto, ProductView, Product> productApiDtoConverter) {
+                             final ApiDtoConverter<ProductDto, ProductView, Product> productApiDtoConverter, PaginationDtoConverter paginationDtoConverter) {
         this.productService = productService;
         this.productApiDtoConverter = productApiDtoConverter;
+        this.paginationDtoConverter = paginationDtoConverter;
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
@@ -59,17 +64,19 @@ public class ProductController {
     }
 
     @RequestMapping(path = "/all", method = RequestMethod.GET)
-    public ResponseEntity<List<ProductView>> getAll() {
-        LOGGER.info("Calling getAll products started");
+    public ResponseEntity<ContentPageView<ProductView>> getAll(final @RequestBody ContentPageRequestDto pageRequestDto) {
+        LOGGER.info("Calling getAll products started, page request: {}", pageRequestDto);
 
-        List<ProductView> products = productService.getAll()
-                .stream()
-                .map(productApiDtoConverter::convertDomainToView)
-                .toList();
+        final ContentPageRequest pageRequest = paginationDtoConverter.convertToContentPageRequest(pageRequestDto);
+        final ContentPage<Product> page = productService.getAll(pageRequest);
 
-        LOGGER.debug("Product views detailed printing: {}", products);
+        final ContentPageView<ProductView> pageView = paginationDtoConverter.convertToContentPageView(page,
+                products -> products.stream().map(productApiDtoConverter::convertDomainToView).toList()
+        );
 
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        LOGGER.debug("Products page view detailed printing: {}", pageView);
+
+        return new ResponseEntity<>(pageView, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/update", method = RequestMethod.PUT)
