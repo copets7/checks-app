@@ -5,8 +5,11 @@ import com.yarosh.checks.domain.id.ProductId;
 import com.yarosh.checks.domain.pagination.ContentPage;
 import com.yarosh.checks.domain.pagination.ContentPageRequest;
 import com.yarosh.checks.service.util.converter.BidirectionalConverter;
+import com.yarosh.checks.service.util.converter.PaginationConverter;
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.ProductEntity;
+import com.yarosh.library.repository.api.pagination.RepositoryPage;
+import com.yarosh.library.repository.api.pagination.RepositoryPageRequest;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -17,12 +20,15 @@ public class ProductService implements CrudService<Product, ProductId> {
 
     private final CrudRepository<ProductEntity, Long> productRepository;
     private final BidirectionalConverter<Product, ProductEntity> productConverter;
+    private final PaginationConverter paginationConverter;
 
     @Inject
     public ProductService(final CrudRepository<ProductEntity, Long> productRepository,
-                          final BidirectionalConverter<Product, ProductEntity> productConverter) {
+                          final BidirectionalConverter<Product, ProductEntity> productConverter,
+                          final PaginationConverter paginationConverter) {
         this.productRepository = productRepository;
         this.productConverter = productConverter;
+        this.paginationConverter = paginationConverter;
     }
 
     @Override
@@ -50,8 +56,15 @@ public class ProductService implements CrudService<Product, ProductId> {
     }
 
     @Override
-    public ContentPage<Product> findAllWithPagination(ContentPageRequest request) {
-        return null;
+    public ContentPage<Product> getAll(ContentPageRequest pageRequest) {
+        final RepositoryPageRequest databasePageRequest = paginationConverter.convertToRepositoryPageRequest(pageRequest);
+        final RepositoryPage<ProductEntity> databasePage = productRepository.selectAll(databasePageRequest);
+
+        return paginationConverter.convertToContentPage(
+                databasePage,
+                products -> products.stream().map(productConverter::convertToDomain).toList(),
+                pageRequest.pageNumber() + 1
+        );
     }
 
     @Override
