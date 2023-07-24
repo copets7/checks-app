@@ -2,8 +2,8 @@ package com.yarosh.library.repository.jdbc;
 
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
-import com.yarosh.library.repository.api.pagination.DatabasePage;
-import com.yarosh.library.repository.api.pagination.DatabasePageRequest;
+import com.yarosh.library.repository.api.pagination.RepositoryPage;
+import com.yarosh.library.repository.api.pagination.RepositoryPageRequest;
 import com.yarosh.library.repository.executor.DefaultSqlExecutor;
 import com.yarosh.library.repository.executor.SqlExecutor;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
 
     private static final String SQL_INSERT = "INSERT INTO discount_cards (discount) VALUES (?)";
     private static final String SQL_SELECT = "SELECT id, discount FROM discount_cards WHERE id = ?";
-    private static final String SQL_SELECT_ALL = "SELECT id, discount FROM discount_cards";
+    private static final String SQL_SELECT_ALL = "SELECT id, discount FROM discount_cards ORDER BY id DESC";
     private static final String SQL_UPDATE = "UPDATE discount_cards SET discount = ? WHERE id = ?";
     private static final String SQL_DELETE = "DELETE FROM discount_cards WHERE id = ?";
 
@@ -71,7 +71,7 @@ public class JdbcDiscountCardRepository implements CrudRepository<DiscountCardEn
     }
 
     @Override
-    public DatabasePage<DiscountCardEntity> findAllWithPagination(DatabasePageRequest request) {
+    public RepositoryPage<DiscountCardEntity> selectAll(RepositoryPageRequest request) {
         return null;
     }
 
