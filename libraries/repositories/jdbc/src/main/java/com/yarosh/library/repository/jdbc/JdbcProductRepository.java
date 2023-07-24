@@ -2,8 +2,8 @@ package com.yarosh.library.repository.jdbc;
 
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.ProductEntity;
-import com.yarosh.library.repository.api.pagination.DatabasePage;
-import com.yarosh.library.repository.api.pagination.DatabasePageRequest;
+import com.yarosh.library.repository.api.pagination.RepositoryPage;
+import com.yarosh.library.repository.api.pagination.RepositoryPageRequest;
 import com.yarosh.library.repository.executor.DefaultSqlExecutor;
 import com.yarosh.library.repository.executor.SqlExecutor;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
 
     private static final String SQL_INSERT = "INSERT INTO products (description, price, discount) VALUES (?,?,?)";
     private static final String SQL_SELECT = "SELECT id, description, price, discount FROM products WHERE id = ?";
-    private static final String SQL_SELECT_ALL = "SELECT id, description, price, discount FROM products";
+    private static final String SQL_SELECT_ALL = "SELECT id, description, price, discount FROM products ORDER BY id DESC";
     private static final String SQL_UPDATE = "UPDATE products SET description = ?, price = ?, discount = ? WHERE id = ?";
     private static final String SQL_DELETE = "DELETE FROM products WHERE id = ?";
 
@@ -73,7 +73,7 @@ public class JdbcProductRepository implements CrudRepository<ProductEntity, Long
     }
 
     @Override
-    public DatabasePage<ProductEntity> findAllWithPagination(DatabasePageRequest request) {
+    public RepositoryPage<ProductEntity> selectAll(RepositoryPageRequest request) {
         return null;
     }
 
