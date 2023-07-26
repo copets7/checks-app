@@ -1,7 +1,6 @@
 package com.yarosh.checks.controller;
 
 import com.yarosh.checks.controller.dto.ProductDto;
-import com.yarosh.checks.controller.dto.pagination.ContentPageRequestDto;
 import com.yarosh.checks.controller.util.ApiDtoConverter;
 import com.yarosh.checks.controller.util.PaginationDtoConverter;
 import com.yarosh.checks.controller.view.ContentPageView;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -64,13 +64,18 @@ public class ProductController {
     }
 
     @RequestMapping(path = "/all", method = RequestMethod.GET)
-    public ResponseEntity<ContentPageView<ProductView>> getAll(final @RequestBody ContentPageRequestDto pageRequestDto) {
-        LOGGER.info("Calling getAll products started, page request: {}", pageRequestDto);
+    public ResponseEntity<ContentPageView<ProductView>> getAll(
+            final @RequestParam(name = "page") Integer page,
+            final @RequestParam(name = "size") Integer size,
+            final @RequestParam(name = "column", required = false) String column,
+            final @RequestParam(name = "isDesc", required = false) Boolean isDesc
+    ) {
+        LOGGER.info("Calling getAll products started, page: {}, size: {}, column: {}, isDesc: {}", page, size, column, isDesc);
 
-        final ContentPageRequest pageRequest = paginationDtoConverter.convertToContentPageRequest(pageRequestDto);
-        final ContentPage<Product> page = productService.getAll(pageRequest);
+        final ContentPageRequest pageRequest = paginationDtoConverter.convertToContentPageRequest(page, size, column, isDesc);
+        final ContentPage<Product> pageContent = productService.getAll(pageRequest);
 
-        final ContentPageView<ProductView> pageView = paginationDtoConverter.convertToContentPageView(page,
+        final ContentPageView<ProductView> pageView = paginationDtoConverter.convertToContentPageView(pageContent,
                 products -> products.stream().map(productApiDtoConverter::convertDomainToView).toList()
         );
 
