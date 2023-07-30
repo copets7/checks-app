@@ -5,8 +5,11 @@ import com.yarosh.checks.domain.id.CheckId;
 import com.yarosh.checks.domain.pagination.ContentPage;
 import com.yarosh.checks.domain.pagination.ContentPageRequest;
 import com.yarosh.checks.service.util.converter.BidirectionalConverter;
+import com.yarosh.checks.service.util.converter.PaginationConverter;
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.CheckEntity;
+import com.yarosh.library.repository.api.pagination.RepositoryPage;
+import com.yarosh.library.repository.api.pagination.RepositoryPageRequest;
 import org.springframework.cache.annotation.Cacheable;
 
 import javax.inject.Inject;
@@ -17,14 +20,16 @@ import java.util.function.Function;
 public class CheckService implements CrudService<Check, CheckId> {
 
     private final CrudRepository<CheckEntity, Long> checkRepository;
-
     private final BidirectionalConverter<Check, CheckEntity> checkConverter;
+    private final PaginationConverter paginationConverter;
 
     @Inject
     public CheckService(final CrudRepository<CheckEntity, Long> checkRepository,
-                        final BidirectionalConverter<Check, CheckEntity> checkConverter) {
+                        final BidirectionalConverter<Check, CheckEntity> checkConverter,
+                        final PaginationConverter paginationConverter) {
         this.checkRepository = checkRepository;
         this.checkConverter = checkConverter;
+        this.paginationConverter = paginationConverter;
     }
 
     @Override
@@ -54,8 +59,15 @@ public class CheckService implements CrudService<Check, CheckId> {
     }
 
     @Override
-    public ContentPage<Check> getAll(ContentPageRequest request) {
-        return null;
+    public ContentPage<Check> getAll(ContentPageRequest pageRequest) {
+        final RepositoryPageRequest databasePageRequest = paginationConverter.convertToRepositoryPageRequest(pageRequest);
+        final RepositoryPage<CheckEntity> databasePage = checkRepository.selectAll(databasePageRequest);
+
+        return paginationConverter.convertToContentPage(
+                databasePage,
+                checks -> checks.stream().map(checkConverter::convertToDomain).toList(),
+                pageRequest.pageNumber() + 1
+        );
     }
 
     @Override
