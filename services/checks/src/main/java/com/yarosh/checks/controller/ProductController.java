@@ -32,7 +32,8 @@ public class ProductController {
     private final PaginationDtoConverter paginationDtoConverter;
 
     public ProductController(final CrudService<Product, ProductId> productService,
-                             final ApiDtoConverter<ProductDto, ProductView, Product> productApiDtoConverter, PaginationDtoConverter paginationDtoConverter) {
+                             final ApiDtoConverter<ProductDto, ProductView, Product> productApiDtoConverter,
+                             final PaginationDtoConverter paginationDtoConverter) {
         this.productService = productService;
         this.productApiDtoConverter = productApiDtoConverter;
         this.paginationDtoConverter = paginationDtoConverter;
