@@ -37,9 +37,10 @@ public class ServiceConfig {
     @Bean
     public CrudService<Check, CheckId> checkService(
             final CrudRepository<CheckEntity, Long> checkRepository,
-            final BidirectionalConverter<Check, CheckEntity> checkConverter
+            final BidirectionalConverter<Check, CheckEntity> checkConverter,
+            final PaginationConverter paginationConverter
     ) {
-        return new CheckService(checkRepository, checkConverter);
+        return new CheckService(checkRepository, checkConverter, paginationConverter);
     }
 
     @Bean
@@ -54,9 +55,10 @@ public class ServiceConfig {
     @Bean
     public CrudService<DiscountCard, DiscountCardId> discountCardService(
             final CrudRepository<DiscountCardEntity, Long> discountCardRepository,
-            final BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter
+            final BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter,
+            final PaginationConverter paginationConverter
     ) {
-        return new DiscountCardService(discountCardRepository, discountCardConverter);
+        return new DiscountCardService(discountCardRepository, discountCardConverter, paginationConverter);
     }
 
     @Bean
