@@ -61,8 +61,8 @@ public class CheckController {
                            final ApiDtoConverter<DiscountCardDto, DiscountCardView, DiscountCard> discountCardConverter,
                            final ProductApiDtoConverter productConverter,
                            final PaginationDtoConverter paginationDtoConverter,
-                           final @Value("${app.cashier.name}") String marketName,
-                           final @Value("${app.market.name}") String cashierName) {
+                           final @Value("${app.market.name}") String marketName,
+                           final @Value("${app.cashier.name}") String cashierName) {
         this.checkService = checkService;
         this.discountCardService = discountCardService;
         this.productService = productService;
@@ -133,21 +133,23 @@ public class CheckController {
                 check.getDate(),
                 check.getTime(),
                 convertToProductViews(check.getProducts()),
-                check.getDiscountCard().map(discountCardConverter::convertDomainToView).orElseThrow(),
+                check.getDiscountCard().map(discountCardConverter::convertDomainToView).orElse(null),
                 check.getTotalPrice()
         );
     }
 
     private Check convertToCheck(CheckDto checkDto) {
         final Map<ProductId, Integer> productIds = convertToProductIds(checkDto.products());
+        final Long discountCardId = checkDto.discountCardId();
+
         return new Check(
                 Optional.ofNullable(checkDto.id()).map(CheckId::new),
                 marketName,
                 cashierName,
-                (checkDto.date() != null) ? checkDto.date() : LocalDate.now(),
-                (checkDto.time() != null) ? checkDto.time() : LocalTime.now(),
+                LocalDate.now(),
+                LocalTime.now(),
                 convertToProducts(productIds),
-                discountCardService.get(new DiscountCardId(checkDto.discountCardId()))
+                discountCardId != null ? discountCardService.get(new DiscountCardId(discountCardId)) : Optional.empty()
         );
     }
 
