@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,20 +19,16 @@ public class JwtAuthenticationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationController.class);
 
-    private final AuthenticationManager authenticationManager;
     private final JwtTokenService jwtTokenService;
 
-    public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenService jwtTokenService) {
-        this.authenticationManager = authenticationManager;
+    public JwtAuthenticationController(JwtTokenService jwtTokenService) {
         this.jwtTokenService = jwtTokenService;
     }
 
-    @PostMapping("/basic")
+    @PostMapping("/login")
     public ResponseEntity<JwtResponseView> login(@RequestBody AuthenticationDto dto) {
         LOGGER.debug("Basic login started, credentials: {}", dto);
-
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.username(), dto.password()));
-        final JwtResponseView view = convertToJwtResponseView(jwtTokenService.processJwtFlow(dto.username()));
+        final JwtResponseView view = convertToJwtResponseView(jwtTokenService.login(dto.username(), dto.password()));
         LOGGER.debug("JWT token generated, response: {}", view);
 
         return new ResponseEntity<>(view, HttpStatus.OK);
