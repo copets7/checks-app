@@ -28,5 +28,4 @@ public class JwtAuthenticationHandler extends ResponseEntityExceptionHandler {
         LOGGER.trace("JwtAuthenticationException was handled", e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.PRECONDITION_FAILED);
     }
-
 }
