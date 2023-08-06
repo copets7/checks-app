@@ -11,6 +11,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,7 +29,9 @@ public class JwtTokenService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenService.class);
 
-    private static final String TOKEN_PREFIX = "Bearer_";
+    private static final String TOKEN_PREFIX = "Bearer ";
+
+    private final AuthenticationManager authenticationManager;
 
     private final String secret;
     private final long validityInMilliSeconds;
@@ -35,18 +39,25 @@ public class JwtTokenService {
     private final UserDetailsService userDetailsService;
     private final UserService<User> userService;
 
-    public JwtTokenService(String secret, long validityInMilliSeconds, UserDetailsService userDetailsService, UserService<User> userService) {
+
+    public JwtTokenService(AuthenticationManager authenticationManager,
+                           String secret,
+                           long validityInMilliSeconds,
+                           UserDetailsService userDetailsService,
+                           UserService<User> userService) {
+        this.authenticationManager = authenticationManager;
         this.secret = Base64.getEncoder().encodeToString(secret.getBytes());
         this.validityInMilliSeconds = validityInMilliSeconds;
         this.userDetailsService = userDetailsService;
         this.userService = userService;
     }
 
-    public JwtResponse processJwtFlow(String username) {
-       return userService.findByUsername(username)
-               .map(user -> createToken(user.username(), user.roles()))
-               .map(token -> new JwtResponse(username, token))
-               .orElseThrow(() -> new UsernameNotFoundException(MessageFormat.format("User with username {0} not found", username)));
+    public JwtResponse login(String username, String password) {
+        authenticate(username, password);
+        return userService.findByUsername(username)
+                .map(user -> createToken(user.username(), user.roles()))
+                .map(token -> new JwtResponse(username, token))
+                .orElseThrow(() -> new UsernameNotFoundException(MessageFormat.format("User with username {0} not found", username)));
     }
 
     public String createToken(String username, List<Role> roles) {
@@ -84,6 +95,15 @@ public class JwtTokenService {
         } catch (JwtException | IllegalArgumentException e) {
             LOGGER.debug("JWT TOKEN is expired or invalid", e);
             throw new JwtAuthenticationException("JWT TOKEN is expired or invalid");
+        }
+    }
+
+    private void authenticate(String username, String password) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (BadCredentialsException e) {
+            LOGGER.debug("Invalid credentials, username: {}", username, e);
+            throw new JwtAuthenticationException("Invalid credentials were passed");
         }
     }
 }
