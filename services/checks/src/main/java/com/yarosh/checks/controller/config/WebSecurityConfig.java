@@ -4,6 +4,7 @@ import com.yarosh.library.authentication.jwt.JwtSecurityConfig;
 import com.yarosh.library.authentication.jwt.JwtTokenFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -38,6 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenFilter jwtTokenFilter;
     private final UserDetailsService userDetailsService;
 
+    @Lazy
     public WebSecurityConfig(JwtTokenFilter jwtTokenFilter, UserDetailsService userDetailsService) {
         this.jwtTokenFilter = jwtTokenFilter;
         this.userDetailsService = userDetailsService;
