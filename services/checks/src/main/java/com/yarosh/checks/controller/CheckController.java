@@ -4,8 +4,10 @@ import com.yarosh.checks.controller.dto.CheckDto;
 import com.yarosh.checks.controller.dto.DiscountCardDto;
 import com.yarosh.checks.controller.dto.ProductPairDto;
 import com.yarosh.checks.controller.util.ApiDtoConverter;
+import com.yarosh.checks.controller.util.PaginationDtoConverter;
 import com.yarosh.checks.controller.util.ProductApiDtoConverter;
 import com.yarosh.checks.controller.view.CheckView;
+import com.yarosh.checks.controller.view.ContentPageView;
 import com.yarosh.checks.controller.view.DiscountCardView;
 import com.yarosh.checks.controller.view.ProductView;
 import com.yarosh.checks.domain.Check;
@@ -14,6 +16,8 @@ import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.CheckId;
 import com.yarosh.checks.domain.id.DiscountCardId;
 import com.yarosh.checks.domain.id.ProductId;
+import com.yarosh.checks.domain.pagination.ContentPage;
+import com.yarosh.checks.domain.pagination.ContentPageRequest;
 import com.yarosh.checks.service.CrudService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
@@ -45,6 +50,7 @@ public class CheckController {
 
     private final ApiDtoConverter<DiscountCardDto, DiscountCardView, DiscountCard> discountCardConverter;
     private final ProductApiDtoConverter productConverter;
+    private final PaginationDtoConverter paginationDtoConverter;
 
     private final String marketName;
     private final String cashierName;
@@ -54,13 +60,15 @@ public class CheckController {
                            final CrudService<Product, ProductId> productService,
                            final ApiDtoConverter<DiscountCardDto, DiscountCardView, DiscountCard> discountCardConverter,
                            final ProductApiDtoConverter productConverter,
-                           final @Value("${app.cashier.name}") String marketName,
-                           final @Value("${app.market.name}") String cashierName) {
+                           final PaginationDtoConverter paginationDtoConverter,
+                           final @Value("${app.market.name}") String marketName,
+                           final @Value("${app.cashier.name}") String cashierName) {
         this.checkService = checkService;
         this.discountCardService = discountCardService;
         this.productService = productService;
         this.discountCardConverter = discountCardConverter;
         this.productConverter = productConverter;
+        this.paginationDtoConverter = paginationDtoConverter;
         this.marketName = marketName;
         this.cashierName = cashierName;
     }
@@ -90,17 +98,23 @@ public class CheckController {
     }
 
     @RequestMapping(path = "/all", method = RequestMethod.GET)
-    public ResponseEntity<List<CheckView>> getAll() {
-        LOGGER.info("Calling getAll checks started");
+    public ResponseEntity<ContentPageView<CheckView>> getAll(
+            final @RequestParam(name = "page") Integer page,
+            final @RequestParam(name = "size") Integer size,
+            final @RequestParam(name = "column", required = false) String column,
+            final @RequestParam(name = "isDesc", required = false) Boolean isDesc
+    ) {
+        LOGGER.info("Calling getAll checks started page: {}, size: {}, column: {}, isDesc: {}", page, size, column, isDesc);
 
-        List<CheckView> checks = checkService.getAll()
-                .stream()
-                .map(this::convertToCheckView)
-                .toList();
+        ContentPageRequest pageRequest = paginationDtoConverter.convertToContentPageRequest(page, size, column, isDesc);
+        ContentPage<Check> pageContent = checkService.getAll(pageRequest);
 
-        LOGGER.trace("Checks views detailed printing: {}", checks);
+        final ContentPageView<CheckView> pageView = paginationDtoConverter.convertToContentPageView(pageContent,
+                checks -> checks.stream().map(this::convertToCheckView).toList()
+        );
+        LOGGER.trace("Checks views detailed printing: {}", pageView);
 
-        return new ResponseEntity<>(checks, HttpStatus.OK);
+        return new ResponseEntity<>(pageView, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.DELETE)
@@ -119,21 +133,23 @@ public class CheckController {
                 check.getDate(),
                 check.getTime(),
                 convertToProductViews(check.getProducts()),
-                check.getDiscountCard().map(discountCardConverter::convertDomainToView).orElseThrow(),
+                check.getDiscountCard().map(discountCardConverter::convertDomainToView).orElse(null),
                 check.getTotalPrice()
         );
     }
 
     private Check convertToCheck(CheckDto checkDto) {
         final Map<ProductId, Integer> productIds = convertToProductIds(checkDto.products());
+        final Long discountCardId = checkDto.discountCardId();
+
         return new Check(
                 Optional.ofNullable(checkDto.id()).map(CheckId::new),
                 marketName,
                 cashierName,
-                (checkDto.date() != null) ? checkDto.date() : LocalDate.now(),
-                (checkDto.time() != null) ? checkDto.time() : LocalTime.now(),
+                LocalDate.now(),
+                LocalTime.now(),
                 convertToProducts(productIds),
-                discountCardService.get(new DiscountCardId(checkDto.discountCardId()))
+                discountCardId != null ? discountCardService.get(new DiscountCardId(discountCardId)) : Optional.empty()
         );
     }
 

@@ -2,9 +2,14 @@ package com.yarosh.checks.service;
 
 import com.yarosh.checks.domain.DiscountCard;
 import com.yarosh.checks.domain.id.DiscountCardId;
+import com.yarosh.checks.domain.pagination.ContentPage;
+import com.yarosh.checks.domain.pagination.ContentPageRequest;
 import com.yarosh.checks.service.util.converter.BidirectionalConverter;
+import com.yarosh.checks.service.util.converter.PaginationConverter;
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
+import com.yarosh.library.repository.api.pagination.RepositoryPage;
+import com.yarosh.library.repository.api.pagination.RepositoryPageRequest;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -15,12 +20,15 @@ public class DiscountCardService implements CrudService<DiscountCard, DiscountCa
 
     private final CrudRepository<DiscountCardEntity, Long> discountCardRepository;
     private final BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter;
+    private final PaginationConverter paginationConverter;
 
     @Inject
     public DiscountCardService(final CrudRepository<DiscountCardEntity, Long> discountCardRepository,
-                               final BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter) {
+                               final BidirectionalConverter<DiscountCard, DiscountCardEntity> discountCardConverter,
+                               final PaginationConverter paginationConverter) {
         this.discountCardRepository = discountCardRepository;
         this.discountCardConverter = discountCardConverter;
+        this.paginationConverter = paginationConverter;
     }
 
     @Override
@@ -45,6 +53,18 @@ public class DiscountCardService implements CrudService<DiscountCard, DiscountCa
                 .stream()
                 .map(discountCardConverter::convertToDomain)
                 .toList();
+    }
+
+    @Override
+    public ContentPage<DiscountCard> getAll(ContentPageRequest pageRequest) {
+        final RepositoryPageRequest databasePageRequest = paginationConverter.convertToRepositoryPageRequest(pageRequest);
+        final RepositoryPage<DiscountCardEntity> databasePage = discountCardRepository.selectAll(databasePageRequest);
+
+        return paginationConverter.convertToContentPage(
+                databasePage,
+                discountCards -> discountCards.stream().map(discountCardConverter::convertToDomain).toList(),
+                pageRequest.pageNumber() + 1
+        );
     }
 
     @Override

@@ -13,8 +13,7 @@ import java.util.Optional;
 public class Check implements Domain {
 
     private static final double NO_DISCOUNT = 0;
-    private static final double MAX_DISCOUNT = 100;
-    private static final int DISCOUNT_DIVIDER = 100;
+    private static final double MAX_DISCOUNT = 1;
     private static final double INVALID_TOTAL_PRICE = 0.0;
     private static final int INVALID_QUANTITY = 0;
 
@@ -119,16 +118,11 @@ public class Check implements Domain {
     }
 
     private double countPrice(Product product) {
-        return product.price() * (MAX_DISCOUNT - countDiscount(product))
-                / DISCOUNT_DIVIDER
-                * getValidatedQuantity(products.get(product));
+        return product.price() * (MAX_DISCOUNT - countDiscount(product)) * getValidatedQuantity(products.get(product));
     }
 
     private double countDiscount(Product product) {
-        if (product.discount() > NO_DISCOUNT) {
-            return product.discount();
-        }
-        return discountCard.map(DiscountCard::discount).orElse(NO_DISCOUNT);
+        return product.discount() > NO_DISCOUNT ? product.discount() : discountCard.map(DiscountCard::discount).orElse(NO_DISCOUNT);
     }
 
     private Integer getValidatedQuantity(Integer quantity) {
@@ -150,7 +144,7 @@ public class Check implements Domain {
         } else if (products.isEmpty()) {
             throw new InvalidCheckException("Product list can not be empty, {0}", this);
         } else if (totalPrice <= INVALID_TOTAL_PRICE) {
-            throw InvalidCheckException.invalidPrice(INVALID_TOTAL_PRICE, totalPrice);
+            throw new InvalidCheckException("Total price in check is less than {0} or null, price: {1}", INVALID_TOTAL_PRICE, totalPrice);
         }
     }
 }

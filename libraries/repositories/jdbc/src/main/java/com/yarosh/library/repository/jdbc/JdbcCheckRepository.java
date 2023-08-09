@@ -4,6 +4,8 @@ import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.ProductsColumnConverter;
 import com.yarosh.library.repository.api.entity.CheckEntity;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
+import com.yarosh.library.repository.api.pagination.RepositoryPage;
+import com.yarosh.library.repository.api.pagination.RepositoryPageRequest;
 import com.yarosh.library.repository.executor.DefaultSqlExecutor;
 import com.yarosh.library.repository.executor.SqlExecutor;
 import org.slf4j.Logger;
@@ -34,7 +36,7 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
             """;
     private static final String SQL_SELECT_ALL = """ 
             SELECT c.id, c.market_name, c.cashier_name, c.date, c.time, c.products, c.discount_card_id, c.total_price,d.id, d.discount
-            FROM checks AS c JOIN discount_cards AS d ON c.discount_card_id = d.id
+            FROM checks AS c JOIN discount_cards AS d ON c.discount_card_id = d.id ORDER BY c.id DESC
             """;
     private static final String SQL_UPDATE = """
             UPDATE checks SET market_name = ?, cashier_name = ?, date = ?, time = ?,  products = ?, discount_card_id = ?,
@@ -80,6 +82,11 @@ public class JdbcCheckRepository implements CrudRepository<CheckEntity, Long> {
     @Override
     public List<CheckEntity> selectAll() {
         return sqlExecutor.selectAll(SQL_SELECT_ALL, this::convertToEntity);
+    }
+
+    @Override
+    public RepositoryPage<CheckEntity> selectAll(RepositoryPageRequest request) {
+        return null;
     }
 
     @Override

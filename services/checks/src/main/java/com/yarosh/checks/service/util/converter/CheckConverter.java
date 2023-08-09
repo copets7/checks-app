@@ -32,7 +32,7 @@ public class CheckConverter implements BidirectionalConverter<Check, CheckEntity
                 entity.getDate(),
                 entity.getTime(),
                 convertToProducts(entity.getProducts()),
-                Optional.ofNullable(discountCardConverter.convertToDomain(entity.getDiscountCard()))
+                Optional.ofNullable(entity.getDiscountCard()).map(discountCardConverter::convertToDomain)
         );
     }
 
@@ -45,7 +45,7 @@ public class CheckConverter implements BidirectionalConverter<Check, CheckEntity
                 check.getDate(),
                 check.getTime(),
                 convertToProductEntities(check.getProducts()),
-                check.getDiscountCard().map(discountCardConverter::convertToEntity).orElseThrow(),
+                check.getDiscountCard().map(discountCardConverter::convertToEntity).orElse(null),
                 check.getTotalPrice()
         );
     }
