@@ -18,8 +18,6 @@
         <module>pool</module>
         <module>sql-executor</module>
         <module>spring</module>
-        <module>reports-api</module>
-        <module>reports-local</module>
     </modules>
 
 </project>
