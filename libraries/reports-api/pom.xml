@@ -2,27 +2,35 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.yarosh.library.repository</groupId>
-        <artifactId>repositories</artifactId>
+        <groupId>com.yarosh.library</groupId>
+        <artifactId>libraries</artifactId>
         <version>0.0.1</version>
     </parent>
 
-    <groupId>com.yarosh.library.repository.reports.api</groupId>
+    <groupId>com.yarosh.library.reports.api</groupId>
     <artifactId>reports-api</artifactId>
     <packaging>jar</packaging>
 
     <name>reports-api</name>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <com.opencsv.version>5.8</com.opencsv.version>
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>${com.opencsv.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 </project>
