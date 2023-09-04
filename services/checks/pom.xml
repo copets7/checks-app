@@ -48,6 +48,18 @@
         </dependency>
 
         <dependency>
+            <groupId>com.yarosh.library.reports.api</groupId>
+            <artifactId>reports-api</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.yarosh.library.reports.local</groupId>
+            <artifactId>reports-local</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.yarosh.library.authentication.jwt</groupId>
             <artifactId>jwt</artifactId>
             <version>0.0.1</version>
