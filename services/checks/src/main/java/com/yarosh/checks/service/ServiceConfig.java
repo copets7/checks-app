@@ -11,6 +11,9 @@ import com.yarosh.checks.service.util.converter.CheckConverter;
 import com.yarosh.checks.service.util.converter.DiscountCardConverter;
 import com.yarosh.checks.service.util.converter.PaginationConverter;
 import com.yarosh.checks.service.util.converter.ProductConverter;
+import com.yarosh.library.reports.api.CheckRecord;
+import com.yarosh.library.reports.api.ReportService;
+import com.yarosh.library.reports.local.LocalReportsConfig;
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.CheckEntity;
 import com.yarosh.library.repository.api.entity.DiscountCardEntity;
@@ -21,12 +24,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
 //@Import(JdbcConfig.class)
-@Import(SpringDataRepositoryConfig.class)
+@Import({SpringDataRepositoryConfig.class, LocalReportsConfig.class})
 @PropertySource("classpath:application.properties")
 @EnableCaching
+@EnableScheduling
 public class ServiceConfig {
 
     @Bean
@@ -36,11 +41,12 @@ public class ServiceConfig {
 
     @Bean
     public CrudService<Check, CheckId> checkService(
+            final ReportService<CheckRecord> checkReportsService,
             final CrudRepository<CheckEntity, Long> checkRepository,
             final BidirectionalConverter<Check, CheckEntity> checkConverter,
             final PaginationConverter paginationConverter
     ) {
-        return new CheckService(checkRepository, checkConverter, paginationConverter);
+        return new CheckService(checkReportsService, checkRepository, checkConverter, paginationConverter);
     }
 
     @Bean
