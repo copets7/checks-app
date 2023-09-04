@@ -1,35 +1,50 @@
 package com.yarosh.checks.service;
 
 import com.yarosh.checks.domain.Check;
+import com.yarosh.checks.domain.DiscountCard;
+import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.CheckId;
 import com.yarosh.checks.domain.pagination.ContentPage;
 import com.yarosh.checks.domain.pagination.ContentPageRequest;
 import com.yarosh.checks.service.util.converter.BidirectionalConverter;
 import com.yarosh.checks.service.util.converter.PaginationConverter;
+import com.yarosh.library.reports.api.CheckRecord;
+import com.yarosh.library.reports.api.ReportService;
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.CheckEntity;
 import com.yarosh.library.repository.api.pagination.RepositoryPage;
 import com.yarosh.library.repository.api.pagination.RepositoryPageRequest;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class CheckService implements CrudService<Check, CheckId> {
 
+    private final ReportService<CheckRecord> checkReportsService;
     private final CrudRepository<CheckEntity, Long> checkRepository;
     private final BidirectionalConverter<Check, CheckEntity> checkConverter;
     private final PaginationConverter paginationConverter;
 
     @Inject
-    public CheckService(final CrudRepository<CheckEntity, Long> checkRepository,
+    public CheckService(final ReportService<CheckRecord> checkReportsService,
+                        final CrudRepository<CheckEntity, Long> checkRepository,
                         final BidirectionalConverter<Check, CheckEntity> checkConverter,
                         final PaginationConverter paginationConverter) {
+        this.checkReportsService = checkReportsService;
         this.checkRepository = checkRepository;
         this.checkConverter = checkConverter;
         this.paginationConverter = paginationConverter;
+    }
+
+    @Scheduled(cron = "${reports.cron}")
+    void sendReport() {
+        checkReportsService.storeReport(convertToReportRecords(getAll()));
+        System.out.println("Worked");
     }
 
     @Override
@@ -83,5 +98,19 @@ public class CheckService implements CrudService<Check, CheckId> {
     private Check upsert(Function<CheckEntity, CheckEntity> upsert, Check check) {
         final CheckEntity upsertedCheck = upsert.apply(checkConverter.convertToEntity(check));
         return checkConverter.convertToDomain(upsertedCheck);
+    }
+
+    private List<CheckRecord> convertToReportRecords(List<Check> checks) {
+        return checks.stream().map(check ->
+                new CheckRecord(
+                        check.getMarketName(),
+                        check.getCashierName(),
+                        check.getDate(),
+                        check.getTime(),
+                        check.getProducts().keySet().stream().map(Product::description).collect(Collectors.toSet()),
+                        check.getDiscountCard().map(DiscountCard::discount),
+                        check.getTotalPrice()
+                )
+        ).toList();
     }
 }
