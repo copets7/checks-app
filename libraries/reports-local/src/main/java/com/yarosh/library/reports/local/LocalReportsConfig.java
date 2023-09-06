@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class LocalReportsConfig {
 
     @Bean
-    public ReportService<CheckRecord> checkReportsService(@Value("${reports.directory}")String reportsDir) {
+    public ReportService<CheckRecord> checkReportsService(@Value("${reports.directory}") String reportsDir) {
         return new CheckReportsService(reportsDir);
     }
 }
