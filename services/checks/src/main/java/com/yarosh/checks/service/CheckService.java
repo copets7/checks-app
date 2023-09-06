@@ -44,7 +44,6 @@ public class CheckService implements CrudService<Check, CheckId> {
     @Scheduled(cron = "${reports.cron}")
     void sendReport() {
         checkReportsService.storeReport(convertToReportRecords(getAll()));
-        System.out.println("Worked");
     }
 
     @Override
