@@ -2,13 +2,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.yarosh.library</groupId>
-        <artifactId>libraries</artifactId>
+        <groupId>com.yarosh.library.report</groupId>
+        <artifactId>reports</artifactId>
         <version>0.0.1</version>
     </parent>
 
-    <groupId>com.yarosh.library.reports.api</groupId>
-    <artifactId>reports-api</artifactId>
+    <groupId>com.yarosh.library.reports.report-api</groupId>
+    <artifactId>report-api</artifactId>
     <packaging>jar</packaging>
 
     <name>reports-api</name>
