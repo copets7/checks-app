@@ -3,6 +3,8 @@ package com.yarosh.library.reports.local;
 import com.opencsv.CSVWriter;
 import com.yarosh.library.reports.api.CheckRecord;
 import com.yarosh.library.reports.api.ReportService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,6 +17,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class CheckReportsService implements ReportService<CheckRecord> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CheckReportsService.class);
 
     private static final String[] CSV_HEADER = {"Market", "Cashier", "Date", "Time", "Products", "Discount", "Total price"};
     private static final String NO_DISCOUNT = "";
@@ -29,6 +33,7 @@ public class CheckReportsService implements ReportService<CheckRecord> {
 
     @Override
     public void storeReport(List<CheckRecord> records) {
+        LOGGER.info("Calling stored report started, parameter: {}", records);
         if (records.isEmpty()) {
             return;
         }
@@ -38,6 +43,7 @@ public class CheckReportsService implements ReportService<CheckRecord> {
             final List<String[]> content = convertToCsvFormat(records);
             writer.writeAll(content);
         } catch (IOException e) {
+            LOGGER.debug("Report not stored ", e);
             throw new RuntimeException(e);
         }
     }
@@ -65,11 +71,13 @@ public class CheckReportsService implements ReportService<CheckRecord> {
     }
 
     private String performReportsDir(String reportsDir) {
+        LOGGER.info("Creation of the reports directory started: {}", reportsDir);
         final Path target = Paths.get(Objects.requireNonNull(this.getClass().getResource("/")).getPath());
         final Path reports = Paths.get(MessageFormat.format(REPORTS_DIR_PATTERN, target.toAbsolutePath(), reportsDir));
         try {
             return Files.createDirectories(reports).toString();
         } catch (IOException e) {
+            LOGGER.debug("Creation of the reports directory failed: ", e);
             throw new RuntimeException(e);
         }
     }
