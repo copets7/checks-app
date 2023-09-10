@@ -18,8 +18,7 @@
         <module>repositories</module>
         <module>user-service</module>
         <module>authentication</module>
-        <module>reports-api</module>
-        <module>reports-local</module>
+        <module>reports</module>
     </modules>
 
     <dependencies>
