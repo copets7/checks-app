@@ -6,6 +6,7 @@ import com.yarosh.library.reports.api.ReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,6 +29,7 @@ public class CheckReportsService implements ReportService<CheckRecord> {
 
     private final String reportsDir;
 
+    @Inject
     public CheckReportsService(String reportsDir) {
         this.reportsDir = performReportsDir(reportsDir);
     }
