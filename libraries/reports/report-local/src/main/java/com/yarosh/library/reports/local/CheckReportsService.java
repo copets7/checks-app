@@ -24,6 +24,7 @@ public class CheckReportsService implements ReportService<CheckRecord> {
     private static final String NO_DISCOUNT = "";
     private static final int CSV_HEADER_INDEX = 0;
     private static final String REPORTS_DIR_PATTERN = "{0}/{1}";
+    private static final String REPORTS_FILE_PATTERN = "{0}/ report - {1}.csv";
 
     private final String reportsDir;
 
@@ -67,7 +68,7 @@ public class CheckReportsService implements ReportService<CheckRecord> {
     }
 
     private String createReportPath(List<CheckRecord> records) {
-        return MessageFormat.format("{0}/{1}", reportsDir, records.get(0).date());
+        return MessageFormat.format(REPORTS_FILE_PATTERN, reportsDir, records.get(0).date());
     }
 
     private String performReportsDir(String reportsDir) {
