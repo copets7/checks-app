@@ -9,7 +9,7 @@ public record CheckRecord(String marketName,
                           String cashierName,
                           LocalDate date,
                           LocalTime time,
-                          Collection<String> products,
+                          Collection<ProductInfo> products,
                           Optional<Double> discount,
                           double totalPrice) implements Record {
 
