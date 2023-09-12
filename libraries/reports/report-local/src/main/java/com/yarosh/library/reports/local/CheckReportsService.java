@@ -25,7 +25,7 @@ public class CheckReportsService implements ReportService<CheckRecord> {
     private static final String NO_DISCOUNT = "";
     private static final int CSV_HEADER_INDEX = 0;
     private static final String REPORTS_DIR_PATTERN = "{0}/{1}";
-    private static final String REPORTS_FILE_PATTERN = "{0}/ report - {1}.csv";
+    private static final String REPORTS_FILE_PATTERN = "{0}/report-{1}.csv";
 
     private final String reportsDir;
 
@@ -36,10 +36,10 @@ public class CheckReportsService implements ReportService<CheckRecord> {
 
     @Override
     public void storeReport(List<CheckRecord> records) {
-        LOGGER.info("Calling stored report started, parameter: {}", records);
         if (records.isEmpty()) {
             return;
         }
+        LOGGER.info("Calling stored report started, parameter: {}", records);
 
         final String reportPath = createReportPath(records);
         try (CSVWriter writer = new CSVWriter(new FileWriter(reportPath))) {
@@ -57,15 +57,29 @@ public class CheckReportsService implements ReportService<CheckRecord> {
         return content;
     }
 
-    private String[] convertToArray(CheckRecord record) {
+    private String[] convertToArray(List<CheckRecord> records) {
+//        boolean isFirstCheckLine = true;
+//        records.stream().map(record -> {
+//            record.products().
+//            record.products().stream().map(productInfo -> {
+//               if (isFirstCheckLine) {
+//                   isFirstCheckLine = false;
+//                   return new String[]{
+//                           record.marketName(),
+//                           record.cashierName(),
+//                           record.date().toString(),
+//                           record.time().toString(),
+//                           productInfo.name(),
+//                           productInfo.number().toString(),
+//                           productInfo.discount() == 0 ? productInfo.discount().toString() : NO_DISCOUNT,
+//                           record.discount().map(Object::toString).orElse(NO_DISCOUNT),
+//                           String.valueOf(record.totalPrice())
+//                   }
+//               }
+//            })
+//        })
+
         return new String[]{
-                record.marketName(),
-                record.cashierName(),
-                record.date().toString(),
-                record.time().toString(),
-                record.products().toString(),
-                record.discount().map(Object::toString).orElse(NO_DISCOUNT),
-                String.valueOf(record.totalPrice())
         };
     }
 
@@ -77,8 +91,12 @@ public class CheckReportsService implements ReportService<CheckRecord> {
         LOGGER.info("Creation of the reports directory started: {}", reportsDir);
         final Path target = Paths.get(Objects.requireNonNull(this.getClass().getResource("/")).getPath());
         final Path reports = Paths.get(MessageFormat.format(REPORTS_DIR_PATTERN, target.toAbsolutePath(), reportsDir));
+
         try {
-            return Files.createDirectories(reports).toString();
+            final String path = Files.createDirectories(reports).toString();
+            LOGGER.debug("Report file was created, path: {}", path);
+
+            return path;
         } catch (IOException e) {
             LOGGER.debug("Creation of the reports directory failed: ", e);
             throw new RuntimeException(e);
