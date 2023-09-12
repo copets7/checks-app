@@ -2,13 +2,13 @@ package com.yarosh.checks.service;
 
 import com.yarosh.checks.domain.Check;
 import com.yarosh.checks.domain.DiscountCard;
-import com.yarosh.checks.domain.Product;
 import com.yarosh.checks.domain.id.CheckId;
 import com.yarosh.checks.domain.pagination.ContentPage;
 import com.yarosh.checks.domain.pagination.ContentPageRequest;
 import com.yarosh.checks.service.util.converter.BidirectionalConverter;
 import com.yarosh.checks.service.util.converter.PaginationConverter;
 import com.yarosh.library.reports.api.CheckRecord;
+import com.yarosh.library.reports.api.ProductInfo;
 import com.yarosh.library.reports.api.ReportService;
 import com.yarosh.library.repository.api.CrudRepository;
 import com.yarosh.library.repository.api.entity.CheckEntity;
@@ -18,10 +18,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class CheckService implements CrudService<Check, CheckId> {
 
@@ -106,10 +106,18 @@ public class CheckService implements CrudService<Check, CheckId> {
                         check.getCashierName(),
                         check.getDate(),
                         check.getTime(),
-                        check.getProducts().keySet().stream().map(Product::description).collect(Collectors.toSet()),
+                        convertToProductInfo(check),
                         check.getDiscountCard().map(DiscountCard::discount),
                         check.getTotalPrice()
                 )
         ).toList();
+    }
+
+    private Collection<ProductInfo> convertToProductInfo(Check check) {
+        return check.getProducts()
+                .entrySet()
+                .stream()
+                .map(entry -> new ProductInfo(entry.getKey().description(), entry.getValue(), entry.getKey().discount()))
+                .toList();
     }
 }
