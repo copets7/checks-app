@@ -113,7 +113,7 @@ public class CheckService implements CrudService<Check, CheckId> {
         ).toList();
     }
 
-    private Collection<ProductInfo> convertToProductInfo(Check check) {
+    private List<ProductInfo> convertToProductInfo(Check check) {
         return check.getProducts()
                 .entrySet()
                 .stream()
