@@ -25,7 +25,7 @@ public class CheckReportsService implements ReportService<CheckRecord> {
 
     private static final String[] CSV_HEADER = {"Market", "Cashier", "Date", "Time", "Products", "Number", "Discount"};
     private static final String EMPTY_COLUMN = "";
-    private static final String NO_DISCOUNT = "";
+    private static final String NO_DISCOUNT = "No discount";
     private static final int ZERO_DISCOUNT = 0;
     private static final int ZERO_ROW_INDEX = 0;
     private static final int CSV_HEADER_INDEX = 0;
@@ -74,7 +74,7 @@ public class CheckReportsService implements ReportService<CheckRecord> {
                                     record.time().toString(),
                                     product.name(),
                                     product.number().toString(),
-                                    product.discount() == ZERO_DISCOUNT ? product.discount().toString() : NO_DISCOUNT,
+                                    product.discount() != ZERO_DISCOUNT ? product.discount().toString() : NO_DISCOUNT,
                             }
                     );
                 } else {
@@ -86,7 +86,7 @@ public class CheckReportsService implements ReportService<CheckRecord> {
                                     EMPTY_COLUMN,
                                     product.name(),
                                     product.number().toString(),
-                                    product.discount() == ZERO_DISCOUNT ? product.discount().toString() : NO_DISCOUNT
+                                    product.discount() != ZERO_DISCOUNT ? product.discount().toString() : NO_DISCOUNT
                             }
                     );
                 }
