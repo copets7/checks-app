@@ -12,6 +12,10 @@
     <packaging>pom</packaging>
 
     <name>report</name>
+    <modules>
+        <module>report-api</module>
+        <module>report-local</module>
+    </modules>
 
     <properties>
 
